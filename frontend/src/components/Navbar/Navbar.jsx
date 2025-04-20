@@ -14,10 +14,10 @@ function Navbar() {
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                        <a className="nav-link active" aria-current="page" href="#">Главная</a>
+                        <a className="nav-link active" aria-current="page" href="/">Главная</a>
                         </li>
                         <li className="nav-item">
-                        <a className="nav-link" href="#">P2P-торговля</a>
+                        <a className="nav-link" href="/p2p-trade">P2P-торговля</a>
                         </li>
                         <li className="nav-item">
                         <a className="nav-link" href="#">Мои сделки</a>

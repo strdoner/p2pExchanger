@@ -8,6 +8,7 @@
     --main-accent-color: #2563EB;
     --second-accent-color: #06B6D4;
     --icons-color: #3c4043;
+    --hr-color: rgba(0, 0, 0, 0.5);
 }
   
 :root[data-theme="dark"] {
@@ -18,6 +19,7 @@
     --main-accent-color: #3B82F6;
     --second-accent-color: #22D3EE;
     --icons-color: #E2E8F0;
+    --hr-color: rgba(255,255,255,0.8);
 }
 
 $font-primary: 'Manrope', sans-serif;
@@ -66,6 +68,12 @@ h5 {
 i {
     color: var(--icons-color);
 }
+
+hr {
+    border: 0!important;
+    height: 1px;
+    background: var(--hr-color); /* для светлой темы */
+  }
 
 .nav-link i:hover {
     color: #9e9e9e;
@@ -124,3 +132,12 @@ footer {
     border-top: 1px solid var(--text-color);
 }
 
+.orders__list_choose .form-select{
+    max-width: 140px;
+    margin: 0 20px 0 0;
+}
+
+.choosen {
+    border-bottom: 2px solid var(--second-accent-color);
+    color: var(--second-accent-color)!important;
+}
