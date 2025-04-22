@@ -37,7 +37,27 @@ $font-primary: 'Manrope', sans-serif;
 }
 body {
     background: var(--background-color)!important;
+    min-height: 100vh;
+
+    
 }
+
+#root > div.container {
+    flex: 1;
+}
+
+#root {
+    min-height: 100vh!important;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: start;
+    
+}
+
+footer {
+    margin-top: auto;
+} 
 
 .main-accent-color {
     color: var(--main-accent-color)!important;
@@ -193,6 +213,10 @@ footer {
     max-width: 150px;
   }
 
+  .select-full {
+    max-width: 100%;
+  }
+
   .select-button {
     font-size: 14px;
     display: flex;
@@ -329,7 +353,7 @@ footer {
     margin-top: 30px;
     
     * {
-        color: var(--secondary-text-color)!important;
+        color: var(--secondary-text-color);
         font-weight: 400;
     }
 
@@ -338,7 +362,7 @@ footer {
         
     }
 
-    span {
+    .merchant_info span, .order__price {
         font-weight: 800;
         color: var(--text-color)!important;
     }
@@ -360,10 +384,11 @@ footer {
         }
         p {
             margin: 0;
+            color: var(--secondary-text-color)!important;
         }
     }
 
-    .order__price {
+    .order__volume {
         padding: 30px 0;
         div {
             display: flex;
@@ -423,3 +448,46 @@ footer {
     }
 }
 
+.history__type span, .history__agent span {
+    font-weight: 800;
+
+}
+
+.auth_form {
+    width: 50vh;
+    margin: 0 auto;
+}
+
+.auth_form form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 350px;
+    margin: auto auto;
+    padding: 30px;
+    border: 1px solid var(--hr-color);
+    border-radius: 10px;
+
+    p {
+        color: var(--secondary-text-color)!important;
+    }
+
+    h4 {
+        font-weight: 800;
+    }
+
+    input {
+        background: var(--background-color);
+        color: var(--text-color);
+    }
+
+    input:focus {
+        background: var(--background-color);
+        color: var(--text-color);
+        
+    }
+    input::placeholder {
+        color: var(--secondary-text-color);
+    }
+
+}

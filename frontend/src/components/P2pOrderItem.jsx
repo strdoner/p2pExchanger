@@ -15,11 +15,11 @@ const P2pOrderItem = ({action}) => {
                     <p>20 мин.</p>
                 </div>
             </th>
-            <th>
+            <th className='order__price'>
                 <span className='h4'>81.40</span><span className='ms-1'>RUB</span>
             </th>
             <th>
-                <div className='order__price'>
+                <div className='order__volume'>
                     <p className='text-color'>55.00000 USDT</p>
                     <div>
                         <p className='text-color'>3,222.00</p>-

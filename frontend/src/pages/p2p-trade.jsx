@@ -9,6 +9,7 @@ import CustomSelect from '../components/CustomSelect/CustomSelect'
 import P2pPricePanel from '../components/P2pPricePanel'
 import P2pOrdersList from '../components/P2pOrdersListBuy';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import Pagination from '../components/Pagination';
 
 function P2pTrade() {
     const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -65,13 +66,7 @@ function P2pTrade() {
                         <Outlet />
                     </div>
                 </div>
-                <div className='pagination__block d-flex gap-3 text-center justify-content-center mt-4'>
-                    <button><i class="bi bi-chevron-left"></i></button>
-                    <button className='active'>1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button><i class="bi bi-chevron-right"></i></button>
-                </div>
+                <Pagination />
 
 
 

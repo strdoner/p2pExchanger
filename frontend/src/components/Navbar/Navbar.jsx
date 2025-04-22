@@ -2,6 +2,7 @@ import {observer} from 'mobx-react-lite'
 import ToggleTheme from '../ToggleTheme/ToggleTheme'
 import { ThemeContext } from '../../contexts/ThemeContext'
 import { themes } from '../../contexts/ThemeContext'
+import { Link } from 'react-router-dom'
 
 function Navbar() {
     return (
@@ -14,16 +15,16 @@ function Navbar() {
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                        <a className="nav-link active" aria-current="page" href="/">Главная</a>
+                        <Link className="nav-link active" aria-current="page" to="/">Главная</Link>
                         </li>
                         <li className="nav-item">
-                        <a className="nav-link" href="/p2p-trade">P2P-торговля</a>
+                        <Link className="nav-link" to="/p2p-trade">P2P-торговля</Link>
                         </li>
                         <li className="nav-item">
-                        <a className="nav-link" href="#">Мои сделки</a>
+                        <Link className="nav-link" to="/orders-history">Мои сделки</Link>
                         </li>
                         <li className="nav-item">
-                        <a className="nav-link" href="#">Кошелек</a>
+                        <Link className="nav-link" to="#">Кошелек</Link>
                         </li>
                     </ul>
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
