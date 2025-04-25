@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.example.backend.model.user.Balance;
 import org.example.backend.model.user.PaymentMethod;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -41,15 +42,13 @@ public class User implements UserDetails {
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Balance> balances = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
-    private List<PaymentMethod> paymentMethods;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

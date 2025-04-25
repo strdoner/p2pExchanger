@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.backend.model.Currency;
 
 import java.math.BigDecimal;
 
@@ -18,7 +19,7 @@ public class Balance {
     private Long id;
 
     @Column(nullable = false)
-    private String currency; // "BTC", "USDT"
+    private Currency currency; // "BTC", "USDT"
 
     @Column(precision = 19, scale = 8)
     private BigDecimal available = BigDecimal.ZERO;
