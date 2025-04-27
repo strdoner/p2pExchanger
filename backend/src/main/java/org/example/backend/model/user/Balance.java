@@ -18,7 +18,8 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency; // "BTC", "USDT"
 
     @Column(precision = 19, scale = 8)

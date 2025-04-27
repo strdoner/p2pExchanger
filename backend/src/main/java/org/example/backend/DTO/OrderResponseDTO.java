@@ -4,14 +4,14 @@ import lombok.Data;
 import org.example.backend.model.Currency;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderType;
-import org.example.backend.model.user.User;
+import org.example.backend.service.OrderService;
 
 import java.math.BigDecimal;
 
 @Data
 public class OrderResponseDTO {
     private long id;
-    private User maker;
+    private UserOrderDTO maker;
     private OrderType type;
     private BigDecimal price;
     private BigDecimal amount;
@@ -20,9 +20,9 @@ public class OrderResponseDTO {
     private BigDecimal maxLimit;
     private String paymentMethod;
 
-    public OrderResponseDTO(Order order) {
+    public OrderResponseDTO(Order order, Long ordersCount, Long percentOrdersCompleted) {
         this.id = order.getId();
-        this.maker = order.getMaker();
+        this.maker = new UserOrderDTO(order.getMaker(), ordersCount, percentOrdersCompleted);
         this.type = order.getType();
         this.price = order.getPrice();
         this.amount = order.getAmount();

@@ -34,9 +34,8 @@ public class Order {
     private OrderType type; // BUY, SELL
 
      // ACTIVE, COMPLETED, CANCELLED
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency; // BTC, USDT ...
 
     @Column(precision = 19, scale = 2, nullable = false)

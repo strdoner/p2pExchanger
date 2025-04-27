@@ -35,19 +35,20 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Transient
+    private String passwordConfirm;
 
     private boolean enabled = true;
     private boolean accountNonExpired = true;
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @ManyToOne
     private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(role);
     }
 
     @Override

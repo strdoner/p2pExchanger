@@ -4,9 +4,12 @@ package org.example.backend.controller;
 import org.example.backend.DTO.OrderRequestDTO;
 import org.example.backend.DTO.OrderResponseDTO;
 import org.example.backend.model.order.Order;
+import org.example.backend.model.user.User;
 import org.example.backend.service.OrderService;
 import org.example.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +29,16 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> getAllOrders(
+    public ResponseEntity<Page<OrderResponseDTO>> getAllOrders(
             @RequestParam(defaultValue = "USDT") String coin,
-            @RequestParam(defaultValue = "Все методы") String method
+            @RequestParam(defaultValue = "Все методы") String method,
+            @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int limit
     ) {
-        final List<OrderResponseDTO> orders = orderService.readAll();
-        return orders != null && !orders.isEmpty()
-                ? new ResponseEntity<>(orders, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        User user = userService.findUserById(1L);
+        final Page<OrderResponseDTO> orders = orderService.readAll(user, method, coin, PageRequest.of(page, limit));
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+
     }
 
     @PostMapping

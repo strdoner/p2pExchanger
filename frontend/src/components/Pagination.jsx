@@ -1,14 +1,24 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-const Pagination = () => {
+const Pagination = ({isFirst, isLast, totalPages}) => {
+    const [searchParams, setSearchParams] = useSearchParams()
+    const page = searchParams.get("page") === null ? 1 : Number(searchParams.get("page"))
+    const setPage = (newPage) => {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set("page", newPage);
+        setSearchParams(newSearchParams)
+    }
     return (
         <div className='pagination__block d-flex gap-3 text-center justify-content-center mt-4'>
-            <button><i class="bi bi-chevron-left"></i></button>
-            <button className='active'>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button><i class="bi bi-chevron-right"></i></button>
+            {!isFirst ? <button onClick={() => {setPage(page - 1)}}><i class="bi bi-chevron-left"></i></button> : <></>}
+            {page - 2 > 0 ? <button onClick={() => {setPage(page - 2)}}>{page - 2}</button>: <></>}
+            {page - 1 > 0 ? <button onClick={() => {setPage(page - 1)}}>{page - 1}</button>: <></>}
+            <button className='active'>{page}</button>
+            {page + 1 <= totalPages ? <button onClick={() => {setPage(page + 1)}}>{page + 1}</button>: <></>}
+            {page + 2 <= totalPages ? <button onClick={() => {setPage(page + 2)}}>{page + 2}</button>: <></>}
+            {!isLast ? <button onClick={() => {setPage(page + 1)}}><i class="bi bi-chevron-right"></i></button> : <></>}
         </div>
     )
 }

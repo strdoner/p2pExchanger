@@ -2,33 +2,34 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import PaymentMethod from './PaymentMethod';
 
-const P2pOrderItem = ({action, order}) => {
+const P2pOrderItem = ({action, order, placeholder}) => {
     return (
         <tr>
-            <th className='merchant_info'>
-                <span>{order.maker.username}</span>
-                <div className='d-flex align-items-center'>
+            <th className='merchant_info placeholder-glow'>
+                <span className={placeholder ? "placeholder" : ""}>{placeholder ? "username" : order.maker.username}</span>
+                <div className={`d-flex align-items-center ${placeholder ? "placeholder" : ""}`}>
                     <div className='online_icon'></div>
-                    <p>В сети</p>|
-                    <p>169 ордеров</p>|
-                    <p>93%</p>|
-                    <p>20 мин.</p>
+                    <p className={placeholder ? "placeholder" : ""}>В сети</p>|
+                    <p className={placeholder ? "placeholder" : ""}>{placeholder ? "999" : order.maker.ordersCount} ордеров</p>|
+                    <p className={placeholder ? "placeholder" : ""}>{placeholder ? "99" : order.maker.percentOrdersCompleted}%</p>|
+                    <p className={placeholder ? "placeholder" : ""}>20 мин.</p>
                 </div>
             </th>
-            <th className='order__price'>
-                <span className='h4'>{order.price}</span><span className='ms-1'>RUB</span>
+            <th className='order__price placeholder-glow'>
+                <div className={placeholder ? "placeholder" : ""}><span className={`h4`}>{placeholder ? "1233" : order.price}</span><span className='ms-1'>RUB</span></div>
             </th>
             <th>
-                <div className='order__volume'>
-                    <p className='text-color'>{`${order.amount} ${order.currency}`}</p>
-                    <div>
-                        <p className='text-color'>{order.minLimit}</p>-
-                        <p className='text-color'>{order.maxLimit}</p>
+                <div className='order__volume placeholder-glow'>
+                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{`${placeholder ? "2333" : order.amount} ${placeholder ? "" : order.currency.name}`}</p>
+                    <div className={placeholder ? "placeholder" : ""}>
+                        <p className={`text-color ${placeholder ? "d-none" : ""}`}>{placeholder ? "1223" : order.minLimit}</p>-
+                        <p className={`text-color ${placeholder ? "d-none" : ""}`}>{placeholder ? "123231" : order.maxLimit}</p>
                     </div>
                 </div>
             </th>
-            <th>
-                <PaymentMethod name={order.paymentMethod} color="red"/>
+            <th className='placeholder-glow'>
+                {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.paymentMethod} color="red" className={placeholder ? "placeholder" : ""}/>}
+                
             </th>
             <th>
                 <button className={`btn ${action == "buy" ? "btn-success" : "btn-danger"}`}>{action == "buy" ? "Купить": "Продать"}</button>

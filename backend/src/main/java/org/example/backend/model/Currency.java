@@ -1,11 +1,13 @@
 package org.example.backend.model;
 
-public enum Currency {
-    BTC,
-    ETH,
-    USDT,
-    USDC,
-    BNB,
-    SOL,
-    DOGE
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+@Entity
+@Data
+public class Currency {
+    @Id
+    private Integer id;
+    private String name;
 }

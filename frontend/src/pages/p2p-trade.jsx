@@ -1,27 +1,34 @@
 import {observer} from 'mobx-react-lite'
-import React, {useState} from 'react';
-import ToggleTheme from '../components/ToggleTheme/ToggleTheme'
-import { ThemeContext } from '../contexts/ThemeContext'
-import { themes } from '../contexts/ThemeContext'
+import React, {useState, useEffect} from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar'
 import Footer from '../components/Footer/Footer'
 import CustomSelect from '../components/CustomSelect/CustomSelect'
 import P2pPricePanel from '../components/P2pPricePanel'
-import P2pOrdersList from '../components/P2pOrdersListBuy';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 
 function P2pTrade() {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [isPanelOpen, setIsPanelOpen] = useState(true);
-    const [selectedCoin, setSelectedCoin] = useState({label:"USDT", value:"1"});
-    const [selectedMethod, setSelectedMethod] = useState({label:"Все методы", value:"1"});
     const location = useLocation()
-
     const isSellOrders = location.pathname.includes('/sell');
     const IsPanelOpenHandler = () => {
         setIsPanelOpen(true)
     }
-
+    useEffect(() => {
+        const newSearchParams = new URLSearchParams(searchParams);
+            if (searchParams.get("coin") === null) {
+                newSearchParams.set("coin", "USDT");
+            }
+            if (searchParams.get("method") === null) {
+                newSearchParams.set("method", "Все методы");
+            }
+            // newSearchParams.set("method", "USDT");
+            setSearchParams(newSearchParams);
+    
+    }, [])
+    
     var coinsTo = [
         {label:"USDT", value:"1"},
         {label:"USDC", value:"2"},
@@ -41,6 +48,26 @@ function P2pTrade() {
         {label:"QIWI", value:"7"},
 
     ]
+    const findCoin = () => {
+        for (var i = 0; i < coinsTo.length; i++) {
+            if (coinsTo[i].label === searchParams.get("coin")) {
+                return coinsTo[i]
+            }
+            return coinsTo[0]
+        }
+    }
+    
+    const findMethod = () => {
+        for (var i = 0; i < paymentsMethods.length; i++) {
+            if (paymentsMethods[i].label === searchParams.get("method")) {
+                return paymentsMethods[i]
+            }
+            return paymentsMethods[0]
+        }
+    }
+    const [selectedCoin, setSelectedCoin] = useState(findCoin());
+    const [selectedMethod, setSelectedMethod] = useState(findMethod());
+    
 
 
     return (
@@ -59,8 +86,8 @@ function P2pTrade() {
                         </div>
                         <hr />
                         <div className='d-flex orders__list_choose'>
-                            <CustomSelect options={coinsTo} selectedOption={selectedCoin} setSelectedOption={setSelectedCoin}/>
-                            <CustomSelect options={paymentsMethods} size="lg" selectedOption={selectedMethod} setSelectedOption={setSelectedMethod}/>
+                            <CustomSelect options={coinsTo} paramName="coin"/>
+                            <CustomSelect options={paymentsMethods} size="lg" paramName="method"/>
                             <div className={`pricePanelButton ${isPanelOpen ? "hidden": ""}`}>
                                 <button className='select-button' onClick={IsPanelOpenHandler}><i class="bi bi-graph-up"></i></button>
                             </div>
@@ -69,10 +96,9 @@ function P2pTrade() {
                             isOpen={isPanelOpen} 
                             onToggle={() => setIsPanelOpen(!isPanelOpen)} 
                         />
-                        <Outlet context={[selectedCoin.label, selectedMethod.label, 1]}/>
+                        <Outlet />
                     </div>
                 </div>
-                <Pagination />
 
 
 
