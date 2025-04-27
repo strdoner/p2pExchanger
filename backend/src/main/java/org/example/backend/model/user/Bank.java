@@ -1,20 +1,17 @@
 package org.example.backend.model.user;
 
-public enum Bank {
-    SBERBANK("Сбербанк"),
-    T_BANK("Т-Банк"),
-    VTB("ВТБ"),
-    ALFABANK("Альфабанк"),
-    YOO_MONEY("ЮMoney"),
-    RAIFFEISEN("Райффайзен");
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    private final String displayName;
+@Data
+@Entity
+@Table(name = "bank")
+@NoArgsConstructor
+public class Bank {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String name;
 
-    Bank(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
 }

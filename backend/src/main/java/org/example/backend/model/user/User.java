@@ -17,8 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
@@ -61,16 +60,5 @@ public class User implements UserDetails {
         return password;
     }
 
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
 }

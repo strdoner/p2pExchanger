@@ -1,17 +1,15 @@
 package org.example.backend.DTO;
 
 import lombok.Data;
-import lombok.Getter;
 import org.example.backend.model.Currency;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderType;
-import org.example.backend.model.user.PaymentMethod;
 import org.example.backend.model.user.User;
 
 import java.math.BigDecimal;
 
 @Data
-public class OrderDTO {
+public class OrderResponseDTO {
     private long id;
     private User maker;
     private OrderType type;
@@ -22,7 +20,7 @@ public class OrderDTO {
     private BigDecimal maxLimit;
     private String paymentMethod;
 
-    public OrderDTO(Order order) {
+    public OrderResponseDTO(Order order) {
         this.id = order.getId();
         this.maker = order.getMaker();
         this.type = order.getType();

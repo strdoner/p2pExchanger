@@ -1,10 +1,12 @@
 package org.example.backend.model.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.backend.DTO.OrderRequestDTO;
 import org.example.backend.model.Currency;
 import org.example.backend.model.user.PaymentMethod;
 import org.example.backend.model.user.User;
@@ -23,21 +25,15 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "maker_id", nullable = false)
     private User maker; // создает
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "taker_id", nullable = false)
-    private User taker; // откликается
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderType type; // BUY, SELL
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OrderStatus status = OrderStatus.ACTIVE; // ACTIVE, COMPLETED, CANCELLED
+     // ACTIVE, COMPLETED, CANCELLED
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -59,6 +55,7 @@ public class Order {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @ManyToOne
     private PaymentMethod paymentMethod;
 
@@ -66,4 +63,13 @@ public class Order {
     private String paymentDetails;
 
 
+    public void copyFrom(OrderRequestDTO order) {
+        this.setAmount(order.getAmount());
+        this.setCurrency(order.getCurrency());
+        this.setMinLimit(order.getMinLimit());
+        this.setMaxLimit(order.getMaxLimit());
+        this.setType(order.getType());
+        this.setPrice(order.getPrice());
+        this.setPaymentDetails(order.getPaymentDetails());
+    }
 }

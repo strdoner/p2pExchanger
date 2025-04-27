@@ -13,7 +13,10 @@ import Pagination from '../components/Pagination';
 
 function P2pTrade() {
     const [isPanelOpen, setIsPanelOpen] = useState(true);
+    const [selectedCoin, setSelectedCoin] = useState({label:"USDT", value:"1"});
+    const [selectedMethod, setSelectedMethod] = useState({label:"Все методы", value:"1"});
     const location = useLocation()
+
     const isSellOrders = location.pathname.includes('/sell');
     const IsPanelOpenHandler = () => {
         setIsPanelOpen(true)
@@ -23,6 +26,9 @@ function P2pTrade() {
         {label:"USDT", value:"1"},
         {label:"USDC", value:"2"},
         {label:"ETH", value:"3"},
+        {label:"BTC", value:"4"},
+        {label:"BNB", value:"5"},
+
     ]
 
     var paymentsMethods = [
@@ -53,17 +59,17 @@ function P2pTrade() {
                         </div>
                         <hr />
                         <div className='d-flex orders__list_choose'>
-                            <CustomSelect options={coinsTo}/>
-                            <CustomSelect options={paymentsMethods} size="lg"/>
+                            <CustomSelect options={coinsTo} selectedOption={selectedCoin} setSelectedOption={setSelectedCoin}/>
+                            <CustomSelect options={paymentsMethods} size="lg" selectedOption={selectedMethod} setSelectedOption={setSelectedMethod}/>
                             <div className={`pricePanelButton ${isPanelOpen ? "hidden": ""}`}>
                                 <button className='select-button' onClick={IsPanelOpenHandler}><i class="bi bi-graph-up"></i></button>
                             </div>
                         </div>
-                        <P2pPricePanel 
+                        <P2pPricePanel value="asdf"
                             isOpen={isPanelOpen} 
                             onToggle={() => setIsPanelOpen(!isPanelOpen)} 
                         />
-                        <Outlet />
+                        <Outlet context={[selectedCoin.label, selectedMethod.label, 1]}/>
                     </div>
                 </div>
                 <Pagination />

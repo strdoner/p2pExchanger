@@ -1,8 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React, {useState, useEffect, useRef} from 'react';
 
-const CustomSelect = ({ options, size }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
+const CustomSelect = ({ options, size, selectedOption, setSelectedOption }) => {
     const [showOptions, setShowOptions] = useState(false);
     const [focusedOptionIndex, setFocusedOptionIndex] = useState(-1);
     const selectRef = useRef(null);

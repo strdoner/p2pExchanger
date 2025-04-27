@@ -1,5 +1,8 @@
 import {makeAutoObservable} from "mobx"
 import axios from "axios";
+import UserService from "../services/UserService.ts";
+import AuthService from "../services/AuthService.ts";
+import { AuthResponse } from "../models/response/AuthResponse";
 
 export default class Store {
     username = ""; 
@@ -27,15 +30,7 @@ export default class Store {
     }
 
     async loginUser(username: string, password: string) {
-        this.setLoading(true);
-        try {
-            const response = await AuthService.loginUser(username, password)
-            //TODO
-        } catch (e) {
-            return e?.response?.data;
-        } finally {
-            this.setLoading(false);
-        }
+        
     }
 
     async logoutUser() {
@@ -50,21 +45,20 @@ export default class Store {
     }
 
     async checkAuth() {
-        this.setAuthLoading(true)
+        
+    }
+
+    async getOrders(coin: string, method: string, page:number) {
+        this.setLoading(true);
         try {
-            axios.defaults.withCredentials = true
-            const response = await axios.post<AuthResponse>('http://127.0.0.1:8000/api/auth/token/refresh/', {withCredentials: true})
             
-            localStorage.setItem('access_token', response.data.access)
-            this.setAuth(true)
-            const decoded = jwtDecode<JwtResponse>(response.data.access).username
-            this.setUser(decoded)
+            const response = await UserService.getOrders(coin, method, page)
+            console.log(response.data)
+            return response.data
         } catch (e) {
             console.log(e)
-
         } finally {
-            this.setAuthLoading(false);
-            
+            this.setLoading(false);
         }
     }
 }

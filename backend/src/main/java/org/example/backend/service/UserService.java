@@ -22,4 +22,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(rawPassword));
         return userRepository.save(user);
     }
+
+    public User getUserById(long id) {
+        return userRepository.getReferenceById(id);
+    }
 }

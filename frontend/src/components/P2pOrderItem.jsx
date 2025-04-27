@@ -2,11 +2,11 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import PaymentMethod from './PaymentMethod';
 
-const P2pOrderItem = ({action}) => {
+const P2pOrderItem = ({action, order}) => {
     return (
         <tr>
             <th className='merchant_info'>
-                <span>strdoner</span>
+                <span>{order.maker.username}</span>
                 <div className='d-flex align-items-center'>
                     <div className='online_icon'></div>
                     <p>В сети</p>|
@@ -16,20 +16,19 @@ const P2pOrderItem = ({action}) => {
                 </div>
             </th>
             <th className='order__price'>
-                <span className='h4'>81.40</span><span className='ms-1'>RUB</span>
+                <span className='h4'>{order.price}</span><span className='ms-1'>RUB</span>
             </th>
             <th>
                 <div className='order__volume'>
-                    <p className='text-color'>55.00000 USDT</p>
+                    <p className='text-color'>{`${order.amount} ${order.currency}`}</p>
                     <div>
-                        <p className='text-color'>3,222.00</p>-
-                        <p className='text-color'>3,223.00</p>
+                        <p className='text-color'>{order.minLimit}</p>-
+                        <p className='text-color'>{order.maxLimit}</p>
                     </div>
                 </div>
             </th>
             <th>
-                <PaymentMethod name="АльфаБанк" color="red"/>
-                <PaymentMethod name="Т-Банк" color="orange"/>
+                <PaymentMethod name={order.paymentMethod} color="red"/>
             </th>
             <th>
                 <button className={`btn ${action == "buy" ? "btn-success" : "btn-danger"}`}>{action == "buy" ? "Купить": "Продать"}</button>

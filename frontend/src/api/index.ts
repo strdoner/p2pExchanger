@@ -8,5 +8,6 @@ let $api = axios.create({
 
     }
 })
-$api.defaults.withCredentials = true
+$api.defaults.withCredentials = true;
 
+export default $api;
