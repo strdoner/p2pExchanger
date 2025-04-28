@@ -48,25 +48,7 @@ function P2pTrade() {
         {label:"QIWI", value:"7"},
 
     ]
-    const findCoin = () => {
-        for (var i = 0; i < coinsTo.length; i++) {
-            if (coinsTo[i].label === searchParams.get("coin")) {
-                return coinsTo[i]
-            }
-            return coinsTo[0]
-        }
-    }
     
-    const findMethod = () => {
-        for (var i = 0; i < paymentsMethods.length; i++) {
-            if (paymentsMethods[i].label === searchParams.get("method")) {
-                return paymentsMethods[i]
-            }
-            return paymentsMethods[0]
-        }
-    }
-    const [selectedCoin, setSelectedCoin] = useState(findCoin());
-    const [selectedMethod, setSelectedMethod] = useState(findMethod());
     
 
 
