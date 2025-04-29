@@ -10,8 +10,17 @@ import P2pOrdersListSell from './components/P2pOrdersListSell';
 import OrdersHistory from './pages/orders-history';
 import Login from './pages/login';
 import Register from './pages/register';
+import {useContext, useEffect} from "react";
+import {Context} from "./index";
+import {observer} from "mobx-react-lite";
 
 function App() {
+  const {store} = useContext(Context)
+
+  useEffect(() => {
+    store.setAuthLoading(true)
+    store.checkAuth()
+  }, [store]);
   return (
     <BrowserRouter>
     <Routes>
@@ -36,4 +45,4 @@ function App() {
   );
 }
 
-export default App;
+export default observer(App);

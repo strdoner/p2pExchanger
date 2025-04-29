@@ -1,6 +1,8 @@
 import {makeAutoObservable} from "mobx"
 import axios from "axios";
+// @ts-ignore
 import UserService from "../services/UserService.ts";
+// @ts-ignore
 import AuthService from "../services/AuthService.ts";
 import { AuthResponse } from "../models/response/AuthResponse";
 
@@ -29,14 +31,63 @@ export default class Store {
         this.isAuthLoading = bool;
     }
 
-    async loginUser(username: string, password: string) {
-        
+    async loginUser(username: string, password: string): Promise<{ success: boolean; error?: string }> {
+        this.setAuthLoading(true)
+        try {
+            const response = await AuthService.loginUser(username, password)
+            this.setAuth(true)
+            this.setUser(username)
+            this.setAuthLoading(false)
+            return { success: true };
+        } catch (e) {
+            this.setAuthLoading(false)
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            // Для неизвестных ошибок
+            console.error('Login error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async registerUser(
+        username: string,
+        email:string,
+        password: string,
+        password2: string): Promise<{ success: boolean; error?: string }>
+
+    {
+        try {
+            const response = await AuthService.registerUser(username, email, password, password2)
+            return { success: true };
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            // Для неизвестных ошибок
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
     }
 
     async logoutUser() {
         try {
             const response = await AuthService.logoutUser()
-            localStorage.removeItem('access_token')
             this.setAuth(false)
             this.setUser("")
         } catch (e) {
@@ -45,7 +96,15 @@ export default class Store {
     }
 
     async checkAuth() {
-        
+        try {
+            this.setAuthLoading(true)
+            const response = await AuthService.checkAuth()
+            this.setAuth(true)
+            this.setUser(response.data)
+            this.setAuthLoading(false)
+        } catch (e) {
+            this.setAuthLoading(false)
+        }
     }
 
     async getOrders(coin: string, method: string, page:number) {

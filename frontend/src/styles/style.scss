@@ -145,6 +145,30 @@ p {
     color: var(--main-accent-color)!important;
 }
 
+.username-link {
+  cursor: default;
+  .bi-person-fill {
+    cursor: default;
+  }
+
+  .bi-box-arrow-right {
+    cursor: pointer;
+  }
+
+  p {
+    transition: .2s;
+  }
+
+  .bi-person-fill:hover {
+    color: var(--text-color);
+
+  }
+  p:hover {
+    color: var(--main-accent-color)!important;
+    cursor: pointer;
+  }
+}
+
 nav {
     border-bottom: 1px solid var(--text-color);
     background: var(--background-color);
@@ -458,7 +482,7 @@ footer {
     margin: 0 auto;
 }
 
-.auth_form form{
+.auth_form .form{
     display: flex;
     flex-direction: column;
     gap: 15px;

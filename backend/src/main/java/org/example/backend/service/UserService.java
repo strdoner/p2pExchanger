@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.example.backend.model.user.Role;
@@ -44,10 +45,15 @@ public class UserService implements UserDetailsService {
     public boolean saveUser(User user) {
         Optional<User> userFromDB = userRepository.findByUsername(user.getUsername());
 
+
         if (userFromDB.isPresent()) {
-            return false;
+            throw new EntityExistsException("Пользователь с выбранным именем уже существует!");
         }
 
+        userFromDB = userRepository.findByEmail(user.getEmail());
+        if (userFromDB.isPresent()) {
+            throw new EntityExistsException("Пользователь с выбранной почтой уже существует!");
+        }
         user.setRole(new Role(1L, "ROLE_USER"));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);

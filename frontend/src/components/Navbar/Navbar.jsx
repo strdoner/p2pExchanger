@@ -3,8 +3,11 @@ import ToggleTheme from '../ToggleTheme/ToggleTheme'
 import { ThemeContext } from '../../contexts/ThemeContext'
 import { themes } from '../../contexts/ThemeContext'
 import { Link } from 'react-router-dom'
+import {useContext} from "react";
+import {Context} from "../../index";
 
 function Navbar() {
+    const {store} = useContext(Context)
     return (
         <nav class="navbar navbar-expand-lg container fixed-top">
             <div class="container-fluid">
@@ -42,21 +45,43 @@ function Navbar() {
                                 )}
                             </ThemeContext.Consumer>
                         </li>
+                        {store.isAuth
+                        ? (
+                            <div className="d-flex">
+                                <li className="nav-item">
+                                    <a className='nav-link'>
+                                        <i className="bi bi-bell-fill"></i>
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link">
+                                        <i className="bi bi-chat-fill"></i>
+                                    </a>
+                                </li>
+                            </div>
+                            )
+                        : (
+                            <></>
+                            )
+                        }
+
                         <li className="nav-item">
-                            <a className='nav-link'>
-                                <i className="bi bi-bell-fill"></i>
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link">
-                                <i className="bi bi-chat-fill"></i>
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link">
-                                <i class="bi bi-person-fill m-1"></i>
-                                strdoner
-                            </a>
+                            {store.isAuth
+                            ?
+                                (
+                                    <a className="nav-link d-flex username-link">
+                                        <i className="bi bi-person-fill me-1"></i>
+                                        <p className="m-0">{store.username}</p>
+                                        <i className="bi bi-box-arrow-right ms-2 danger-color" onClick={() => {store.logoutUser(); store.setAuth(false)}}></i>
+                                    </a>
+
+                                )
+                            :
+                                (
+                                    <div className=" placeholder-glow"><Link className={`nav-link ${store.isAuthLoading ? "placeholder": ""}`} to="/login">Войти</Link></div>
+                                )
+                            }
+
                         </li>
                     </ul>
                 </div>

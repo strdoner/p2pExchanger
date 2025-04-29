@@ -1,5 +1,6 @@
 package org.example.backend.controller;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -33,7 +35,7 @@ public class AuthController {
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
-    @GetMapping("/me")
+    @GetMapping("/whoami")
     public ResponseEntity<?> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
@@ -52,7 +54,12 @@ public class AuthController {
                 .unauthenticated(
                         loginRequest.getUsername(), loginRequest.getPassword()
                 );
-        Authentication authentication = authenticationManager.authenticate(token);
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(token);
+        } catch (AuthenticationException er) {
+            return ResponseEntity.status(403).body("Неверное имя пользователя или пароль");
+        }
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
 
         context.setAuthentication(authentication);
@@ -64,9 +71,11 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> registration(@RequestBody User user) {
-
-        return userService.saveUser(user)
-                ? new ResponseEntity<>(HttpStatus.CREATED)
-                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            userService.saveUser(user);
+        } catch (EntityExistsException er) {
+            return ResponseEntity.status(409).body(er.getMessage());
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
