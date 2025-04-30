@@ -4,6 +4,7 @@ package org.example.backend.controller;
 import org.example.backend.DTO.OrderRequestDTO;
 import org.example.backend.DTO.OrderResponseDTO;
 import org.example.backend.model.order.Order;
+import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.User;
 import org.example.backend.service.OrderService;
 import org.example.backend.service.UserService;
@@ -32,11 +33,11 @@ public class OrderController {
     public ResponseEntity<Page<OrderResponseDTO>> getAllOrders(
             @RequestParam(defaultValue = "USDT") String coin,
             @RequestParam(defaultValue = "Все методы") String method,
+            @RequestParam(defaultValue = "BUY") OrderType type,
             @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int limit
+            @RequestParam(defaultValue = "5") int limit
     ) {
-        User user = userService.findUserById(1L);
-        final Page<OrderResponseDTO> orders = orderService.readAll(user, method, coin, PageRequest.of(page, limit));
+        final Page<OrderResponseDTO> orders = orderService.readAll(method, coin, type, PageRequest.of(page, limit));
         return new ResponseEntity<>(orders, HttpStatus.OK);
 
     }

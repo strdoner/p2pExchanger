@@ -21,7 +21,7 @@ function Navbar() {
                         <Link className="nav-link active" aria-current="page" to="/">Главная</Link>
                         </li>
                         <li className="nav-item">
-                        <Link className="nav-link" to="/p2p-trade">P2P-торговля</Link>
+                        <Link className="nav-link" to="/p2p-trade/buy">P2P-торговля</Link>
                         </li>
                         <li className="nav-item">
                         <Link className="nav-link" to="/orders-history">Мои сделки</Link>

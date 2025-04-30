@@ -4,6 +4,7 @@ import lombok.Data;
 import org.example.backend.model.Currency;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderType;
+import org.example.backend.model.user.Bank;
 import org.example.backend.service.OrderService;
 
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ public class OrderResponseDTO {
     private Currency currency;
     private BigDecimal minLimit;
     private BigDecimal maxLimit;
-    private String paymentMethod;
+    private Bank paymentMethod;
 
     public OrderResponseDTO(Order order, Long ordersCount, Long percentOrdersCompleted) {
         this.id = order.getId();
@@ -29,9 +30,8 @@ public class OrderResponseDTO {
         this.currency = order.getCurrency();
         this.minLimit = order.getMinLimit();
         this.maxLimit = order.getMaxLimit();
-        this.paymentMethod = order.getPaymentMethod().getBank().getName();
+        this.paymentMethod = order.getPaymentMethod().getBank();
     }
-    // Геттеры
 
 
 

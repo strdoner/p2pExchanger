@@ -65,6 +65,10 @@ public class UserService implements UserDetailsService {
         return userFromDb.orElse(new User());
     }
 
+    public boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(
@@ -76,5 +80,10 @@ public class UserService implements UserDetailsService {
                 user.getPassword(),
                 new ArrayList<>()
         );
+    }
+
+    public UserDetails findUserByUsername(String username) {
+        Optional<User> userFromDb = userRepository.findByUsername(username);
+        return userFromDb.orElse(new User());
     }
 }

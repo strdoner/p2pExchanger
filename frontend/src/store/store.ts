@@ -7,7 +7,8 @@ import AuthService from "../services/AuthService.ts";
 import { AuthResponse } from "../models/response/AuthResponse";
 
 export default class Store {
-    username = ""; 
+    username = "";
+    id = 0;
     isAuth = false;
     isLoading = false;
     isAuthLoading = false;
@@ -100,24 +101,35 @@ export default class Store {
             this.setAuthLoading(true)
             const response = await AuthService.checkAuth()
             this.setAuth(true)
-            this.setUser(response.data)
+            this.setUser(response.data?.username)
+            this.id = (response.data?.userId)
             this.setAuthLoading(false)
         } catch (e) {
             this.setAuthLoading(false)
         }
     }
 
-    async getOrders(coin: string, method: string, page:number) {
+    async getOrders(coin: string, method: string, type:string, page:number) {
         this.setLoading(true);
         try {
-            
-            const response = await UserService.getOrders(coin, method, page)
-            console.log(response.data)
+            const response = await UserService.getOrders(coin, method, type, page)
             return response.data
         } catch (e) {
             console.log(e)
         } finally {
             this.setLoading(false);
+        }
+    }
+
+    async getUserOrders(userId:number, status:string, currency:string, type:string, page:number) {
+        this.setLoading(true);
+        try {
+            const response = await UserService.getUserOrders(userId, status, currency, type, page)
+            return response.data
+        } catch (e) {
+            console.log(e)
+        } finally {
+            this.setLoading(false)
         }
     }
 }

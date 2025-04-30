@@ -1,5 +1,6 @@
 package org.example.backend.model.order;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -51,7 +52,9 @@ public class Order {
     private BigDecimal amount; // количество покупаемой валюты
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @JsonIgnore
@@ -60,6 +63,8 @@ public class Order {
 
     @Column(length = 500)
     private String paymentDetails;
+
+    private Boolean isAvailable = true;
 
 
     public void copyFrom(OrderRequestDTO order) {

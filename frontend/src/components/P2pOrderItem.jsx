@@ -28,7 +28,7 @@ const P2pOrderItem = ({action, order, placeholder}) => {
                 </div>
             </th>
             <th className='placeholder-glow'>
-                {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.paymentMethod} color="red" className={placeholder ? "placeholder" : ""}/>}
+                {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.paymentMethod.name} color={order.paymentMethod.color} className={placeholder ? "placeholder" : ""}/>}
                 
             </th>
             <th>

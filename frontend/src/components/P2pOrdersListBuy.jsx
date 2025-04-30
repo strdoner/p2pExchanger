@@ -7,70 +7,73 @@ import { useOutletContext, useSearchParams } from 'react-router-dom';
 import Pagination from './Pagination.jsx';
 
 
-const P2pOrderListBuy = () => {
+const P2pOrdersListBuy = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const selectedCoin = searchParams.get("coin")
-    const selectedMethod = searchParams.get("method")
-    const selectedPage = searchParams.get("page") === null ? 1 : searchParams.get("page")
+
     const {store} = useContext(Context)
+
     const [orders, setOrders] = useState([])
-    
+
     useEffect(() => {
-        console.log("sdf")
-        updateOrdersList()
-    }, [selectedCoin, selectedMethod, selectedPage]);
-    
+
+        const fetchOrders = async () => {
+            try {
+                const response = await store.getOrders(
+                    searchParams.get("coin"),
+                    searchParams.get("method"),
+                    "BUY",
+                    searchParams.get("page") === null ? 0 : Number(searchParams.get("page")) - 1
+                );
+                setOrders(response);
+            } catch (error) {
+                console.error("Failed to fetch orders:", error);
+            }
+        };
+
+        fetchOrders();
+    }, [searchParams, store]);
+
     if (store.isLoading) {
         return (
             <table className='order__list'>
                 <thead>
-                    <tr>
-                        
-                        <th>Пользователь</th>
-                        <th>Цена</th>
-                        <th>Доступно|Лимиты</th>
-                        <th>Платежные методы</th>
-                        <th>Действие</th>
-                    </tr>
+                <tr>
+
+                    <th>Пользователь</th>
+                    <th>Цена</th>
+                    <th>Доступно|Лимиты</th>
+                    <th>Платежный метод</th>
+                    <th>Действие</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <P2pOrderItem placeholder={true} />
-                    <P2pOrderItem placeholder={true} />
-                    <P2pOrderItem placeholder={true} />
-                    <P2pOrderItem placeholder={true} />
-                    <P2pOrderItem placeholder={true} />
+                <P2pOrderItem placeholder={true} />
+                <P2pOrderItem placeholder={true} />
+                <P2pOrderItem placeholder={true} />
+                <P2pOrderItem placeholder={true} />
+                <P2pOrderItem placeholder={true} />
                 </tbody>
             </table>
         );
     }
-    const updateOrdersList = () => {
-        const selectedCoin = searchParams.get("coin")
-        const selectedMethod = searchParams.get("method")
-        console.log(selectedMethod)
-        const selectedPage = searchParams.get("page") === null ? 1 : searchParams.get("page")
-        const response = store.getOrders(selectedCoin, selectedMethod, selectedPage - 1);
-        response.then(function(data) {
-            console.log(data)
-            setOrders(data)
-        })
-    }
-    
-    
+
+
+
     return (
         <>
             <table className='order__list'>
                 <thead>
-                    <tr>
-                        
-                        <th>Пользователь</th>
-                        <th>Цена</th>
-                        <th>Доступно|Лимиты</th>
-                        <th>Платежные методы</th>
-                        <th>Действие</th>
-                    </tr>
+                <tr>
+
+                    <th>Пользователь</th>
+                    <th>Цена</th>
+                    <th>Доступно|Лимиты</th>
+                    <th>Платежные методы</th>
+                    <th>Действие</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {!orders?.empty ? orders?.content?.map(order => 
+                {!orders?.empty ? orders?.content?.map(order =>
                         <P2pOrderItem action="buy" order={order} key={order.id}/>
                     )
                     : (
@@ -85,9 +88,9 @@ const P2pOrderListBuy = () => {
             </table>
 
             {orders?.totalPages > 1 && (
-                <Pagination 
-                    isFirst={orders.first} 
-                    isLast={orders.last} 
+                <Pagination
+                    isFirst={orders.first}
+                    isLast={orders.last}
                     totalPages={orders.totalPages}
                 />
             )}
@@ -96,4 +99,4 @@ const P2pOrderListBuy = () => {
     )
 }
 
-export default observer(P2pOrderListBuy)
+export default observer(P2pOrdersListBuy)

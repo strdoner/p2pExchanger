@@ -29,10 +29,10 @@ function App() {
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
 
-      <Route path="p2p-trade" element={<P2pTrade />}>
+      <Route path="/p2p-trade" element={<P2pTrade />}>
+        <Route index element={<Navigate to="buy" replace />} />
         <Route path="buy" element={<P2pOrdersListBuy />} />
         <Route path="sell" element={<P2pOrdersListSell />} />
-        <Route index element={<Navigate to="buy" />} />
       </Route>
       <Route path='orders-history' element={<OrdersHistory />} />
       {/* <Route path='/login' element={<Login />} />

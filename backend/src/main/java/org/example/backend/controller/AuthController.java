@@ -20,9 +20,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -38,10 +42,19 @@ public class AuthController {
     @GetMapping("/whoami")
     public ResponseEntity<?> getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            return new ResponseEntity<>(auth.getPrincipal(), HttpStatus.OK);
+
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.status(401).build();
+
+        String username = auth.getName();
+
+        User user = (User) userService.findUserByUsername(username);
+
+        return ResponseEntity.ok(Map.of(
+                "userId", user.getId(),
+                "username", user.getUsername()
+        ));
     }
 
     @PostMapping("/login")

@@ -1,6 +1,6 @@
 import {observer} from 'mobx-react-lite'
 import React, {useState, useEffect} from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar'
 import Footer from '../components/Footer/Footer'
 import CustomSelect from '../components/CustomSelect/CustomSelect'
@@ -9,6 +9,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 
 function P2pTrade() {
+    const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams();
     const [isPanelOpen, setIsPanelOpen] = useState(true);
     const location = useLocation()
@@ -28,24 +29,30 @@ function P2pTrade() {
             setSearchParams(newSearchParams);
     
     }, [])
+
+    useEffect(() => {
+        // Если путь точно /p2p-trade (без подмаршрутов)
+        if (location.pathname === '/p2p-trade') {
+            navigate('buy', { replace: true });
+        }
+    }, []);
     
     var coinsTo = [
-        {label:"USDT", value:"1"},
-        {label:"USDC", value:"2"},
-        {label:"ETH", value:"3"},
-        {label:"BTC", value:"4"},
-        {label:"BNB", value:"5"},
+        {label:"USDT", value:"1", name:"USDT"},
+        {label:"USDC", value:"2", name:"USDC"},
+        {label:"ETH", value:"3", name:"ETH"},
+        {label:"BTC", value:"4", name:"BTC"},
+        {label:"BNB", value:"5", name:"BNB"},
 
     ]
 
     var paymentsMethods = [
-        {label:"Все методы", value:"1"},
-        {label:"Сбербанк", value:"2"},
-        {label:"Т-Банк", value:"3"},
-        {label:"АльфаБанк", value:"4"},
-        {label:"Райффайзен", value:"5"},
-        {label:"ВТБ", value:"6"},
-        {label:"QIWI", value:"7"},
+        {label:"Все методы", value:"1", name:"Все методы"},
+        {label:"Сбербанк", value:"2", name:"Сбербанк"},
+        {label:"Т-Банк", value:"3", name:"Т-Банк"},
+        {label:"АльфаБанк", value:"4", name:"АльфаБанк"},
+        {label:"Райффайзен", value:"5", name:"Райффайзен"},
+        {label:"ВТБ", value:"6", name:"ВТБ"},
 
     ]
     
