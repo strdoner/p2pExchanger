@@ -3,6 +3,7 @@ package org.example.backend.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
+import org.example.backend.DTO.OrderDetailsDTO;
 import org.example.backend.DTO.OrderRequestDTO;
 import org.example.backend.DTO.OrderResponseDTO;
 import org.example.backend.DTO.OrderWithStatusDTO;
@@ -17,15 +18,9 @@ import org.example.backend.repository.PaymentMethodRepository;
 import org.example.backend.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +64,7 @@ public class OrderService {
 
             Long totalMakerOrders = orderRepository.countByMaker(maker);
 
-            Long completedMakerOrders = orderRepository.countByMakerAndIsAvailableFalse(maker);
+            Long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(maker, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(maker, OrderStatus.COMPLETED);
 
             Long completionPercentage = totalMakerOrders > 0
                     ? (completedMakerOrders / totalMakerOrders) * 100
@@ -114,7 +109,7 @@ public class OrderService {
 
             return new OrderWithStatusDTO(
                     order,
-                    status != null ? status.getName() : OrderStatus.PENDING.getName(),
+                    status != null ? status : OrderStatus.PENDING,
                     taker
             );
         });
@@ -125,6 +120,16 @@ public class OrderService {
 
     public Order read(Long id) {
         return orderRepository.findById(id).orElse(null);
+    }
+
+    public OrderDetailsDTO createResponse(Long orderId, User user) {
+        OrderResponse response = new OrderResponse();
+        response.setOrder(read(orderId));
+        response.setTaker(user);
+        response.setStatus(OrderStatus.ACTIVE);
+        orderResponseRepository.save(response);
+
+        return new OrderDetailsDTO(response);
     }
 
 

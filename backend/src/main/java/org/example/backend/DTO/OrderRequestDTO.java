@@ -16,8 +16,6 @@ public class OrderRequestDTO {
     private OrderType type; // BUY, SELL
     private Currency currency; // BTC, USDT ...
     private BigDecimal price; // курс валюты
-    private BigDecimal minLimit; // минимальная граница
-    private BigDecimal maxLimit; // максимальная граница
     private BigDecimal amount; // количество покупаемой валюты
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;

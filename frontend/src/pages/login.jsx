@@ -20,6 +20,7 @@ const LoginPage = () => {
     const loginHandler = () => {
         setIsAuthLoading(true)
         if (!isValid()) {
+            setIsAuthLoading(false)
             return;
         }
 
@@ -57,12 +58,17 @@ const LoginPage = () => {
             <div className='container pt-5 mt-5 d-flex align-items-center'>
                 <div className='auth_form'>
                     <div className="form">
-                        <h4 className='text-center'>Войти</h4>
-                        <input 
-                            className="form-control" 
-                            type="text" 
+                        <div className={"d-flex justify-content-center align-items-center"}>
+                            <i className={"bi bi-person-circle fs-4 pe-2"}></i>
+                            <h4 className='text-center m-0'>
+                                Войти
+                            </h4>
+                        </div>
+                        <input
+                            className="form-control"
+                            type="text"
                             placeholder='Имя пользователя'
-                            onChange={(event)=>{setUsername(event.target.value)}}   
+                            onChange={(event)=>{setUsername(event.target.value)}}
                         />
                         <input 
                             className="form-control" 
@@ -71,11 +77,24 @@ const LoginPage = () => {
                             onChange={(event)=>{setPassword(event.target.value)}}   
                             
                         />
-                        <div className="danger-color m-2 text-center">{error}</div>
-                        <Button onClick={loginHandler} btnType={"primary mt-4"} isloading={isAuthLoading ? 1 : 0}>Войти</Button>
-                       
-                        <p>Еще не зарегистрированы? </p>
-                        <Link  to={"/register"} className='second-accent-color ps-1'>Зарегистрироваться</Link>
+                        {error && (
+                            <div className="alert alert-danger d-flex align-items-center">
+                                <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                <div>{error}</div>
+                            </div>
+                        )}
+                        <Button onClick={loginHandler} btnType={"primary mt-4 text-white"} isloading={isAuthLoading ? 1 : 0}>Войти</Button>
+                        <div className='d-flex align-items-center my-3'>
+                            <hr className='flex-grow-1'/>
+                            <span className='px-2 small secondary-text-color'>или</span>
+                            <hr className='flex-grow-1'/>
+                        </div>
+                        <div className='text-center'>
+                            <span className='secondary-text-color'>Еще не зарегистрированы? </span>
+                            <Link to="/register" className='main-accent-color text-decoration-none fw-medium'>
+                                Создать аккаунт
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

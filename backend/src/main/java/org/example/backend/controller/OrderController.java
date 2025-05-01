@@ -1,9 +1,11 @@
 package org.example.backend.controller;
 
 
+import org.example.backend.DTO.OrderDetailsDTO;
 import org.example.backend.DTO.OrderRequestDTO;
 import org.example.backend.DTO.OrderResponseDTO;
 import org.example.backend.model.order.Order;
+import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.User;
 import org.example.backend.service.OrderService;
@@ -13,6 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +53,24 @@ public class OrderController {
         orderService.create(orderDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @PostMapping("/accept/{id}")
+    public ResponseEntity<?> acceptOrder(
+            @PathVariable Long id
+    ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getPrincipal());
+        User user = (User) auth.getPrincipal();
+        OrderDetailsDTO response = orderService.createResponse(
+                id,
+                user
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {

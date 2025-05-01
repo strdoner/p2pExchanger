@@ -13,6 +13,7 @@ import Register from './pages/register';
 import {useContext, useEffect} from "react";
 import {Context} from "./index";
 import {observer} from "mobx-react-lite";
+import ResponseDetails from "./pages/response-details";
 
 function App() {
   const {store} = useContext(Context)
@@ -21,6 +22,10 @@ function App() {
     store.setAuthLoading(true)
     store.checkAuth()
   }, [store]);
+
+  if (store.id === -2) {
+    return <div>Loading</div>
+  }
   return (
     <BrowserRouter>
     <Routes>
@@ -35,6 +40,7 @@ function App() {
         <Route path="sell" element={<P2pOrdersListSell />} />
       </Route>
       <Route path='orders-history' element={<OrdersHistory />} />
+      <Route path='/response/:responseId' element={<ResponseDetails />} />
       {/* <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} /> */}
       {/* <Route path="*" element={<Page404 />} /> */}

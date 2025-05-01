@@ -24,12 +24,13 @@ const OrdersHistory = () => {
     ]
 
     var status = [
-        {label:"ACTIVE", value:"1", name:"Активен"},
-        {label:"COMPLETED", value:"2", name:"Завершен"},
-        {label:"IN_PROCESS", value:"3", name:"В процессе"},
-        {label:"DISPUTED", value:"4", name:"На обжаловании"},
-        {label:"CANCELLED", value:"5", name:"Отменен"},
-        {label:"PENDING", value:"6", name:"Ожидание"},
+        {label:null, value:"1", name:"Все статусы"},
+        {label:"ACTIVE", value:"2", name:"Активен"},
+        {label:"COMPLETED", value:"3", name:"Завершен"},
+        {label:"IN_PROCESS", value:"4", name:"В процессе"},
+        {label:"DISPUTED", value:"5", name:"На обжаловании"},
+        {label:"CANCELLED", value:"6", name:"Отменен"},
+        {label:"PENDING", value:"7", name:"Ожидание"},
 
     ]
 

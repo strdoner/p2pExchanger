@@ -47,7 +47,7 @@ function P2pTrade() {
     ]
 
     var paymentsMethods = [
-        {label:"Все методы", value:"1", name:"Все методы"},
+        {label:null, value:"1", name:"Все методы"},
         {label:"Сбербанк", value:"2", name:"Сбербанк"},
         {label:"Т-Банк", value:"3", name:"Т-Банк"},
         {label:"АльфаБанк", value:"4", name:"АльфаБанк"},

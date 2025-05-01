@@ -44,7 +44,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "COALESCE(r.taker.id, null) as taker " +
             "FROM Order o " +
             "LEFT JOIN OrderResponse r ON r.order = o " +  // Просто LEFT JOIN без доп. условий
-            "WHERE o.maker.id = :userId " +
+            "WHERE (o.maker.id = :userId OR r.taker.id = :userId) " +
             "AND o.isAvailable = true " +
             "AND (:currency IS NULL OR o.currency.name = :currency) " +
             "AND (:type IS NULL OR o.type = :type) " +

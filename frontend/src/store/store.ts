@@ -5,10 +5,11 @@ import UserService from "../services/UserService.ts";
 // @ts-ignore
 import AuthService from "../services/AuthService.ts";
 import { AuthResponse } from "../models/response/AuthResponse";
+import OrderResponseService from "../services/OrderResponseService.ts";
 
 export default class Store {
     username = "";
-    id = 0;
+    id = -1;
     isAuth = false;
     isLoading = false;
     isAuthLoading = false;
@@ -101,11 +102,14 @@ export default class Store {
             this.setAuthLoading(true)
             const response = await AuthService.checkAuth()
             this.setAuth(true)
+            // @ts-ignore
             this.setUser(response.data?.username)
+            // @ts-ignore
             this.id = (response.data?.userId)
             this.setAuthLoading(false)
         } catch (e) {
             this.setAuthLoading(false)
+            this.id = -1
         }
     }
 
@@ -113,6 +117,7 @@ export default class Store {
         this.setLoading(true);
         try {
             const response = await UserService.getOrders(coin, method, type, page)
+            console.log(response.data)
             return response.data
         } catch (e) {
             console.log(e)
@@ -125,11 +130,146 @@ export default class Store {
         this.setLoading(true);
         try {
             const response = await UserService.getUserOrders(userId, status, currency, type, page)
+            console.log(response.data)
             return response.data
         } catch (e) {
             console.log(e)
         } finally {
             this.setLoading(false)
+        }
+    }
+
+    async getUserMinInfo(userId:number) {
+        try {
+            const response = await UserService.getUserMinInfo(userId)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, content:response.data };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async createResponse(orderId: number) {
+        this.setLoading(true)
+        try {
+            const response = await OrderResponseService.createResponse(orderId)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, responseId: response.data.responseId };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getResponse(responseId: number) {
+        this.setLoading(true)
+        try {
+            const response = await OrderResponseService.getResponse(responseId)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, content:response.data };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async cancelResponse(responseId: number) {
+        try {
+            const response = await OrderResponseService.cancelResponse(responseId)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, content:response.data };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async confirmResponse(responseId: number) {
+        try {
+            const response = await OrderResponseService.confirmResponse(responseId)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, content:response.data };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async completeResponse(responseId: number) {
+        try {
+            const response = await OrderResponseService.completeResponse(responseId)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, content:response.data };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
         }
     }
 }

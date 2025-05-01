@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import PaymentMethod from './PaymentMethod';
 
-const P2pOrderItem = ({action, order, placeholder}) => {
+const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) => {
     return (
         <tr>
             <th className='merchant_info placeholder-glow'>
@@ -21,10 +21,6 @@ const P2pOrderItem = ({action, order, placeholder}) => {
             <th>
                 <div className='order__volume placeholder-glow'>
                     <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{`${placeholder ? "2333" : order.amount} ${placeholder ? "" : order.currency.name}`}</p>
-                    <div className={placeholder ? "placeholder" : ""}>
-                        <p className={`text-color ${placeholder ? "d-none" : ""}`}>{placeholder ? "1223" : order.minLimit}</p>-
-                        <p className={`text-color ${placeholder ? "d-none" : ""}`}>{placeholder ? "123231" : order.maxLimit}</p>
-                    </div>
                 </div>
             </th>
             <th className='placeholder-glow'>
@@ -32,7 +28,7 @@ const P2pOrderItem = ({action, order, placeholder}) => {
                 
             </th>
             <th>
-                <button className={`btn ${action == "buy" ? "btn-success" : "btn-danger"}`}>{action == "buy" ? "Купить": "Продать"}</button>
+                <button onClick={() => {modalHandler(true); orderHandler(order)}} className={`btn ${action === "buy" ? "btn-success" : "btn-danger"}`}>{action === "buy" ? "Купить": "Продать"}</button>
             </th>
         </tr>
     )

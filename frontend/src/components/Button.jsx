@@ -7,7 +7,7 @@ const Button = ({children, btnType, ...props}) => {
     if (props.isloading) {
         return (
             <button {...props} className={`btn btn-${btnType} disabled d-flex justify-content-center`}>
-                <h5>{children}</h5>
+                <h5 className={"m-0"}>{children}</h5>
                 <h5 style={{paddingLeft:"10px"}}><span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></h5> 
             </button>
         )
@@ -15,7 +15,7 @@ const Button = ({children, btnType, ...props}) => {
     else {
         return (
             <button {...props} className={`btn btn-${btnType}`}>
-                <h5>{children}</h5>
+                <h5 className={"m-0"}>{children}</h5>
             </button>
         )
     }

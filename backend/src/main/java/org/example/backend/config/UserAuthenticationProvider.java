@@ -24,14 +24,13 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-
         UserDetails userDetails = userService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid username or password!");
         }
 
-        return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(userDetails, password, new ArrayList<>());
     }
 
     @Override

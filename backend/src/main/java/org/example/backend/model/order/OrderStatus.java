@@ -1,21 +1,22 @@
 package org.example.backend.model.order;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+@Getter
+@AllArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum OrderStatus {
-    ACTIVE("Активен"),
-    COMPLETED("Завершен"),
-    CANCELLED("Отменен"),
-    IN_PROCESS("В процессе"),
-    DISPUTED("На обжаловании"),
-    PENDING("Ожидание");
-    private String name;
+    ACTIVE("Активен", "yellow"),
+    COMPLETED("Завершен", "green"),
+    CANCELLED("Отменен", "red"),
+    CONFIRMATION("Ожидает подтверждения", "blue"),
+    DISPUTED("Открыт диспут", "orange"),
+    PENDING("Ожидает отклика", "gray");
 
-    OrderStatus(String text) {
-        this.name = text;
-    }
+    private final String name;
+    private final String color;
 
-    public String getName() {
-        return name;
-    }
 
     public static OrderStatus fromString(String value) {
         if (value == null) return null;

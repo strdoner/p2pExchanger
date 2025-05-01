@@ -3,9 +3,11 @@ package org.example.backend.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.OrderResponseDTO;
 import org.example.backend.DTO.OrderWithStatusDTO;
+import org.example.backend.DTO.UserOrderDTO;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.service.OrderService;
+import org.example.backend.service.UserService;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,12 +16,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final OrderService orderService;
+    private final UserService userService;
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<Page<OrderWithStatusDTO>> getUserOrders(
@@ -33,5 +38,17 @@ public class UserController {
 
         Page<OrderWithStatusDTO> orders = orderService.getUserOrders(userId, status, currency, type, PageRequest.of(page, limit));
         return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserOrders(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "min") String info
+    ) {
+        UserOrderDTO userInfo = null;
+        if (Objects.equals(info, "min")) {
+            userInfo = userService.getMinInfo(userId);
+        }
+        return new ResponseEntity<>(userInfo, HttpStatus.OK);
     }
 }

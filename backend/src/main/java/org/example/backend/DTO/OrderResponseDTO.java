@@ -17,8 +17,6 @@ public class OrderResponseDTO {
     private BigDecimal price;
     private BigDecimal amount;
     private Currency currency;
-    private BigDecimal minLimit;
-    private BigDecimal maxLimit;
     private Bank paymentMethod;
 
     public OrderResponseDTO(Order order, Long ordersCount, Long percentOrdersCompleted) {
@@ -28,8 +26,6 @@ public class OrderResponseDTO {
         this.price = order.getPrice();
         this.amount = order.getAmount();
         this.currency = order.getCurrency();
-        this.minLimit = order.getMinLimit();
-        this.maxLimit = order.getMaxLimit();
         this.paymentMethod = order.getPaymentMethod().getBank();
     }
 

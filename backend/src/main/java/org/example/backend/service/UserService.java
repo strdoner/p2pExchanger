@@ -1,21 +1,21 @@
 package org.example.backend.service;
 
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.EntityNotFoundException;
+import org.example.backend.DTO.UserOrderDTO;
+import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.user.Role;
 import org.example.backend.model.user.User;
+import org.example.backend.repository.OrderRepository;
+import org.example.backend.repository.OrderResponseRepository;
 import org.example.backend.repository.RoleRepository;
 import org.example.backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -27,11 +27,15 @@ public class UserService implements UserDetailsService {
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final OrderRepository orderRepository;
+    private final OrderResponseRepository orderResponseRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, OrderRepository orderRepository, OrderResponseRepository orderResponseRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.orderRepository = orderRepository;
+        this.orderResponseRepository = orderResponseRepository;
     }
 
     public boolean deleteUser(Long userId) {
@@ -75,15 +79,23 @@ public class UserService implements UserDetailsService {
                 () -> new UsernameNotFoundException("Username not found")
         );
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                new ArrayList<>()
-        );
+        return user;
     }
 
     public UserDetails findUserByUsername(String username) {
         Optional<User> userFromDb = userRepository.findByUsername(username);
         return userFromDb.orElse(new User());
     }
+
+    public UserOrderDTO getMinInfo(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                EntityNotFoundException::new
+        );
+        Long count = orderRepository.countByMaker(user) + orderResponseRepository.countByTaker(user);
+        Long percent = (orderResponseRepository.countByOrder_MakerAndStatus(user, OrderStatus.COMPLETED) + orderResponseRepository.countByTakerAndStatus(user, OrderStatus.COMPLETED)) / count * 100;
+        UserOrderDTO userInfo = new UserOrderDTO(user, count, percent);
+        return userInfo;
+    }
+
+
 }

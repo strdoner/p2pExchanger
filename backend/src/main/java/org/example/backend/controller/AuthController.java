@@ -47,9 +47,9 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        String username = auth.getName();
 
-        User user = (User) userService.findUserByUsername(username);
+
+        User user = (User) auth.getPrincipal();
 
         return ResponseEntity.ok(Map.of(
                 "userId", user.getId(),

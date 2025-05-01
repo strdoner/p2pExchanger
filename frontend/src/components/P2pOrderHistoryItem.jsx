@@ -29,12 +29,12 @@ const P2pOrderHistoryItem = ({action, order, placeholder}) => {
             </th>
             <th className='history__agent placeholder-glow'>
                 <div className='d-flex'>
-                    <span className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "username" : (order.status === "PENDING" ? "-" : order.contragentName)}</span>
+                    <span className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "username" : (order.status.value === "PENDING" ? "-" : order.contragentName)}</span>
 
                 </div>
             </th>
             <th>
-                {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.status} color="red" className={placeholder ? "placeholder" : ""}/>}
+                {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.status.name} color={order.status.color} className={placeholder ? "placeholder" : ""}/>}
 
             </th>
         </tr>

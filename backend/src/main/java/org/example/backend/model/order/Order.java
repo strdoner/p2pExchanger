@@ -42,12 +42,6 @@ public class Order {
     @Column(precision = 19, scale = 2, nullable = false)
     private BigDecimal price; // курс валюты
 
-    @Column(precision = 19, scale = 2)
-    private BigDecimal minLimit; // минимальная граница
-
-    @Column(precision = 19, scale = 2)
-    private BigDecimal maxLimit; // максимальная граница
-
     @Column(precision = 19, scale = 8, nullable = false)
     private BigDecimal amount; // количество покупаемой валюты
 
@@ -70,8 +64,6 @@ public class Order {
     public void copyFrom(OrderRequestDTO order) {
         this.setAmount(order.getAmount());
         this.setCurrency(order.getCurrency());
-        this.setMinLimit(order.getMinLimit());
-        this.setMaxLimit(order.getMaxLimit());
         this.setType(order.getType());
         this.setPrice(order.getPrice());
         this.setPaymentDetails(order.getPaymentDetails());
