@@ -30,6 +30,7 @@ const P2pPricePanel = ({isOpen, onToggle}) => {
                     <span>80</span>
                 </div>
             </div>
+
             <div className='price__info_details d-flex'>
                 <a href="" className='align-self-center'>details</a>
                 <i className='bi bi-x' onClick={onToggle}></i>

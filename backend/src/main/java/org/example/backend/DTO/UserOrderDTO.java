@@ -7,6 +7,7 @@ import org.example.backend.service.UserService;
 @Data
 public class UserOrderDTO {
     private String username;
+    private Long userId;
     private Long ordersCount;
     private Long percentOrdersCompleted;
 
@@ -14,6 +15,7 @@ public class UserOrderDTO {
         this.setUsername(user.getUsername());
         this.setOrdersCount(ordersCount);
         this.setPercentOrdersCompleted(percentOrdersCompleted);
+        this.setUserId(user.getId());
     }
 
 }

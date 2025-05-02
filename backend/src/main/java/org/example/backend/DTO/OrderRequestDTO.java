@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 public class OrderRequestDTO {
     private OrderType type; // BUY, SELL
-    private Currency currency; // BTC, USDT ...
+    private String currency; // BTC, USDT ...
     private BigDecimal price; // курс валюты
     private BigDecimal amount; // количество покупаемой валюты
     private LocalDateTime createdAt = LocalDateTime.now();

@@ -9,7 +9,7 @@ import OrderResponseService from "../services/OrderResponseService.ts";
 
 export default class Store {
     username = "";
-    id = -1;
+    id = -2;
     isAuth = false;
     isLoading = false;
     isAuthLoading = false;
@@ -136,6 +136,28 @@ export default class Store {
             console.log(e)
         } finally {
             this.setLoading(false)
+        }
+    }
+
+    async createOrder(order: object) {
+        try {
+            const response = await UserService.createOrder(order)
+            console.log(response.data)
+            // @ts-ignore
+            return { success: true, content:response.data };
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
         }
     }
 

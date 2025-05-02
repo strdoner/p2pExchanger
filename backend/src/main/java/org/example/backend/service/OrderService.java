@@ -12,10 +12,7 @@ import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.User;
-import org.example.backend.repository.OrderRepository;
-import org.example.backend.repository.OrderResponseRepository;
-import org.example.backend.repository.PaymentMethodRepository;
-import org.example.backend.repository.UserRepository;
+import org.example.backend.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,21 +26,21 @@ public class OrderService {
     private final UserRepository userRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final OrderResponseRepository orderResponseRepository;
+    private final CurrencyRepository currencyRepository;
     private final UserService userService;
 
 
-    public void create(OrderRequestDTO order) {
+    public void create(OrderRequestDTO order, User user) {
         Order newOrder = new Order();
         newOrder.copyFrom(order);
-        newOrder.setMaker(userRepository.getReferenceById(1L));
+        newOrder.setCurrency(currencyRepository.findByName(order.getCurrency()));
+        newOrder.setMaker(user);
         newOrder.setPaymentMethod(paymentMethodRepository.getReferenceById(order.getPaymentMethodId()));
 
         orderRepository.save(newOrder);
     }
 
-    public Long getUserOrdersCount(User user) {
-        return orderRepository.findAllByMaker(user).stream().count();
-    }
+
 
     public Page<OrderResponseDTO> readAll(String method, String coin, OrderType type, Pageable paging) {
         Page<Order> ordersPage;
@@ -62,12 +59,10 @@ public class OrderService {
         return ordersPage.map(order -> {
             User maker = order.getMaker();
 
-            Long totalMakerOrders = orderRepository.countByMaker(maker);
-
-            Long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(maker, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(maker, OrderStatus.COMPLETED);
-
+            long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(maker) + orderResponseRepository.countByTaker(maker) + orderResponseRepository.countByOrder_Maker(maker);
+            long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(maker, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(maker, OrderStatus.COMPLETED);
             Long completionPercentage = totalMakerOrders > 0
-                    ? (completedMakerOrders / totalMakerOrders) * 100
+                    ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)
                     : 0;
 
             return new OrderResponseDTO(

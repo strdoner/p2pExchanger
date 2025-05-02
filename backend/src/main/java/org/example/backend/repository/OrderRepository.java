@@ -61,4 +61,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllByIsAvailableTrueAndCurrency_NameAndType(String coin, OrderType type, Pageable paging);
 
     Page<Order> findAllByIsAvailableTrueAndPaymentMethod_Bank_NameAndCurrency_NameAndType(String method, String coin, OrderType type, Pageable paging);
+
+    Long countByMakerAndIsAvailableTrue(User maker);
 }

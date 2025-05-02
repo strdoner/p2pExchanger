@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, {useContext} from 'react';
 import PaymentMethod from './PaymentMethod';
+import {Context} from "../index";
 
 const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) => {
+    const {store} = useContext(Context)
     return (
         <tr>
             <th className='merchant_info placeholder-glow'>
@@ -28,7 +30,7 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
                 
             </th>
             <th>
-                <button onClick={() => {modalHandler(true); orderHandler(order)}} className={`btn ${action === "buy" ? "btn-success" : "btn-danger"}`}>{action === "buy" ? "Купить": "Продать"}</button>
+                <button onClick={() => {modalHandler(true); orderHandler(order)}} className={`${order?.maker?.userId === store.id ? "disabled": ""} btn ${action === "buy" ? "btn-success" : "btn-danger"}`}>{action === "buy" ? "Купить": "Продать"}</button>
             </th>
         </tr>
     )

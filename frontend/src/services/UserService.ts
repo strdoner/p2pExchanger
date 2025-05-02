@@ -16,4 +16,8 @@ export default class UserService {
     static async getUserMinInfo(userId:number): Promise<AxiosResponse<OrdersResponse>> {
         return $api.get(`users/${userId}`)
     }
+
+    static async createOrder(order:object): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.post(`/orders`, order)
+    }
 }

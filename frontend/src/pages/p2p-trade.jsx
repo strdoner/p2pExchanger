@@ -7,6 +7,7 @@ import CustomSelect from '../components/CustomSelect/CustomSelect'
 import P2pPricePanel from '../components/P2pPricePanel'
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import Pagination from '../components/Pagination';
+import ModalWindowNewOrder from "../components/ModalWindowNewOrder";
 
 function P2pTrade() {
     const navigate = useNavigate()
@@ -14,6 +15,8 @@ function P2pTrade() {
     const [isPanelOpen, setIsPanelOpen] = useState(true);
     const location = useLocation()
     const isSellOrders = location.pathname.includes('/sell');
+    const [newOrder, setNewOrder] = useState(null)
+    const [showForm, setShowForm] = useState(false)
     const IsPanelOpenHandler = () => {
         setIsPanelOpen(true)
     }
@@ -55,6 +58,10 @@ function P2pTrade() {
         {label:"ВТБ", value:"6", name:"ВТБ"},
 
     ]
+
+    const createOrderHandler = () => {
+        setShowForm(true)
+    }
     
     
 
@@ -62,6 +69,7 @@ function P2pTrade() {
     return (
         <>
             <Navbar />
+            <ModalWindowNewOrder modalShow={showForm} setModalShow={setShowForm} action={"BUY"} />
             <div className='container pt-5'>
                 <div className='header__block p-5'>
                     <h1 className='text-center'>P2P-торговля</h1>
@@ -77,13 +85,17 @@ function P2pTrade() {
                         <div className='d-flex orders__list_choose'>
                             <CustomSelect options={coinsTo} paramName="coin"/>
                             <CustomSelect options={paymentsMethods} size="lg" paramName="method"/>
-                            <div className={`pricePanelButton ${isPanelOpen ? "hidden": ""}`}>
-                                <button className='select-button' onClick={IsPanelOpenHandler}><i class="bi bi-graph-up"></i></button>
+                            <div className={`pricePanelButton d-flex`}>
+                                <button className={`select-button ${isPanelOpen ? "hidden" : ""} me-3`} onClick={IsPanelOpenHandler}><i
+                                    className="bi bi-graph-up"></i></button>
+                                <button className='select-button' onClick={createOrderHandler}><i
+                                    className="bi bi-plus-lg"></i></button>
                             </div>
+
                         </div>
                         <P2pPricePanel value="asdf"
-                            isOpen={isPanelOpen} 
-                            onToggle={() => setIsPanelOpen(!isPanelOpen)} 
+                                       isOpen={isPanelOpen}
+                                       onToggle={() => setIsPanelOpen(!isPanelOpen)}
                         />
                         <Outlet />
                     </div>

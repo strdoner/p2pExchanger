@@ -15,4 +15,6 @@ public interface OrderResponseRepository extends JpaRepository<OrderResponse, Lo
 
     Long countByTakerAndStatus(User taker, OrderStatus status);
     Long countByOrder_MakerAndStatus(User user, OrderStatus status);
+
+    Long countByOrder_Maker(User maker);
 }

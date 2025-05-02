@@ -95,7 +95,6 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                             </div>
                         </div>
 
-                        {/* Предупреждения */}
                         <div className="alert alert-warning mt-3">
                             <div className="d-flex align-items-center">
                                 <i className="bi bi-exclamation-triangle-fill me-2"></i>

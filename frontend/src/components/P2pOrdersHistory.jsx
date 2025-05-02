@@ -12,7 +12,7 @@ const P2pOrdersHistory = () => {
     const {store} = useContext(Context)
     const [orders, setOrders] = useState([])
     const [searchParams, setSearchParams] = useSearchParams();
-
+    let counter = 0;
     useEffect(() => {
 
         const fetchOrders = async () => {
@@ -73,7 +73,7 @@ const P2pOrdersHistory = () => {
                 </thead>
                 <tbody>
                     {!orders?.empty ? orders?.content?.map(order =>
-                            <P2pOrderHistoryItem action="buy" order={order} key={order.id}/>
+                            <P2pOrderHistoryItem action="buy" order={order} key={counter++}/>
                         )
                         : (
                             <tr>

@@ -49,8 +49,11 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderRequestDTO orderDTO) {
-        orderService.create(orderDTO);
+    public ResponseEntity<?> createOrder(
+            @RequestBody OrderRequestDTO orderDTO,
+            @AuthenticationPrincipal User user
+    ) {
+        orderService.create(orderDTO, user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

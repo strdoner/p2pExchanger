@@ -63,7 +63,6 @@ public class Order {
 
     public void copyFrom(OrderRequestDTO order) {
         this.setAmount(order.getAmount());
-        this.setCurrency(order.getCurrency());
         this.setType(order.getType());
         this.setPrice(order.getPrice());
         this.setPaymentDetails(order.getPaymentDetails());

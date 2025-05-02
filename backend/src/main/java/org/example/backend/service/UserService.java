@@ -91,10 +91,12 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId).orElseThrow(
                 EntityNotFoundException::new
         );
-        Long count = orderRepository.countByMaker(user) + orderResponseRepository.countByTaker(user);
-        Long percent = (orderResponseRepository.countByOrder_MakerAndStatus(user, OrderStatus.COMPLETED) + orderResponseRepository.countByTakerAndStatus(user, OrderStatus.COMPLETED)) / count * 100;
-        UserOrderDTO userInfo = new UserOrderDTO(user, count, percent);
-        return userInfo;
+        long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
+        long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(user, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(user, OrderStatus.COMPLETED);
+        Long completionPercentage = totalMakerOrders > 0
+                ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)
+                : 0;
+        return new UserOrderDTO(user, totalMakerOrders, completionPercentage);
     }
 
 

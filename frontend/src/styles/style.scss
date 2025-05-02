@@ -541,20 +541,26 @@ footer {
         font-weight: 800;
     }
 
-    input {
-        background: var(--background-color);
-        color: var(--text-color);
-    }
 
-    input:focus {
-        background: var(--background-color);
-        color: var(--text-color);
-        
-    }
-    input::placeholder {
-        color: var(--secondary-text-color);
-    }
 
+}
+
+input, select, textarea {
+  background: var(--background-color)!important;
+  color: var(--text-color)!important;
+}
+
+option:hover {
+  background: var(--select-hover-color)!important;
+}
+
+input:focus, textarea:focus {
+  background: var(--background-color)!important;
+  color: var(--text-color)!important;
+
+}
+input::placeholder, textarea::placeholder {
+  color: var(--secondary-text-color)!important;
 }
 
 .modal-content {

@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserOrders(
+    public ResponseEntity<?> getUserInfo(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "min") String info
     ) {
