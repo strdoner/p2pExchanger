@@ -1,18 +1,18 @@
-import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import Notification from "./Notification";
+import {observer} from "mobx-react-lite";
 
-function StackingExample({list}) {
+function NotificationList({list}) {
     return (
-        <ToastContainer className="mt-5 pe-5" position={"top-end"} style={{ zIndex: 207770 }}>
+        <ToastContainer className="mt-5 pe-5" position={"top-end"} style={{zIndex: 207770}}>
 
             {
                 list?.map(item => (
-                    <Notification notification={item} key={item.id} />
+                    <Notification notification={item} key={item.id}/>
                 ))
             }
         </ToastContainer>
     );
 }
 
-export default StackingExample;
+export default observer(NotificationList);

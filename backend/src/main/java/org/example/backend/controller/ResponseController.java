@@ -2,6 +2,7 @@ package org.example.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.OrderDetailsDTO;
+import org.example.backend.DTO.ResponseWebSocketDTO;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.user.User;
@@ -9,6 +10,7 @@ import org.example.backend.service.ResponseService;
 import org.example.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,8 @@ public class ResponseController {
 
     private final ResponseService responseService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getResponseById(@PathVariable Long id) {
         OrderResponse response = responseService.read(id);
@@ -58,4 +62,6 @@ public class ResponseController {
                 ? new ResponseEntity<>(HttpStatus.FORBIDDEN)
                 : new ResponseEntity<>(details, HttpStatus.OK);
     }
+
+
 }

@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -18,8 +20,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public Page<Notification> getUserNotifications(Long userId, Pageable paging) {
-        return notificationRepository.findByUserIdOrderByReadAsc(userId, paging);
+    public List<Notification> getUserNotifications(Long userId) {
+        return notificationRepository.findByUserIdOrderByIsReadAsc(userId);
     }
     public void createAndSendNotification(NotificationCreationDTO notificationDTO) {
         Notification notification = new Notification();

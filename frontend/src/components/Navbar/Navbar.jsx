@@ -1,29 +1,47 @@
 import {observer} from 'mobx-react-lite'
 import ToggleTheme from '../ToggleTheme/ToggleTheme'
-import { ThemeContext } from '../../contexts/ThemeContext'
-import { themes } from '../../contexts/ThemeContext'
-import { Link } from 'react-router-dom'
+import {ThemeContext, themes} from '../../contexts/ThemeContext'
+import {Link} from 'react-router-dom'
 import {useContext, useEffect, useState} from "react";
 import {Context} from "../../index";
-import {connectWebSocket} from "../../websocket";
-import Notification from "../Notification";
 import NotificationList from "../NotificationList";
 import {useSubscription} from "../../websocket/hooks";
+import NotificationsIcon from "../NotificationsIcon";
 
 function Navbar() {
     const {store} = useContext(Context)
     const [notifications, setNotifications] = useState([]);
+    const [isNotifications, setIsNotifications] = useState(false)
+    const [listNotifications, setListNotifications] = useState([])
 
-    // Хук ДОЛЖЕН вызываться на верхнем уровне, без try/catch
+    useEffect(() => {
+        const response = store.getUserNotifications()
+        response.then(e => {
+            if (e.success) {
+                setListNotifications(e.content)
+                getIsNotifications()
+            }
+        })
+
+    }, [store]);
+
     useSubscription(`/user/${store.id}/queue/notifications`, (msg) => {
         try {
+
             setNotifications(prev => [...prev, msg]);
+            setListNotifications(prev => [msg, ...prev])
         } catch (error) {
             console.error("Error updating notifications:", error);
         }
     }, [store.id]);
 
-
+    const getIsNotifications = () => {
+        for (let i = 0; i < listNotifications.length; i++) {
+            if (!listNotifications[i]?.read) {
+                setIsNotifications(true)
+            }
+        }
+    }
 
 
     return (
@@ -70,14 +88,23 @@ function Navbar() {
                             {store.isAuth
                                 ? (
                                     <div className="d-flex">
-                                        <li className="nav-item">
-                                            <a className='nav-link'>
-                                                <i className="bi bi-bell-fill"></i>
-                                            </a>
-                                        </li>
+                                        <NotificationsIcon listNotifications={listNotifications}
+                                                           setListNotifications={setListNotifications}/>
                                         <li className="nav-item">
                                             <a className="nav-link">
-                                                <i className="bi bi-chat-fill"></i>
+                                                <i className="bi bi-chat-fill position-relative">
+                                                    {isNotifications
+                                                        ? (
+                                                            <span
+                                                                className="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                                                                style={{top: 3}}>
+                                                                <span className="visually-hidden">New alerts</span>
+                                                            </span>
+                                                        )
+                                                        :
+                                                        <></>
+                                                    }
+                                                </i>
                                             </a>
                                         </li>
                                     </div>

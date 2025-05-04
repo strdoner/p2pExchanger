@@ -1,6 +1,5 @@
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import React, {useContext, useEffect, useState} from 'react';
-import PaymentMethod from './PaymentMethod';
 import P2pOrderItem from './P2pOrderItem';
 import {useSearchParams} from "react-router-dom";
 import {Context} from "../index";
@@ -47,16 +46,11 @@ const P2pOrderList = () => {
                 </tr>
                 </thead>
                 <tbody>
-                <P2pOrderItem placeholder={true} />
-                <P2pOrderItem placeholder={true} />
-                <P2pOrderItem placeholder={true} />
-                <P2pOrderItem placeholder={true} />
-                <P2pOrderItem placeholder={true} />
+                <P2pOrderItem placeholder={true}/>
                 </tbody>
             </table>
         );
     }
-
 
 
     return (
@@ -75,7 +69,8 @@ const P2pOrderList = () => {
                 </thead>
                 <tbody>
                 {!orders?.empty ? orders?.content?.map(order =>
-                        <P2pOrderItem action="sell" order={order} key={order.id} modalHandler={setmodalShow} orderHandler={setOrder}/>
+                        <P2pOrderItem action="sell" order={order} key={order.id} modalHandler={setmodalShow}
+                                      orderHandler={setOrder}/>
                     )
                     : (
                         <tr>

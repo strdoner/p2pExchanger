@@ -2,6 +2,7 @@ package org.example.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.backend.model.Notification;
+import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.user.User;
 import org.example.backend.service.NotificationService;
 import org.springframework.data.domain.Page;
@@ -14,25 +15,27 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-    @PatchMapping("/read")
-    public void markNotificationAsRead(@Payload Long notificationId) {
+    @PatchMapping("/{notificationId}/read")
+    public void markNotificationAsRead(@PathVariable Long notificationId) {
         notificationService.markAsRead(notificationId);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Notification>> getUserNotifications(
-            @AuthenticationPrincipal User user,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<List<Notification>> getUserNotifications(
+            @AuthenticationPrincipal User user) {
 
-        Page<Notification> notifications = notificationService
-                .getUserNotifications(user.getId(), PageRequest.of(page, size));
+        List<Notification> notifications = notificationService
+                .getUserNotifications(user.getId());
 
         return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
+
+
 }

@@ -4,7 +4,6 @@ import axios from "axios";
 import UserService from "../services/UserService.ts";
 // @ts-ignore
 import AuthService from "../services/AuthService.ts";
-import { AuthResponse } from "../models/response/AuthResponse";
 import OrderResponseService from "../services/OrderResponseService.ts";
 
 export default class Store {
@@ -14,6 +13,7 @@ export default class Store {
     isLoading = false;
     isAuthLoading = false;
     isWebSocketConnected = false;
+
     constructor() {
         makeAutoObservable(this, {}, {autoBind: true});
     }
@@ -41,7 +41,7 @@ export default class Store {
             this.setAuth(true)
             this.setUser(username)
             this.setAuthLoading(false)
-            return { success: true };
+            return {success: true};
         } catch (e) {
             this.setAuthLoading(false)
             if (axios.isAxiosError(e)) {
@@ -62,16 +62,13 @@ export default class Store {
 
     async registerUser(
         username: string,
-        email:string,
+        email: string,
         password: string,
-        password2: string): Promise<{ success: boolean; error?: string }>
-
-    {
+        password2: string): Promise<{ success: boolean; error?: string }> {
         try {
             const response = await AuthService.registerUser(username, email, password, password2)
-            return { success: true };
-        }
-        catch (e) {
+            return {success: true};
+        } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
                     success: false,
@@ -108,15 +105,15 @@ export default class Store {
             // @ts-ignore
             this.id = (response.data?.userId)
             this.setAuthLoading(false)
-            return { success: true };
+            return {success: true};
         } catch (e) {
             this.setAuthLoading(false)
             this.id = -1
-            return { success: false };
+            return {success: false};
         }
     }
 
-    async getOrders(coin: string, method: string, type:string, page:number) {
+    async getOrders(coin: string, method: string, type: string, page: number) {
         this.setLoading(true);
         try {
             const response = await UserService.getOrders(coin, method, type, page)
@@ -129,7 +126,7 @@ export default class Store {
         }
     }
 
-    async getUserOrders(userId:number, status:string, currency:string, type:string, page:number) {
+    async getUserOrders(userId: number, status: string, currency: string, type: string, page: number) {
         this.setLoading(true);
         try {
             const response = await UserService.getUserOrders(userId, status, currency, type, page)
@@ -147,7 +144,7 @@ export default class Store {
             const response = await UserService.createOrder(order)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, content:response.data };
+            return {success: true, content: response.data};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -164,12 +161,12 @@ export default class Store {
         }
     }
 
-    async getUserMinInfo(userId:number) {
+    async getUserMinInfo(userId: number) {
         try {
             const response = await UserService.getUserMinInfo(userId)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, content:response.data };
+            return {success: true, content: response.data};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -192,7 +189,7 @@ export default class Store {
             const response = await OrderResponseService.createResponse(orderId)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, responseId: response.data.responseId };
+            return {success: true, responseId: response.data.responseId};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -215,7 +212,7 @@ export default class Store {
             const response = await OrderResponseService.getResponse(responseId)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, content:response.data };
+            return {success: true, content: response.data};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -237,7 +234,7 @@ export default class Store {
             const response = await OrderResponseService.cancelResponse(responseId)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, content:response.data };
+            return {success: true, content: response.data};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -259,7 +256,7 @@ export default class Store {
             const response = await OrderResponseService.confirmResponse(responseId)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, content:response.data };
+            return {success: true, content: response.data};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -281,7 +278,50 @@ export default class Store {
             const response = await OrderResponseService.completeResponse(responseId)
             console.log(response.data)
             // @ts-ignore
-            return { success: true, content:response.data };
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getUserNotifications() {
+        try {
+            const response = await UserService.getUserNotifications()
+            console.log(response.data)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('Registration error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async markNotificationAsRead(notificationId: number) {
+        try {
+            const response = await UserService.markNotificationAsRead(notificationId)
+            // @ts-ignore
+            return {success: true};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {

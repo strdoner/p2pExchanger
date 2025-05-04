@@ -1,22 +1,21 @@
-import { observer } from 'mobx-react-lite';
-import React, {useContext, useEffect, useState} from 'react';
+import {observer} from 'mobx-react-lite';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import Navbar from '../components/Navbar/Navbar';
-import {Link, Navigate, useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Context} from '../index.js';
 import Footer from "../components/Footer/Footer";
-import Button from "../components/Button";
 import ResponseDetailsActive from "../components/ResponseDetailsActive";
 import ResponseDetailsConfirmationTaker from "../components/ResponseDetailsConfirmationTaker";
 import ResponseDetailsConfirmationMaker from "../components/ResponseDetailsConfirmationMaker";
 import ResponseDetailsComplete from "../components/ResponseDetailsComplete";
-import {set} from "mobx";
 import ResponseDetailsCancelled from "../components/ResponseDetailsCancelled";
 import ResponseDetailsWaiting from "../components/ResponseDetailsWaiting";
+import {useSubscription} from "../websocket/hooks";
 
 const ResponseDetails = () => {
     const {store} = useContext(Context)
     const navigate = useNavigate()
-    const { responseId } = useParams();
+    const {responseId} = useParams();
     const [isLoading, setIsLoading] = useState()
     const [response, setResponse] = useState(null)
 
@@ -29,19 +28,17 @@ const ResponseDetails = () => {
     useEffect(() => {
         setIsLoading(true)
         const ans = store.getResponse(responseId)
-        ans.then(function(er) {
+        ans.then(function (er) {
             setIsLoading(false)
             if (er.success) {
                 setResponse(er.content)
                 setStatus(er.content.status)
                 if (er.content.maker.id === store.id) {
                     setContragent(er.content.taker)
-                }
-                else {
+                } else {
                     setContragent(er.content.maker)
                 }
-            }
-            else {
+            } else {
                 console.log("some error: " + er.error)
             }
         })
@@ -56,71 +53,68 @@ const ResponseDetails = () => {
 
         return () => clearInterval(interval);
     }, [timer]);
+    useSubscription(`/user/${store.id}/queue/responses`, (msg) => {
+        try {
 
+            if (msg.id === Number(responseId)) {
+                setStatus(msg.status)
+            }
+        } catch (error) {
+            console.error("Error updating notifications:", error);
+        }
+    }, [responseId, navigate, store.id]);
 
 
     const handleSendMessage = () => {
 
     }
 
-    const getResponseComponent = () => {
-        if (status === null) {
-            return null
-        }
+    const ResponseComponent = useMemo(() => {
+        
+        if (status === null || response === null) return null;
         if (status === "ACTIVE") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsActive response={response} statusHandler={setStatus}/>
-            }
-            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+            } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
                 return <ResponseDetailsWaiting response={response} statusHandler={setStatus}/>
             }
-        }
-        else if (status === "CONFIRMATION") {
+        } else if (status === "CONFIRMATION") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsConfirmationTaker response={response} statusHandler={setStatus}/>
-            }
-            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+            } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
                 return <ResponseDetailsConfirmationMaker response={response} statusHandler={setStatus}/>
             }
-        }
-        else if (status === "COMPLETED") {
+        } else if (status === "COMPLETED") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={false}/>
-            }
-            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+            } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
                 return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={true}/>
             }
-        }
-        else if (status === "CANCELLED") {
+        } else if (status === "CANCELLED") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={false}/>
-            }
-            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+            } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
                 return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={true}/>
             }
         }
-    }
-
+    }, [status, response, store.id]);
 
 
     if (response === null || status === null) {
         return (
             <>Loading..</>
         )
-    }
-
-    else {
+    } else {
         return (
             <>
-                <Navbar />
+                <Navbar/>
                 <div className="d-flex flex-column min-vh-100 pt-5 container">
 
 
                     <div className="container my-4 flex-grow-1 align-items-center d-flex w-100 justify-content-center">
                         <div className="row">
                             <div className="col-md-6 mb-4 mb-md-0">
-
-                                {getResponseComponent()}
+                                {ResponseComponent}
                             </div>
 
                             <div className="col-md-6">
@@ -159,14 +153,17 @@ const ResponseDetails = () => {
                                                     >
                                                         <div
                                                             className={`p-3 rounded-3 ${msg.sender === 'YOU' ? 'bg-primary text-white' : 'bg-light'}`}
-                                                            style={{ maxWidth: '70%' }}
+                                                            style={{maxWidth: '70%'}}
                                                         >
                                                             <div className="d-flex justify-content-between small mb-1">
                                                         <span className="fw-bold">
                                                             {msg.sender === 'YOU' ? 'Вы' : response.maker.username}
                                                         </span>
                                                                 <span className="secondary-text-color">
-                                                            {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })}
                                                         </span>
                                                             </div>
                                                             <div>{msg.text}</div>
@@ -200,7 +197,7 @@ const ResponseDetails = () => {
                         </div>
                     </div>
 
-                    <Footer />
+                    <Footer/>
                 </div>
             </>
         )
