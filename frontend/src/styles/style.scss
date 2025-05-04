@@ -18,6 +18,11 @@
     --info-background-color: #cfe2ff;
     --info-text-color: #084298;
     --info-border-color: #b6d4fe;
+    --success-background-color: #d1e7dd;
+    --success-border-color: #badbcc;
+    --danger-background-color: #f8d7da;
+    --danger-text-color: #58151c;
+    --danger-border-color: #f1aeb5;
 }
   
 :root[data-theme="dark"] {
@@ -38,6 +43,12 @@
     --info-background-color: #0a2a5a;
     --info-text-color: #a8c6f8;
     --info-border-color: #1a4b8c;
+    --success-background-color: #1a2e25;
+    --success-text-color: #75b798;
+    --success-border-color: #2d4b3d;
+    --danger-background-color: #2d1a1c;
+    --danger-text-color: #ffaba8;
+    --danger-border-color: #5d2b35;
 }
 
 $font-primary: 'Manrope', sans-serif;
@@ -67,6 +78,11 @@ body {
     
 }
 
+.link-style {
+  text-decoration: underline!important;
+  color: var(--main-accent-color)!important;
+}
+
 .alert-warning {
   color: var(--warning-text-color)!important;
   border-color: var(--warning-border-color)!important;
@@ -75,12 +91,33 @@ body {
     color: var(--warning-text-color)!important;
   }
 }
+.alert-danger {
+  color: var(--danger-text-color)!important;
+  border-color: var(--danger-border-color)!important;
+  background: var(--danger-background-color)!important;
+  i {
+    color: var(--danger-text-color)!important;
+  }
+}
 .alert-info {
   color: var(--info-text-color)!important;
   border-color: var(--info-border-color)!important;
   background: var(--info-background-color)!important;
   i {
     color: var(--info-text-color)!important;
+  }
+}
+
+.bg-success {
+  background: var(--success-background-color)!important;
+}
+
+.alert-success {
+  color: var(--success-color)!important;
+  border-color: var(--success-border-color)!important;
+  background: var(--success-background-color)!important;
+  i {
+    color: var(--success-text-color)!important;
   }
 }
 
@@ -605,6 +642,9 @@ input::placeholder, textarea::placeholder {
   .border-top {
     border-color: var(--table-separator)!important;
   }
-
+  .completed-operation {
+    width: 100px;
+    height: 100px;
+  }
 }
 

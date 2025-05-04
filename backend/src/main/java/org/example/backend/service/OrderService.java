@@ -3,10 +3,8 @@ package org.example.backend.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
-import org.example.backend.DTO.OrderDetailsDTO;
-import org.example.backend.DTO.OrderRequestDTO;
-import org.example.backend.DTO.OrderResponseDTO;
-import org.example.backend.DTO.OrderWithStatusDTO;
+import org.example.backend.DTO.*;
+import org.example.backend.model.NotificationType;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
@@ -28,6 +26,7 @@ public class OrderService {
     private final OrderResponseRepository orderResponseRepository;
     private final CurrencyRepository currencyRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
 
     public void create(OrderRequestDTO order, User user) {
@@ -42,19 +41,17 @@ public class OrderService {
 
 
 
-    public Page<OrderResponseDTO> readAll(String method, String coin, OrderType type, Pageable paging) {
+    public Page<OrderResponseDTO> readAll(String method, String coin, String type, User user, Pageable paging) {
         Page<Order> ordersPage;
 
-        if ("Все методы".equals(method)) {
-            ordersPage = orderRepository.findAllByIsAvailableTrueAndCurrency_NameAndType(coin, type, paging);
-        } else {
-            ordersPage = orderRepository.findAllByIsAvailableTrueAndPaymentMethod_Bank_NameAndCurrency_NameAndType(
-                    method,
-                    coin,
-                    type,
-                    paging
-            );
-        }
+
+        ordersPage = orderRepository.findAllByCurrencyAndTypeAndUserFilter(
+                method,
+                coin,
+                type,
+                user,
+                paging
+        );
 
         return ordersPage.map(order -> {
             User maker = order.getMaker();
@@ -91,6 +88,7 @@ public class OrderService {
             Order order = tuple.get(0, Order.class);
             OrderStatus status = tuple.get(1, OrderStatus.class);
             Long takerId = tuple.get(2, Long.class);
+            Long responseId = tuple.get(3, Long.class);
             User taker;
             if (takerId == null) {
                 taker = new User();
@@ -105,6 +103,7 @@ public class OrderService {
             return new OrderWithStatusDTO(
                     order,
                     status != null ? status : OrderStatus.PENDING,
+                    responseId != null ? responseId : -1,
                     taker
             );
         });
@@ -114,15 +113,27 @@ public class OrderService {
 
 
     public Order read(Long id) {
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findById(id).orElseThrow(
+                EntityNotFoundException::new
+        );
     }
 
     public OrderDetailsDTO createResponse(Long orderId, User user) {
         OrderResponse response = new OrderResponse();
+        Order order = read(orderId);
+        order.setIsAvailable(false);
+        orderRepository.save(order);
         response.setOrder(read(orderId));
         response.setTaker(user);
         response.setStatus(OrderStatus.ACTIVE);
-        orderResponseRepository.save(response);
+        OrderResponse saved = orderResponseRepository.save(response);
+        NotificationCreationDTO notification = new NotificationCreationDTO();
+        notification.setMessage("На ваше объявление № "+ saved.getId() +" был получен отклик");
+        notification.setType(NotificationType.ORDER_STATUS_CHANGE);
+        notification.setTitle("Изменение статуса объявления");
+        notification.setResponseId(saved.getId());
+        notification.setUser(order.getMaker());
+        notificationService.createAndSendNotification(notification);
 
         return new OrderDetailsDTO(response);
     }

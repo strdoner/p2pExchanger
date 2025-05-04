@@ -5,12 +5,13 @@ import P2pOrderItem from './P2pOrderItem';
 import {useSearchParams} from "react-router-dom";
 import {Context} from "../index";
 import Pagination from "./Pagination";
+import ModalWindow from "./ModalWindow";
 
 const P2pOrderList = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-
+    const [modalShow, setmodalShow] = useState(false)
     const {store} = useContext(Context)
-
+    const [order, setOrder] = useState(null)
     const [orders, setOrders] = useState([])
 
     useEffect(() => {
@@ -60,6 +61,7 @@ const P2pOrderList = () => {
 
     return (
         <>
+            <ModalWindow modalShow={modalShow} setModalShow={setmodalShow} action={"SELL"} order={order}/>
             <table className='order__list'>
                 <thead>
                 <tr>
@@ -73,7 +75,7 @@ const P2pOrderList = () => {
                 </thead>
                 <tbody>
                 {!orders?.empty ? orders?.content?.map(order =>
-                        <P2pOrderItem action="sell" order={order} key={order.id}/>
+                        <P2pOrderItem action="sell" order={order} key={order.id} modalHandler={setmodalShow} orderHandler={setOrder}/>
                     )
                     : (
                         <tr>

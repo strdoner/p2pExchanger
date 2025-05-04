@@ -7,12 +7,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum OrderStatus {
-    ACTIVE("Активен", "yellow"),
-    COMPLETED("Завершен", "green"),
-    CANCELLED("Отменен", "red"),
     CONFIRMATION("Ожидает подтверждения", "blue"),
+    ACTIVE("Активен", "yellow"),
     DISPUTED("Открыт диспут", "orange"),
-    PENDING("Ожидает отклика", "gray");
+    PENDING("Ожидает отклика", "gray"),
+    CANCELLED("Отменен", "red"),
+    COMPLETED("Завершен", "green");
 
     private final String name;
     private final String color;

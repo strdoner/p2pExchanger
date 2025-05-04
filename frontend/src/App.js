@@ -14,16 +14,26 @@ import {useContext, useEffect} from "react";
 import {Context} from "./index";
 import {observer} from "mobx-react-lite";
 import ResponseDetails from "./pages/response-details";
+import {connect, disconnect} from "./websocket/connection";
 
 function App() {
   const {store} = useContext(Context)
 
   useEffect(() => {
     store.setAuthLoading(true)
-    store.checkAuth()
+    store.checkAuth().then(r => {
+      if (r.success) {
+        connect('http://localhost:8080/ws')
+            .then(() => {
+              store.isWebSocketConnected = true
+            })
+            .catch(console.error);
+
+      }
+    })
   }, [store]);
 
-  if (store.id === -2) {
+  if (store.id === -2 || !store.isWebSocketConnected) {
     return <div>Loading</div>
   }
   return (

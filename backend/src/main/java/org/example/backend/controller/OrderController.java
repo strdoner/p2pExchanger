@@ -38,12 +38,14 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<Page<OrderResponseDTO>> getAllOrders(
             @RequestParam(defaultValue = "USDT") String coin,
-            @RequestParam(defaultValue = "Все методы") String method,
-            @RequestParam(defaultValue = "BUY") OrderType type,
+            @RequestParam(required = false) String method,
+            @RequestParam(defaultValue = "BUY") String type,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int limit
+            @RequestParam(defaultValue = "5") int limit,
+            @AuthenticationPrincipal User user
     ) {
-        final Page<OrderResponseDTO> orders = orderService.readAll(method, coin, type, PageRequest.of(page, limit));
+
+        final Page<OrderResponseDTO> orders = orderService.readAll(method, coin, type, user, PageRequest.of(page, limit));
         return new ResponseEntity<>(orders, HttpStatus.OK);
 
     }

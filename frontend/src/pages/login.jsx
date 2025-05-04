@@ -78,12 +78,12 @@ const LoginPage = () => {
                             
                         />
                         {error && (
-                            <div className="alert alert-danger d-flex align-items-center">
+                            <div className="alert alert-danger d-flex align-items-center me-0">
                                 <i className="bi bi-exclamation-triangle-fill me-2"></i>
                                 <div>{error}</div>
                             </div>
                         )}
-                        <Button onClick={loginHandler} btnType={"primary mt-4 text-white"} isloading={isAuthLoading ? 1 : 0}>Войти</Button>
+                        <Button onClick={loginHandler} btnType={"primary mt-1 text-white"} isloading={isAuthLoading ? 1 : 0}>Войти</Button>
                         <div className='d-flex align-items-center my-3'>
                             <hr className='flex-grow-1'/>
                             <span className='px-2 small secondary-text-color'>или</span>

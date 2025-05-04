@@ -13,6 +13,7 @@ export default class Store {
     isAuth = false;
     isLoading = false;
     isAuthLoading = false;
+    isWebSocketConnected = false;
     constructor() {
         makeAutoObservable(this, {}, {autoBind: true});
     }
@@ -107,9 +108,11 @@ export default class Store {
             // @ts-ignore
             this.id = (response.data?.userId)
             this.setAuthLoading(false)
+            return { success: true };
         } catch (e) {
             this.setAuthLoading(false)
             this.id = -1
+            return { success: false };
         }
     }
 

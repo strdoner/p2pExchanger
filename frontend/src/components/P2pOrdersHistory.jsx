@@ -69,11 +69,12 @@ const P2pOrdersHistory = () => {
                         <th>Фиат/Криптовалюта</th>
                         <th>Контрагент</th>
                         <th>Статус</th>
+                        <th>Ссылка</th>
                     </tr>
                 </thead>
                 <tbody>
                     {!orders?.empty ? orders?.content?.map(order =>
-                            <P2pOrderHistoryItem action="buy" order={order} key={counter++}/>
+                            <P2pOrderHistoryItem action={order.type} order={order} key={counter++}/>
                         )
                         : (
                             <tr>

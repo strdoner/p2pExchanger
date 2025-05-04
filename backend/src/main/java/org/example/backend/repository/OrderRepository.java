@@ -41,22 +41,44 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     //        "   (r IS NOT NULL AND r.status = :status))")
     @Query("SELECT o, " +
             "COALESCE(r.status, 'PENDING') as status, " +
-            "COALESCE(r.taker.id, null) as taker " +
+            "COALESCE(r.taker.id, null) as taker, " +
+            "COALESCE(r.id, null) as responseId " +
             "FROM Order o " +
             "LEFT JOIN OrderResponse r ON r.order = o " +  // Просто LEFT JOIN без доп. условий
             "WHERE (o.maker.id = :userId OR r.taker.id = :userId) " +
-            "AND o.isAvailable = true " +
             "AND (:currency IS NULL OR o.currency.name = :currency) " +
             "AND (:type IS NULL OR o.type = :type) " +
             "AND (:status IS NULL OR " +
             "   (r IS NULL AND :status = 'PENDING') OR " +  // Фильтр по PENDING
-            "   (r IS NOT NULL AND r.status = :status))")
+            "   (r IS NOT NULL AND r.status = :status)) " +
+            "ORDER BY FIELD(status, 'CONFIRMATION','ACTIVE','DISPUTED','PENDING','CANCELLED','COMPLETED')")
     Page<Tuple> findUserOrdersWithStatus(
             @Param("userId") Long userId,
             @Param("currency") String currency,
             @Param("type") OrderType type,
             @Param("status") OrderStatus status,
             Pageable pageable);
+
+    @Query("""
+    SELECT o FROM Order o 
+    WHERE o.isAvailable = true 
+    AND (:method IS NULL OR o.paymentMethod.bank.name = :method)
+    AND o.currency.name = :coin 
+    AND (
+        (:type = 'BUY' AND ((o.maker != :currentUser AND o.type = 'SELL') OR (o.maker = :currentUser AND o.type = 'BUY')))
+        OR
+        (:type = 'SELL' AND ((o.maker != :currentUser AND o.type = 'BUY') OR (o.maker = :currentUser AND o.type = 'SELL')))
+    )
+    """)
+    Page<Order> findAllByCurrencyAndTypeAndUserFilter(
+            @Param("method") String method,
+            @Param("coin") String coin,
+            @Param("type") String type,
+            @Param("currentUser") User currentUser,
+            Pageable paging
+    );
+
+
 
     Page<Order> findAllByIsAvailableTrueAndCurrency_NameAndType(String coin, OrderType type, Pageable paging);
 

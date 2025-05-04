@@ -94,17 +94,37 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                                 </span>
                             </div>
                         </div>
+                        {action === 'BUY' ? (
+                            <div className="alert alert-warning mt-3">
+                                <div className="d-flex align-items-center">
+                                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <span>Продавец ожидает оплату в течение 15 минут</span>
+                                </div>
+                                <div className="d-flex align-items-center mt-2">
+                                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <span>Переводите только на указанные реквизиты</span>
+                                </div>
+                            </div>
+                        )
+                        : (
+                                <div className="alert alert-warning mt-3">
+                                    <div className="d-flex align-items-center">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Переводите деньги только после получения оплаты от покупателя.</span>
+                                    </div>
+                                    <div className="d-flex align-items-center mt-2">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Не доверяйте скриншотам — проверяйте поступления в своём банке или платёжной системе.</span>
+                                    </div>
+                                    <div className="d-flex align-items-center mt-2">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Общайтесь только через чат обменника — это защитит вас в случае спора.</span>
+                                    </div>
+                                </div>
+                            )
 
-                        <div className="alert alert-warning mt-3">
-                            <div className="d-flex align-items-center">
-                                <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                                <span>Продавец ожидает оплату в течение 15 минут</span>
-                            </div>
-                            <div className="d-flex align-items-center mt-2">
-                                <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                                <span>Переводите только на указанные реквизиты</span>
-                            </div>
-                        </div>
+                        }
+
                     </div>
                 </Modal.Body>
 
@@ -121,10 +141,10 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                             Отменить
                         </Button>
                         <Button
-                            variant={order?.type === 'BUY' ? 'success' : 'danger'}
+                            variant={action === 'BUY' ? 'success' : 'danger'}
                             onClick={createResponseHandler}
                         >
-                            {order?.type === 'BUY' ? 'Купить' : 'Продать'}
+                            {action === 'BUY' ? 'Купить' : 'Продать'}
                         </Button>
                     </div>
                 </Modal.Footer>

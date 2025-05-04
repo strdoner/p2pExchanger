@@ -8,6 +8,10 @@ import Button from "../components/Button";
 import ResponseDetailsActive from "../components/ResponseDetailsActive";
 import ResponseDetailsConfirmationTaker from "../components/ResponseDetailsConfirmationTaker";
 import ResponseDetailsConfirmationMaker from "../components/ResponseDetailsConfirmationMaker";
+import ResponseDetailsComplete from "../components/ResponseDetailsComplete";
+import {set} from "mobx";
+import ResponseDetailsCancelled from "../components/ResponseDetailsCancelled";
+import ResponseDetailsWaiting from "../components/ResponseDetailsWaiting";
 
 const ResponseDetails = () => {
     const {store} = useContext(Context)
@@ -20,6 +24,7 @@ const ResponseDetails = () => {
     const [message, setMessage] = useState('');
     const [timer, setTimer] = useState(900);
     const [status, setStatus] = useState(null)
+    const [contragent, setContragent] = useState(null)
 
     useEffect(() => {
         setIsLoading(true)
@@ -29,6 +34,12 @@ const ResponseDetails = () => {
             if (er.success) {
                 setResponse(er.content)
                 setStatus(er.content.status)
+                if (er.content.maker.id === store.id) {
+                    setContragent(er.content.taker)
+                }
+                else {
+                    setContragent(er.content.maker)
+                }
             }
             else {
                 console.log("some error: " + er.error)
@@ -57,26 +68,36 @@ const ResponseDetails = () => {
             return null
         }
         if (status === "ACTIVE") {
-            if (response.taker.id === store.id) {
+            if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsActive response={response} statusHandler={setStatus}/>
             }
-            else if (response.maker.id === store.id) {
-                return <div>Пока нет</div>
+            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+                return <ResponseDetailsWaiting response={response} statusHandler={setStatus}/>
             }
         }
         else if (status === "CONFIRMATION") {
-            if (response.taker.id === store.id) {
+            if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsConfirmationTaker response={response} statusHandler={setStatus}/>
             }
-            else if (response.maker.id === store.id) {
+            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
                 return <ResponseDetailsConfirmationMaker response={response} statusHandler={setStatus}/>
             }
         }
         else if (status === "COMPLETED") {
-            return <div>Completed</div>
+            if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
+                return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={false}/>
+            }
+            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+                return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={true}/>
+            }
         }
         else if (status === "CANCELLED") {
-            return <div>cancelled</div>
+            if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
+                return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={false}/>
+            }
+            else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
+                return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={true}/>
+            }
         }
     }
 
@@ -107,7 +128,7 @@ const ResponseDetails = () => {
                                     <div className="card-header">
                                         <div className="d-flex align-items-center">
                                             <div className="flex-grow-1">
-                                                <h5 className="mb-0 text-color">Чат с {response.taker.username}</h5>
+                                                <h5 className="mb-0 text-color">Чат с {contragent.username}</h5>
                                             </div>
                                             <div className="badge bg-primary rounded-pill">
                                                 <i className="bi bi-shield-check me-1 text-white"></i>

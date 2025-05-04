@@ -25,13 +25,11 @@ function P2pTrade() {
             if (searchParams.get("coin") === null) {
                 newSearchParams.set("coin", "USDT");
             }
-            if (searchParams.get("method") === null) {
-                newSearchParams.set("method", "Все методы");
-            }
+
             // newSearchParams.set("method", "USDT");
             setSearchParams(newSearchParams);
     
-    }, [])
+    }, [searchParams])
 
     useEffect(() => {
         // Если путь точно /p2p-trade (без подмаршрутов)
@@ -69,7 +67,7 @@ function P2pTrade() {
     return (
         <>
             <Navbar />
-            <ModalWindowNewOrder modalShow={showForm} setModalShow={setShowForm} action={"BUY"} />
+            <ModalWindowNewOrder modalShow={showForm} setModalShow={setShowForm} action={isSellOrders ? "SELL" : "BUY"} />
             <div className='container pt-5'>
                 <div className='header__block p-5'>
                     <h1 className='text-center'>P2P-торговля</h1>

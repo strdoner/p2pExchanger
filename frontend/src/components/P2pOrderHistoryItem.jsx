@@ -1,16 +1,17 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import PaymentMethod from './PaymentMethod';
+import {Link} from "react-router-dom";
 
 const P2pOrderHistoryItem = ({action, order, placeholder}) => {
     return (
         <tr>
             <th className='history__type placeholder-glow'>
-                <span className={`success-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "Покупка" : (order.type === "BUY" ? "Покупка" : "Продажа")}</span>
-                <p className={placeholder ? "placeholder" : ""}>22-04-2025 17:38</p>
+                <span className={`${action === 'BUY' ? "success-color" : "danger-color"} ${placeholder ? "placeholder" : ""}`}>{placeholder ? "Покупка" : (order.type === "BUY" ? "Покупка" : "Продажа")}</span>
+                <p className={placeholder ? "placeholder" : ""}>{order?.createdAt}</p>
             </th>
             <th>
-                <span>1</span>
+                <span>{order?.responseId === -1 ? "-": order?.responseId}</span>
             </th>
             <th>
                 <div className='order__volume placeholder-glow'>
@@ -36,6 +37,13 @@ const P2pOrderHistoryItem = ({action, order, placeholder}) => {
             <th>
                 {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.status.name} color={order.status.color} className={placeholder ? "placeholder" : ""}/>}
 
+            </th>
+            <th>
+                {order?.responseId !== -1
+                    ?<Link className="link-style" to={`/response/${order?.responseId}`}>Ссылка</Link>
+                    :<div></div>
+
+                }
             </th>
         </tr>
     )

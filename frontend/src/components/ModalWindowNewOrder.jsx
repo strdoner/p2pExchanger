@@ -14,7 +14,7 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
     const handleClose = () => setModalShow(false);
     const handleShow = () => setModalShow(true);
     const [isLoading, setIsLoading] = useState(false)
-    const [order, setOrder] = useState({type: action, currency:"USDT", price:200, amount: 2000, paymentMethodId: 1, paymentDetails:""})
+    const [order, setOrder] = useState({currency:"USDT", price:200, amount: 2000, paymentMethodId: 1, paymentDetails:""})
     const [coin, setCoin] = useState("USDT")
     const [paymentsMethod, setPaymentMethod] = useState("Сбербанк")
     const [errors, setErrors] = useState({})
@@ -29,7 +29,7 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
             return;
         }
         setIsLoading(true)
-        const response = store.createOrder(order)
+        const response = store.createOrder({...order, type: action})
         response.then(function(er) {
             setIsLoading(false)
             if (er.success) {
