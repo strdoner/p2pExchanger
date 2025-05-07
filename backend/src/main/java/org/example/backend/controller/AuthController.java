@@ -79,7 +79,7 @@ public class AuthController {
         securityContextHolderStrategy.setContext(context);
         securityContextRepository.saveContext(context, request, response);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(((User)authentication.getPrincipal()).getId(), HttpStatus.OK);
     }
 
     @PostMapping("/registration")

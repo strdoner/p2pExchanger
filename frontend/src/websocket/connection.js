@@ -1,10 +1,11 @@
 import SockJS from 'sockjs-client';
-import { Client } from '@stomp/stompjs';
+import {Client} from '@stomp/stompjs';
 
 let stompClient = null;
 let connectionPromise = null;
 
 export const connect = (url, headers = {}) => {
+
     if (!connectionPromise) {
         connectionPromise = new Promise((resolve, reject) => {
             const socket = new SockJS(url);

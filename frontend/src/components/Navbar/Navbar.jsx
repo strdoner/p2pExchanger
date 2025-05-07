@@ -2,7 +2,7 @@ import {observer} from 'mobx-react-lite'
 import ToggleTheme from '../ToggleTheme/ToggleTheme'
 import {ThemeContext, themes} from '../../contexts/ThemeContext'
 import {Link} from 'react-router-dom'
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import {Context} from "../../index";
 import NotificationList from "../NotificationList";
 import {useSubscription} from "../../websocket/hooks";
@@ -11,19 +11,22 @@ import NotificationsIcon from "../NotificationsIcon";
 function Navbar() {
     const {store} = useContext(Context)
     const [notifications, setNotifications] = useState([]);
-    const [isNotifications, setIsNotifications] = useState(false)
     const [listNotifications, setListNotifications] = useState([])
 
-    useEffect(() => {
-        const response = store.getUserNotifications()
-        response.then(e => {
-            if (e.success) {
-                setListNotifications(e.content)
-                getIsNotifications()
-            }
-        })
+    const isNotifications = useMemo(() => {
+        return listNotifications.some(notification => !notification?.read);
+    }, [listNotifications]);
 
-    }, [store]);
+    useEffect(() => {
+        if (store.isAuth) {
+            const response = store.getUserNotifications();
+            response.then(e => {
+                if (e.success) {
+                    setListNotifications(e.content);
+                }
+            });
+        }
+    }, [store.isAuth]);
 
     useSubscription(`/user/${store.id}/queue/notifications`, (msg) => {
         try {
@@ -34,14 +37,6 @@ function Navbar() {
             console.error("Error updating notifications:", error);
         }
     }, [store.id]);
-
-    const getIsNotifications = () => {
-        for (let i = 0; i < listNotifications.length; i++) {
-            if (!listNotifications[i]?.read) {
-                setIsNotifications(true)
-            }
-        }
-    }
 
 
     return (
@@ -71,48 +66,51 @@ function Navbar() {
                             </li>
                         </ul>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li className="nav-item">
-                                <ThemeContext.Consumer>
-                                    {({theme, setTheme}) => (
+                            <div className="d-flex">
 
-                                        <ToggleTheme
-                                            onChange={() => {
-                                                if (theme === themes.light) setTheme(themes.dark)
-                                                if (theme === themes.dark) setTheme(themes.light)
-                                            }}
-                                            value={theme === themes.dark ? 1 : 0}
-                                        />
-                                    )}
-                                </ThemeContext.Consumer>
-                            </li>
-                            {store.isAuth
-                                ? (
-                                    <div className="d-flex">
-                                        <NotificationsIcon listNotifications={listNotifications}
-                                                           setListNotifications={setListNotifications}/>
-                                        <li className="nav-item">
-                                            <a className="nav-link">
-                                                <i className="bi bi-chat-fill position-relative">
-                                                    {isNotifications
-                                                        ? (
-                                                            <span
-                                                                className="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                                                                style={{top: 3}}>
+                                <li className="nav-item">
+                                    <ThemeContext.Consumer>
+                                        {({theme, setTheme}) => (
+
+                                            <ToggleTheme
+                                                onChange={() => {
+                                                    if (theme === themes.light) setTheme(themes.dark)
+                                                    if (theme === themes.dark) setTheme(themes.light)
+                                                }}
+                                                value={theme === themes.dark ? 1 : 0}
+                                            />
+                                        )}
+                                    </ThemeContext.Consumer>
+                                </li>
+                                {store.isAuth
+                                    ? (
+                                        <div className="d-flex ms-2 ms-md-0">
+                                            <NotificationsIcon listNotifications={listNotifications}
+                                                               setListNotifications={setListNotifications}/>
+                                            <li className="nav-item ms-2 ms-md-0">
+                                                <a className="nav-link">
+                                                    <i className="bi bi-chat-fill position-relative">
+                                                        {isNotifications
+                                                            ? (
+                                                                <span
+                                                                    className="position-absolute start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                                                                    style={{top: 3}}>
                                                                 <span className="visually-hidden">New alerts</span>
                                                             </span>
-                                                        )
-                                                        :
-                                                        <></>
-                                                    }
-                                                </i>
-                                            </a>
-                                        </li>
-                                    </div>
-                                )
-                                : (
-                                    <></>
-                                )
-                            }
+                                                            )
+                                                            :
+                                                            <></>
+                                                        }
+                                                    </i>
+                                                </a>
+                                            </li>
+                                        </div>
+                                    )
+                                    : (
+                                        <></>
+                                    )
+                                }
+                            </div>
 
                             <li className="nav-item">
                                 {store.isAuth

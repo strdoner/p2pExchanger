@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
 import Toast from 'react-bootstrap/Toast';
 import {observer} from "mobx-react-lite";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const Notification = ({notification}) => {
     const [show, setShow] = useState(true);
     const date = new Date(notification?.createdAt * 1000 || Date.now());
     const localTime = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-    const handleAction = () => {
+    const navigate = useNavigate()
 
+    const handleAction = () => {
+        navigate(`/response/${notification.responseId}`)
     }
     return (
         <Toast

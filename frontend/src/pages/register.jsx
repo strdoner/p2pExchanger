@@ -1,6 +1,5 @@
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import React, {useContext, useState} from 'react';
-import Navbar from '../components/Navbar/Navbar';
 import {Link, useNavigate} from 'react-router-dom';
 import {Context} from "../index";
 import Button from "../components/Button";
@@ -8,8 +7,8 @@ import Button from "../components/Button";
 const RegisterPage = () => {
     const navigate = useNavigate();
     const {store} = useContext(Context)
-    const [form, setForm] = useState({username:'', email:'', password:'', password2:''})
-    const [error, setError] = useState({username:'', email:'', password:'', password2:''})
+    const [form, setForm] = useState({username: '', email: '', password: '', password2: ''})
+    const [error, setError] = useState({username: '', email: '', password: '', password2: ''})
     const [isRegisterLoading, setIsRegisterLoading] = useState(false)
 
     const registerHandler = () => {
@@ -22,20 +21,18 @@ const RegisterPage = () => {
         }
 
         const response = store.registerUser(form.username, form.email, form.password, form.password2)
-        response.then(function(er) {
+        response.then(function (er) {
             setIsRegisterLoading(false);
             if (er.success) {
                 const loginResp = store.loginUser(form.username, form.password)
-                loginResp.then(function(er) {
+                loginResp.then(function (er) {
                     if (er.success) {
                         navigate('/')
-                    }
-                    else {
+                    } else {
                         navigate('/login')
                     }
                 })
-            }
-            else {
+            } else {
                 setError({...error, password2: er.error})
             }
         })
@@ -44,19 +41,19 @@ const RegisterPage = () => {
     }
 
     const isValid = () => {
-        setError({username:'', email:'', password:'', password2:''})
-        if (form.password !== form.password2){
-            setError({...error, password2:"Пароли не совпадают!"})
+        setError({username: '', email: '', password: '', password2: ''})
+        if (form.password !== form.password2) {
+            setError({...error, password2: "Пароли не совпадают!"})
             return false;
         }
 
         if (form.username.length < 5) {
-            setError({...error, username:"Никнейм слишком короткий"})
+            setError({...error, username: "Никнейм слишком короткий"})
             return false;
         }
 
         if (form.password.length < 5) {
-            setError({...error, password:"Пароль слишком короткий"})
+            setError({...error, password: "Пароль слишком короткий"})
             return false;
         }
 
@@ -65,7 +62,6 @@ const RegisterPage = () => {
 
     return (
         <>
-            <Navbar />
             <div className='container pt-5 mt-5 d-flex align-items-center'>
                 <div className='auth_form'>
                     <div className="form">
@@ -98,7 +94,8 @@ const RegisterPage = () => {
                             onChange={e => setForm({...form, password2: e.target.value})}
                         />
                         <div className="danger-color m-2 text-center">{error.password2}</div>
-                        <Button onClick={registerHandler} btnType={"primary mt-4"} isloading={isRegisterLoading ? 1 : 0}>Зарегистрироваться</Button>
+                        <Button onClick={registerHandler} btnType={"primary mt-4"}
+                                isloading={isRegisterLoading ? 1 : 0}>Зарегистрироваться</Button>
 
                         <div className='d-flex'>
                             <p className=''>Уже зарегистрированы? </p>
@@ -107,7 +104,7 @@ const RegisterPage = () => {
                     </div>
                 </div>
             </div>
-        
+
         </>
     )
 }

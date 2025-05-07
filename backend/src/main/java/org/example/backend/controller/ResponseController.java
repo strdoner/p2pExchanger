@@ -24,8 +24,14 @@ public class ResponseController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getResponseById(@PathVariable Long id) {
-        OrderResponse response = responseService.read(id);
+    public ResponseEntity<?> getResponseById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user
+    ) {
+        OrderResponse response = responseService.read(user, id);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         OrderDetailsDTO details = new OrderDetailsDTO(response);
         return new ResponseEntity<>(details, HttpStatus.OK);

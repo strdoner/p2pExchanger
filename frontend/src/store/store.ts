@@ -22,6 +22,14 @@ export default class Store {
         this.isAuth = bool;
     }
 
+    setId(id: number) {
+        this.id = id;
+    }
+
+    setIsWebSocketConnected(bool: boolean) {
+        this.isWebSocketConnected = bool
+    }
+
     setUser(username: string) {
         this.username = username;
     }
@@ -40,6 +48,7 @@ export default class Store {
             const response = await AuthService.loginUser(username, password)
             this.setAuth(true)
             this.setUser(username)
+            this.setId(response.data)
             this.setAuthLoading(false)
             return {success: true};
         } catch (e) {
@@ -51,7 +60,6 @@ export default class Store {
                 }
             }
 
-            // Для неизвестных ошибок
             console.error('Login error:', e);
             return {
                 success: false,
@@ -90,6 +98,7 @@ export default class Store {
             const response = await AuthService.logoutUser()
             this.setAuth(false)
             this.setUser("")
+            this.setId(-1)
         } catch (e) {
             console.log(e)
         }
@@ -103,12 +112,12 @@ export default class Store {
             // @ts-ignore
             this.setUser(response.data?.username)
             // @ts-ignore
-            this.id = (response.data?.userId)
+            this.setId(response.data?.userId)
             this.setAuthLoading(false)
             return {success: true};
         } catch (e) {
             this.setAuthLoading(false)
-            this.id = -1
+            this.setId(-1)
             return {success: false};
         }
     }
@@ -217,6 +226,7 @@ export default class Store {
             if (axios.isAxiosError(e)) {
                 return {
                     success: false,
+                    status: e.response.status,
                     error: e.response.data
                 }
             }

@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom"
 import P2pTrade from './pages/p2p-trade';
+import Navbar from "./components/Navbar/Navbar";
 import P2pOrdersListBuy from './components/P2pOrdersListBuy';
 import P2pOrdersListSell from './components/P2pOrdersListSell';
 import OrdersHistory from './pages/orders-history';
@@ -25,19 +26,20 @@ function App() {
             if (r.success) {
                 connect('http://localhost:8080/ws')
                     .then(() => {
-                        store.isWebSocketConnected = true
+                        store.setIsWebSocketConnected(true)
                     })
                     .catch(console.error);
 
             }
         })
-    }, [store]);
+    }, [store.id]);
 
     if (store.id === -2 || (!store.isWebSocketConnected && store.id > 0)) {
         return <div>Loading</div>
     }
     return (
         <BrowserRouter>
+            <Navbar/>
             <Routes>
 
                 <Route path='/' element={<WelcomePage/>}/>

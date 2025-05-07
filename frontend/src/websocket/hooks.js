@@ -16,7 +16,7 @@ export const useSubscription = (destination, callback, deps = []) => {
         }
 
 
-    }, [destination, ...deps]);
+    }, [store, destination, ...deps]);
 };
 
 export const useWebSocketData = (destination, initialValue) => {

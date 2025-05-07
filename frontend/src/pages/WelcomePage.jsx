@@ -1,21 +1,16 @@
 import {observer} from 'mobx-react-lite'
-import ToggleTheme from '../components/ToggleTheme/ToggleTheme'
-import { ThemeContext } from '../contexts/ThemeContext'
-import { themes } from '../contexts/ThemeContext'
-import Navbar from '../components/Navbar/Navbar'
 import Footer from '../components/Footer/Footer'
 
 function WelcomePage() {
     return (
         <>
-            <Navbar />
             <div className='container pt-5'>
-                 <div className="header__block pt-5 mt-5 text-center">
+                <div className="header__block pt-5 mt-5 text-center">
                     <h1>P2P-обменник криптовалюты</h1>
                     <p>Покупайте и продавайте BTC, USDT и другие активы напрямую у других пользователей.</p>
                     <button className='btn btn-primary mt-5'>Начать торговать</button>
-                 </div>
-                 <div className="howto__block text-center">
+                </div>
+                <div className="howto__block text-center">
                     <h1>Как это работает?</h1>
                     <div className='row mt-5'>
                         <div className='col-12 col-md-6 col-lg-3'>
@@ -39,9 +34,9 @@ function WelcomePage() {
                             <p>Система разблокирует криптовалюту.</p>
                         </div>
                     </div>
-                    
-                 </div>
-                 <div className='preferences__block'>
+
+                </div>
+                <div className='preferences__block'>
                     <h1 className='text-center'>Наши преимущества</h1>
                     <div className='preferences_security row justify-content-around'>
                         <div className="col-4 text-left align-content-center">
@@ -80,13 +75,13 @@ function WelcomePage() {
                             <p>Свободное ценообразование без скрытых надбавок.</p>
                         </div>
                     </div>
-                 </div>
-                 <div className='start__block text-center'>
+                </div>
+                <div className='start__block text-center'>
                     <h1>Готовы к первой сделке?</h1>
                     <button className='btn btn-primary mt-4'>Зарегистрироваться</button>
-                 </div>
-                 <Footer />
-             </div>
+                </div>
+                <Footer/>
+            </div>
         </>
 
     )

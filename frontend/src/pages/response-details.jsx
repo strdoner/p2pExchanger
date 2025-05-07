@@ -1,6 +1,5 @@
 import {observer} from 'mobx-react-lite';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
-import Navbar from '../components/Navbar/Navbar';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Context} from '../index.js';
 import Footer from "../components/Footer/Footer";
@@ -17,6 +16,7 @@ const ResponseDetails = () => {
     const navigate = useNavigate()
     const {responseId} = useParams();
     const [isLoading, setIsLoading] = useState()
+    const [isForbidden, setIsForbidden] = useState(false)
     const [response, setResponse] = useState(null)
 
     const [chatMessages, setChatMessages] = useState([]);
@@ -31,6 +31,7 @@ const ResponseDetails = () => {
         ans.then(function (er) {
             setIsLoading(false)
             if (er.success) {
+                setIsForbidden(false)
                 setResponse(er.content)
                 setStatus(er.content.status)
                 if (er.content.maker.id === store.id) {
@@ -39,7 +40,10 @@ const ResponseDetails = () => {
                     setContragent(er.content.maker)
                 }
             } else {
-                console.log("some error: " + er.error)
+                if (er.status === 403) {
+                    setIsForbidden(true)
+                }
+                console.log("some error: " + er.status)
             }
         })
     }, [responseId, navigate]);
@@ -60,7 +64,7 @@ const ResponseDetails = () => {
                 setStatus(msg.status)
             }
         } catch (error) {
-            console.error("Error updating notifications:", error);
+            console.error("Error updating response status:", error);
         }
     }, [responseId, navigate, store.id]);
 
@@ -70,7 +74,7 @@ const ResponseDetails = () => {
     }
 
     const ResponseComponent = useMemo(() => {
-        
+
         if (status === null || response === null) return null;
         if (status === "ACTIVE") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
@@ -99,20 +103,22 @@ const ResponseDetails = () => {
         }
     }, [status, response, store.id]);
 
-
-    if (response === null || status === null) {
+    if (isForbidden) {
+        return (
+            <>Forbidden</>
+        )
+    } else if (response === null || status === null) {
         return (
             <>Loading..</>
         )
     } else {
         return (
             <>
-                <Navbar/>
                 <div className="d-flex flex-column min-vh-100 pt-5 container">
 
 
                     <div className="container my-4 flex-grow-1 align-items-center d-flex w-100 justify-content-center">
-                        <div className="row">
+                        <div className="row w-100 order-container">
                             <div className="col-md-6 mb-4 mb-md-0">
                                 {ResponseComponent}
                             </div>

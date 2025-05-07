@@ -15,6 +15,7 @@ import org.example.backend.repository.OrderResponseRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -63,10 +64,14 @@ public class ResponseService {
 
     }
 
-    public OrderResponse read(long id) {
-        return orderResponseRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Запись не найдена!")
-        );
+    public OrderResponse read(User user, long id) {
+        OrderResponse orderResponse = orderResponseRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Запись не найдена!"));
+        if (!Objects.equals(orderResponse.getOrder().getMaker().getId(), user.getId()) && !Objects.equals(orderResponse.getTaker().getId(), user.getId())) {
+            return null;
+        }
+
+        return orderResponse;
 
     }
 

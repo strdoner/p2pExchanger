@@ -26,7 +26,7 @@
 }
 
 :root[data-theme="dark"] {
-  --background-color: #0A0A0A;
+  --background-color: #121212;
   --text-color: #E2E8F0;
   --success-color: #34D399;
   --error-color: #F87171;
@@ -683,6 +683,10 @@ input::placeholder, textarea::placeholder {
   border-bottom: 1px solid #f0f0f0;
   font-size: 0.85rem;
   cursor: pointer;
+}
+
+.order-container {
+  max-width: 1000px !important;
 }
 
 .notification-item.unread {

@@ -1,7 +1,6 @@
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import React, {useContext, useState} from 'react';
-import Navbar from '../components/Navbar/Navbar';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {Context} from '../index.js';
 import Button from "../components/Button";
 
@@ -13,7 +12,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const {store} = useContext(Context)
     if (store.isAuth) {
-        return <Navigate to={'/'} />
+        return <Navigate to={'/'}/>
 
     }
 
@@ -25,12 +24,11 @@ const LoginPage = () => {
         }
 
         const response = store.loginUser(username, password)
-        response.then(function(e) {
+        response.then(function (e) {
             setIsAuthLoading(false)
             if (e.success) {
                 navigate('/')
-            }
-            else {
+            } else {
                 setError(e.error)
             }
         })
@@ -38,7 +36,7 @@ const LoginPage = () => {
 
     const isValid = () => {
         setError("")
-        if (username === "" || password === ""){
+        if (username === "" || password === "") {
             setError("Имя пользователя и пароль не могут быть пусты")
             return false;
         }
@@ -54,7 +52,6 @@ const LoginPage = () => {
 
     return (
         <>
-            <Navbar />
             <div className='container pt-5 mt-5 d-flex align-items-center'>
                 <div className='auth_form'>
                     <div className="form">
@@ -68,14 +65,18 @@ const LoginPage = () => {
                             className="form-control"
                             type="text"
                             placeholder='Имя пользователя'
-                            onChange={(event)=>{setUsername(event.target.value)}}
+                            onChange={(event) => {
+                                setUsername(event.target.value)
+                            }}
                         />
-                        <input 
-                            className="form-control" 
-                            type="password" 
-                            placeholder='Пароль' 
-                            onChange={(event)=>{setPassword(event.target.value)}}   
-                            
+                        <input
+                            className="form-control"
+                            type="password"
+                            placeholder='Пароль'
+                            onChange={(event) => {
+                                setPassword(event.target.value)
+                            }}
+
                         />
                         {error && (
                             <div className="alert alert-danger d-flex align-items-center me-0">
@@ -83,7 +84,8 @@ const LoginPage = () => {
                                 <div>{error}</div>
                             </div>
                         )}
-                        <Button onClick={loginHandler} btnType={"primary mt-1 text-white"} isloading={isAuthLoading ? 1 : 0}>Войти</Button>
+                        <Button onClick={loginHandler} btnType={"primary mt-1 text-white"}
+                                isloading={isAuthLoading ? 1 : 0}>Войти</Button>
                         <div className='d-flex align-items-center my-3'>
                             <hr className='flex-grow-1'/>
                             <span className='px-2 small secondary-text-color'>или</span>
@@ -98,7 +100,7 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
-        
+
         </>
     )
 }
