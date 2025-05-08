@@ -8,6 +8,7 @@ import org.example.backend.model.user.PaymentMethod;
 import org.example.backend.model.user.User;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 public class OrderDetailsDTO {
@@ -21,9 +22,11 @@ public class OrderDetailsDTO {
     private BigDecimal amount;
     private PaymentMethodDTO paymentMethod;
     private String status;
+    private LocalDateTime statusChangingTime;
 
 
     public OrderDetailsDTO(OrderResponse response) {
+        this.setStatusChangingTime(response.getStatusChangingTime());
         this.setOrderId(response.getOrder().getId());
         this.setResponseId(response.getId());
         this.setMaker(new OrderDetailsUserDTO(response.getOrder().getMaker()));

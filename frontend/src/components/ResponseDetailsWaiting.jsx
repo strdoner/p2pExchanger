@@ -3,10 +3,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Context} from "../index";
 import {observer} from "mobx-react-lite";
 
-const ResponseDetailsWaiting = ({response, statusHandler}) => {
+const ResponseDetailsWaiting = ({response, statusHandler, responseTimer}) => {
     const navigate = useNavigate()
     const {store} = useContext(Context)
-    const [timer, setTimer] = useState(900);
+    const [timer, setTimer] = useState(responseTimer);
     const { responseId } = useParams();
     const [isPaid, setIsPaid] = useState(false)
 

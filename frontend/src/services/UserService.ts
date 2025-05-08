@@ -28,4 +28,12 @@ export default class UserService {
     static async markNotificationAsRead(notificationId: number): Promise<AxiosResponse<OrdersResponse>> {
         return $api.patch(`/notifications/${notificationId}/read`)
     }
+
+    static async sendMessage(message: object): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.post(`/messages`, message)
+    }
+
+    static async getResponseMessages(responseId: number): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.get(`/messages/response/${responseId}`)
+    }
 }

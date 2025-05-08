@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.model.user.User;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,4 +21,5 @@ public class OrderResponse {
     private Order order;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    private LocalDateTime statusChangingTime = LocalDateTime.now();
 }

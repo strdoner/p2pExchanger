@@ -162,7 +162,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -184,7 +184,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -207,7 +207,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -231,7 +231,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -253,7 +253,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -275,7 +275,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -297,7 +297,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -319,7 +319,7 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'
@@ -340,7 +340,48 @@ export default class Store {
                 }
             }
 
-            console.error('Registration error:', e);
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+    async sendMessage(message: object) {
+        try {
+            const response = await UserService.sendMessage(message)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getResponseMessages(responseId: number) {
+        try {
+            const response = await UserService.getResponseMessages(responseId)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
             return {
                 success: false,
                 error: 'Произошла непредвиденная ошибка!'

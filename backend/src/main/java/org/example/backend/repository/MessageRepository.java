@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
     Long countByRecipientIdAndIsReadFalse(Long recipientId);
+
+    List<Message> findAllByResponseId(Long responseId);
 }

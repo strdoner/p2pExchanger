@@ -10,6 +10,7 @@ import ResponseDetailsComplete from "../components/ResponseDetailsComplete";
 import ResponseDetailsCancelled from "../components/ResponseDetailsCancelled";
 import ResponseDetailsWaiting from "../components/ResponseDetailsWaiting";
 import {useSubscription} from "../websocket/hooks";
+import ChatComponent from "../components/ChatComponent";
 
 const ResponseDetails = () => {
     const {store} = useContext(Context)
@@ -18,8 +19,7 @@ const ResponseDetails = () => {
     const [isLoading, setIsLoading] = useState()
     const [isForbidden, setIsForbidden] = useState(false)
     const [response, setResponse] = useState(null)
-
-    const [chatMessages, setChatMessages] = useState([]);
+    const [responseTimer, setResponseTimer] = useState(null)
     const [message, setMessage] = useState('');
     const [timer, setTimer] = useState(900);
     const [status, setStatus] = useState(null)
@@ -33,6 +33,7 @@ const ResponseDetails = () => {
             if (er.success) {
                 setIsForbidden(false)
                 setResponse(er.content)
+                setResponseTimer(calculateTimeLeft(new Date(), er.content.statusChangingTime))
                 setStatus(er.content.status)
                 if (er.content.maker.id === store.id) {
                     setContragent(er.content.taker)
@@ -48,20 +49,31 @@ const ResponseDetails = () => {
         })
     }, [responseId, navigate]);
 
-    useEffect(() => {
-        if (timer <= 0) return;
+    const calculateTimeLeft = (now, statusChangingArray) => {
+        // Деструктурируем массив [год, месяц, день, часы, минуты, секунды]
+        const [year, month, day, hours, minutes, seconds] = statusChangingArray;
 
-        const interval = setInterval(() => {
-            setTimer(prev => prev - 1);
-        }, 1000);
+        // Создаем объект Date (месяцы в JS начинаются с 0)
+        const statusTime = new Date(year, month - 1, day, hours, minutes, seconds);
 
-        return () => clearInterval(interval);
-    }, [timer]);
+        // Проверяем валидность даты
+        if (isNaN(statusTime.getTime())) {
+            console.error('Invalid date from array:', statusChangingArray);
+            return 0;
+        }
+
+        const timePassed = Math.floor((now - statusTime) / 1000); // разница в секундах
+        const totalTime = 15 * 60; // 15 минут в секундах
+        return Math.max(0, totalTime - timePassed); // не меньше 0
+    };
+
     useSubscription(`/user/${store.id}/queue/responses`, (msg) => {
         try {
 
             if (msg.id === Number(responseId)) {
                 setStatus(msg.status)
+                setResponseTimer(calculateTimeLeft(new Date(), msg.statusChangingTime))
+                console.log(response);
             }
         } catch (error) {
             console.error("Error updating response status:", error);
@@ -78,27 +90,27 @@ const ResponseDetails = () => {
         if (status === null || response === null) return null;
         if (status === "ACTIVE") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
-                return <ResponseDetailsActive response={response} statusHandler={setStatus}/>
+                return <ResponseDetailsActive response={response} statusHandler={setStatus} responseTimer={responseTimer}/>
             } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
-                return <ResponseDetailsWaiting response={response} statusHandler={setStatus}/>
+                return <ResponseDetailsWaiting response={response} statusHandler={setStatus} responseTimer={responseTimer}/>
             }
         } else if (status === "CONFIRMATION") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
-                return <ResponseDetailsConfirmationTaker response={response} statusHandler={setStatus}/>
+                return <ResponseDetailsConfirmationTaker response={response} statusHandler={setStatus} responseTimer={responseTimer}/>
             } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
-                return <ResponseDetailsConfirmationMaker response={response} statusHandler={setStatus}/>
+                return <ResponseDetailsConfirmationMaker response={response} statusHandler={setStatus} responseTimer={responseTimer}/>
             }
         } else if (status === "COMPLETED") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
-                return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={false}/>
+                return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={false} responseTimer={responseTimer}/>
             } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
-                return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={true}/>
+                return <ResponseDetailsComplete response={response} statusHandler={setStatus} isSell={true} responseTimer={responseTimer}/>
             }
         } else if (status === "CANCELLED") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
-                return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={false}/>
+                return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={false} responseTimer={responseTimer}/>
             } else if ((response.taker.id === store.id && response.type === "BUY") || (response.maker.id === store.id && response.type === "SELL")) {
-                return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={true}/>
+                return <ResponseDetailsCancelled response={response} statusHandler={setStatus} isSell={true} responseTimer={responseTimer}/>
             }
         }
     }, [status, response, store.id]);
@@ -124,81 +136,7 @@ const ResponseDetails = () => {
                             </div>
 
                             <div className="col-md-6">
-                                <div className="card shadow-sm h-100">
-                                    <div className="card-header">
-                                        <div className="d-flex align-items-center">
-                                            <div className="flex-grow-1">
-                                                <h5 className="mb-0 text-color">Чат с {contragent.username}</h5>
-                                            </div>
-                                            <div className="badge bg-primary rounded-pill">
-                                                <i className="bi bi-shield-check me-1 text-white"></i>
-                                                P2P сделка
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className="card-body p-0"
-                                        style={{
-                                            height: '400px',
-                                            overflowY: 'auto',
-                                        }}
-                                    >
-                                        {chatMessages.length === 0 ? (
-                                            <div className="d-flex justify-content-center align-items-center h-100">
-                                                <div className="text-center secondary-text-color">
-                                                    <i className="bi bi-chat-left-text fs-1"></i>
-                                                    <p>Начните общение с контрагентом</p>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="p-3">
-                                                {chatMessages.map((msg, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className={`mb-3 d-flex ${msg.sender === 'YOU' ? 'justify-content-end' : 'justify-content-start'}`}
-                                                    >
-                                                        <div
-                                                            className={`p-3 rounded-3 ${msg.sender === 'YOU' ? 'bg-primary text-white' : 'bg-light'}`}
-                                                            style={{maxWidth: '70%'}}
-                                                        >
-                                                            <div className="d-flex justify-content-between small mb-1">
-                                                        <span className="fw-bold">
-                                                            {msg.sender === 'YOU' ? 'Вы' : response.maker.username}
-                                                        </span>
-                                                                <span className="secondary-text-color">
-                                                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            })}
-                                                        </span>
-                                                            </div>
-                                                            <div>{msg.text}</div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="card-footer">
-                                        <div className="input-group">
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Написать сообщение..."
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                            />
-                                            <button
-                                                className="btn btn-primary"
-                                                onClick={handleSendMessage}
-                                                disabled={!message.trim()}
-                                            >
-                                                <i className="bi bi-send-fill text-white"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ChatComponent contragent={contragent}/>
                             </div>
                         </div>
                     </div>

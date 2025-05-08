@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +29,7 @@ public class OrderService {
     private final CurrencyRepository currencyRepository;
     private final UserService userService;
     private final NotificationService notificationService;
-
-
+    private final ResponseService responseService;
     public void create(OrderRequestDTO order, User user) {
         Order newOrder = new Order();
         newOrder.copyFrom(order);
@@ -119,21 +120,10 @@ public class OrderService {
     }
 
     public OrderDetailsDTO createResponse(Long orderId, User user) {
-        OrderResponse response = new OrderResponse();
         Order order = read(orderId);
         order.setIsAvailable(false);
         orderRepository.save(order);
-        response.setOrder(read(orderId));
-        response.setTaker(user);
-        response.setStatus(OrderStatus.ACTIVE);
-        OrderResponse saved = orderResponseRepository.save(response);
-        NotificationCreationDTO notification = new NotificationCreationDTO();
-        notification.setMessage("На ваше объявление № "+ saved.getId() +" был получен отклик");
-        notification.setType(NotificationType.ORDER_STATUS_CHANGE);
-        notification.setTitle("Изменение статуса объявления");
-        notification.setResponseId(saved.getId());
-        notification.setUser(order.getMaker());
-        notificationService.createAndSendNotification(notification);
+        OrderResponse response = responseService.createResponse(order, user);
 
         return new OrderDetailsDTO(response);
     }
