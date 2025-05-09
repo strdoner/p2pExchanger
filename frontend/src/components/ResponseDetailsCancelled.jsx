@@ -85,7 +85,7 @@ const ResponseDetailsCancelled = ({response, statusHandler, isSell, responseTime
                 </div>
 
                 {/* Информация о контрагенте */}
-                <div className="border-top pt-3 text-start" style={{maxWidth: '400px'}}>
+                <div className="border-top pt-3 text-start">
                     <h6 className="text-start">Контрагент</h6>
                     <div className="d-flex align-items-center mb-3">
                         <div className="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center"

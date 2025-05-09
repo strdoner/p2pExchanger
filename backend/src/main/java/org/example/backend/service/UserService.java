@@ -2,6 +2,7 @@ package org.example.backend.service;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.UserOrderDTO;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.user.Role;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -29,14 +31,8 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder bCryptPasswordEncoder;
     private final OrderRepository orderRepository;
     private final OrderResponseRepository orderResponseRepository;
+    private final BalanceService balanceService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, OrderRepository orderRepository, OrderResponseRepository orderResponseRepository) {
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
-        this.orderRepository = orderRepository;
-        this.orderResponseRepository = orderResponseRepository;
-    }
 
     public boolean deleteUser(Long userId) {
         if (userRepository.findById(userId).isPresent()) {
@@ -44,6 +40,10 @@ public class UserService implements UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    public void createUserBalances(User user) {
+        balanceService.createUserBalances(user);
     }
 
     public boolean saveUser(User user) {
@@ -60,7 +60,8 @@ public class UserService implements UserDetailsService {
         }
         user.setRole(new Role(1L, "ROLE_USER"));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        createUserBalances(savedUser);
         return true;
     }
 

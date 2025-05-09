@@ -388,4 +388,44 @@ export default class Store {
             };
         }
     }
+    async getUserBalances() {
+        try {
+            const response = await UserService.getUserBalances()
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+    async createDeposit(balance: object) {
+        try {
+            const response = await UserService.deposit(balance)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
 }

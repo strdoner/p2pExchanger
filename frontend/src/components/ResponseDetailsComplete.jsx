@@ -110,8 +110,8 @@ const ResponseDetailsComplete = ({response, statusHandler, isSell, responseTimer
                         <i className="bi bi-receipt me-2"></i>
                         Получить квитанцию
                     </button>
-                    <Link className="btn btn-primary" to={"/p2p-trade/buy"}>
-                        <i className="bi bi-arrow-left me-2"></i>
+                    <Link className="btn btn-primary text-white" to={"/p2p-trade/buy"}>
+                        <i className="bi bi-arrow-left me-2 text-white"></i>
                         Вернуться к объявлениям
                     </Link>
                 </div>

@@ -4,11 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.*;
+import org.example.backend.model.Currency;
 import org.example.backend.model.NotificationType;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
+import org.example.backend.model.user.Balance;
 import org.example.backend.model.user.User;
 import org.example.backend.repository.*;
 import org.springframework.data.domain.Page;
@@ -30,10 +32,21 @@ public class OrderService {
     private final UserService userService;
     private final NotificationService notificationService;
     private final ResponseService responseService;
+    private final BalanceRepository balanceRepository;
     public void create(OrderRequestDTO order, User user) {
+        Currency orderCurrency = currencyRepository.findByShortName(order.getCurrency());
+        Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, orderCurrency);
+        if (order.getType() == OrderType.SELL) {
+            if (userBalance.getAvailable().compareTo(order.getAmount()) < 0) {
+                throw new IllegalArgumentException("Недостаточно средств для размещения объявления");
+            }
+            userBalance.setLocked(userBalance.getLocked().add(order.getAmount()));
+            userBalance.setAvailable(userBalance.getAvailable().subtract(order.getAmount()));
+            balanceRepository.save(userBalance);
+        }
         Order newOrder = new Order();
         newOrder.copyFrom(order);
-        newOrder.setCurrency(currencyRepository.findByName(order.getCurrency()));
+        newOrder.setCurrency(orderCurrency);
         newOrder.setMaker(user);
         newOrder.setPaymentMethod(paymentMethodRepository.getReferenceById(order.getPaymentMethodId()));
 
@@ -121,6 +134,16 @@ public class OrderService {
 
     public OrderDetailsDTO createResponse(Long orderId, User user) {
         Order order = read(orderId);
+        if (order.getType() == OrderType.BUY) {
+            Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, order.getCurrency());
+            if (userBalance.getAvailable().compareTo(order.getAmount()) < 0) {
+                throw new IllegalArgumentException("Недостаточно средств для отклика на объявление");
+            }
+            userBalance.setLocked(userBalance.getLocked().add(order.getAmount()));
+            userBalance.setAvailable(userBalance.getAvailable().subtract(order.getAmount()));
+            balanceRepository.save(userBalance);
+        }
+
         order.setIsAvailable(false);
         orderRepository.save(order);
         OrderResponse response = responseService.createResponse(order, user);

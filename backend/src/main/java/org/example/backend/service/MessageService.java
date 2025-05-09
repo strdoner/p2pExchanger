@@ -14,6 +14,7 @@ import org.example.backend.repository.MessageRepository;
 import org.example.backend.repository.OrderResponseRepository;
 import org.example.backend.repository.UserRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,8 +49,13 @@ public class MessageService {
 
     public MessageDTO createAndSendMessage(User user, MessageRequestDTO messageRequestDTO) {
         if (!Objects.equals(user.getId(), messageRequestDTO.getSenderId())) {
-            return null;
+            throw new AccessDeniedException("Sender ID doesn't match authenticated user");
         }
+
+        if (messageRequestDTO.getSenderId().equals(messageRequestDTO.getRecipientId())) {
+            throw new IllegalArgumentException("Cannot send message to yourself");
+        }
+
         OrderResponse orderResponse = orderResponseRepository.findById(messageRequestDTO.getOrderResponseId()).orElseThrow(
                 EntityNotFoundException::new
         );
@@ -71,10 +77,11 @@ public class MessageService {
         MessageDTO messageDTO = new MessageDTO(message);
         System.out.printf("Sending message to user %d via WebSocket", message.getRecipient().getId());
         messagingTemplate.convertAndSendToUser(
-                messageDTO.getRecipientId().toString(),
+                userRepository.getReferenceById(messageDTO.getRecipientId()).getUsername(),
                 "/queue/messages",
                 messageDTO
         );
+
         return messageDTO;
     }
 

@@ -47,7 +47,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/registration", "/auth/login", "auth/me").permitAll()
+                        .requestMatchers("/auth/registration", "/auth/login", "auth/me", "/ws/**").permitAll()
 
                         .requestMatchers(
                                 "/orders/**",
@@ -69,7 +69,7 @@ public class SecurityConfig {
                                     new ClearSiteDataHeaderWriter(ClearSiteDataHeaderWriter.Directive.COOKIES)
                             )
                     );
-                    logout.deleteCookies("JSESSIONID");
+                    logout.deleteCookies("SESSION");
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider);

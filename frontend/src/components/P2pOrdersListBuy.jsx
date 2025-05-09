@@ -29,9 +29,15 @@ const P2pOrdersListBuy = () => {
                 console.error("Failed to fetch orders:", error);
             }
         };
+        const timer = setInterval(fetchOrders, 4000);
 
         fetchOrders();
+        return () => {
+            clearInterval(timer);
+        };
     }, [searchParams, store]);
+
+
 
     if (store.isLoading) {
         return (

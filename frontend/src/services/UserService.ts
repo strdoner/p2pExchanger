@@ -36,4 +36,12 @@ export default class UserService {
     static async getResponseMessages(responseId: number): Promise<AxiosResponse<OrdersResponse>> {
         return $api.get(`/messages/response/${responseId}`)
     }
+
+    static async getUserBalances(): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.get(`users/balances`)
+    }
+
+    static async deposit(balance: object): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.post(`/users/balances`, balance)
+    }
 }

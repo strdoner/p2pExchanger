@@ -46,7 +46,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "FROM Order o " +
             "LEFT JOIN OrderResponse r ON r.order = o " +  // Просто LEFT JOIN без доп. условий
             "WHERE (o.maker.id = :userId OR r.taker.id = :userId) " +
-            "AND (:currency IS NULL OR o.currency.name = :currency) " +
+            "AND (:currency IS NULL OR o.currency.shortName = :currency) " +
             "AND (:type IS NULL OR o.type = :type) " +
             "AND (:status IS NULL OR " +
             "   (r IS NULL AND :status = 'PENDING') OR " +  // Фильтр по PENDING
@@ -63,7 +63,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     SELECT o FROM Order o 
     WHERE o.isAvailable = true 
     AND (:method IS NULL OR o.paymentMethod.bank.name = :method)
-    AND o.currency.name = :coin 
+    AND o.currency.shortName = :coin 
     AND (
         (:type = 'BUY' AND ((o.maker != :currentUser AND o.type = 'SELL') OR (o.maker = :currentUser AND o.type = 'BUY')))
         OR

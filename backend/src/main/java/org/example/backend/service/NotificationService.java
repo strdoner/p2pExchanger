@@ -34,7 +34,7 @@ public class NotificationService {
         notificationRepository.save(notification);
         System.out.printf("Sending notification to user %d via WebSocket", notification.getUser().getId());
         messagingTemplate.convertAndSendToUser(
-                notificationDTO.getUser().getId().toString(),
+                notificationDTO.getUser().getUsername(),
                 "/queue/notifications",
                 notification
         );

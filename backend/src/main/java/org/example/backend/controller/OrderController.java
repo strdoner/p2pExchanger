@@ -55,7 +55,11 @@ public class OrderController {
             @RequestBody OrderRequestDTO orderDTO,
             @AuthenticationPrincipal User user
     ) {
-        orderService.create(orderDTO, user);
+        try {
+            orderService.create(orderDTO, user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

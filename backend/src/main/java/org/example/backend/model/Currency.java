@@ -10,4 +10,5 @@ public class Currency {
     @Id
     private Integer id;
     private String name;
+    private String shortName;
 }

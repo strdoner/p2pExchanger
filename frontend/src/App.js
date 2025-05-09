@@ -16,6 +16,7 @@ import {Context} from "./index";
 import {observer} from "mobx-react-lite";
 import ResponseDetails from "./pages/response-details";
 import {connect} from "./websocket/connection";
+import WalletPage from "./pages/wallet-page";
 
 function App() {
     const {store} = useContext(Context)
@@ -52,6 +53,7 @@ function App() {
                     <Route path="sell" element={<P2pOrdersListSell/>}/>
                 </Route>
                 <Route path='orders-history' element={<OrdersHistory/>}/>
+                <Route path='wallet' element={<WalletPage/>}/>
                 <Route path='/response/:responseId' element={<ResponseDetails/>}/>
                 {/* <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} /> */}

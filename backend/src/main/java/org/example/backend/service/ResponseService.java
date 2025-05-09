@@ -10,7 +10,9 @@ import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
+import org.example.backend.model.user.Balance;
 import org.example.backend.model.user.User;
+import org.example.backend.repository.BalanceRepository;
 import org.example.backend.repository.OrderRepository;
 import org.example.backend.repository.OrderResponseRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -32,6 +34,7 @@ public class ResponseService {
     private final OrderResponseRepository orderResponseRepository;
     private final OrderRepository orderRepository;
     private final NotificationService notificationService;
+    private final BalanceRepository balanceRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -52,6 +55,14 @@ public class ResponseService {
 
         if (response.getStatus() == from) {
             response.setStatus(to);
+            orderResponseRepository.save(response);
+            if (to == OrderStatus.CANCELLED) {
+                Order order = response.getOrder();
+                order.setIsAvailable(true);
+                unlockCurrency(response);
+
+                orderRepository.save(order);
+            }
             notifyAboutStatusChanging(response, response.getTaker());
             notifyAboutStatusChanging(response, response.getOrder().getMaker());
         }
@@ -65,7 +76,6 @@ public class ResponseService {
         response.setStatus(OrderStatus.ACTIVE);
         OrderResponse saved = orderResponseRepository.save(response);
         notifyAboutStatusChanging(saved, order.getMaker());
-        notifyAboutStatusChanging(saved, saved.getTaker());
         scheduleOrderHandling(saved.getId(), OrderStatus.ACTIVE, OrderStatus.CANCELLED);
         return saved;
     }
@@ -90,7 +100,7 @@ public class ResponseService {
         responseWebSocketDTO.setStatus(response.getStatus().toString());
         responseWebSocketDTO.setStatusChangingTime(response.getStatusChangingTime());
         messagingTemplate.convertAndSendToUser(
-                notification.getUser().getId().toString(),
+                notification.getUser().getUsername(),
                 "/queue/responses",
                 responseWebSocketDTO
         );
@@ -122,6 +132,7 @@ public class ResponseService {
             response.setStatus(OrderStatus.CANCELLED);
             response.setStatusChangingTime(LocalDateTime.now());
             orderResponseRepository.save(response);
+            unlockCurrency(response);
             notifyAboutStatusChanging(response, response.getTaker());
             notifyAboutStatusChanging(response, response.getOrder().getMaker());
             return response;
@@ -142,7 +153,7 @@ public class ResponseService {
             response.setStatus(OrderStatus.COMPLETED);
             response.setStatusChangingTime(LocalDateTime.now());
             orderResponseRepository.save(response);
-
+            unlockCurrency(response);
             notifyAboutStatusChanging(response, response.getTaker());
             notifyAboutStatusChanging(response, response.getOrder().getMaker());
 
@@ -151,6 +162,22 @@ public class ResponseService {
         else {
             return null;
         }
+    }
+
+    public void unlockCurrency(OrderResponse response) {
+        User user;
+        if (response.getOrder().getType() == OrderType.BUY) {
+            user = response.getTaker();
+        }
+        else {
+            user = response.getOrder().getMaker();
+        }
+        Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, response.getOrder().getCurrency());
+        userBalance.setLocked(userBalance.getLocked().subtract(response.getOrder().getAmount()));
+        if (response.getStatus() == OrderStatus.CANCELLED) {
+            userBalance.setAvailable(userBalance.getAvailable().add(response.getOrder().getAmount()));
+        }
+        balanceRepository.save(userBalance);
     }
 
     public OrderResponse confirmResponse(Long id, User user) {

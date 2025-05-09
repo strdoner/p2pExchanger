@@ -2,7 +2,7 @@ import {observer} from 'mobx-react-lite'
 import ToggleTheme from '../ToggleTheme/ToggleTheme'
 import {ThemeContext, themes} from '../../contexts/ThemeContext'
 import {Link} from 'react-router-dom'
-import {useContext, useEffect, useMemo, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import {Context} from "../../index";
 import NotificationList from "../NotificationList";
 import {useSubscription} from "../../websocket/hooks";
@@ -28,7 +28,7 @@ function Navbar() {
         }
     }, [store.isAuth]);
 
-    useSubscription(`/user/${store.id}/queue/notifications`, (msg) => {
+    useSubscription(`/user/queue/notifications`, (msg) => {
         try {
 
             setNotifications(prev => [...prev, msg]);
@@ -62,11 +62,11 @@ function Navbar() {
                                 <Link className="nav-link" to="/orders-history">Мои сделки</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="#">Кошелек</Link>
+                                <Link className="nav-link" to="/wallet">Кошелек</Link>
                             </li>
                         </ul>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <div className="d-flex">
+                            <div className="d-flex justify-content-center align-items-center">
 
                                 <li className="nav-item">
                                     <ThemeContext.Consumer>
@@ -116,8 +116,11 @@ function Navbar() {
                                 {store.isAuth
                                     ?
                                     (
-                                        <a className="nav-link d-flex username-link">
-                                            <i className="bi bi-person-fill me-1"></i>
+                                        <a className="nav-link d-flex username-link justify-content-center align-items-center">
+                                            <div className="rounded-circle bg-secondary me-1 d-flex align-items-center justify-content-center"
+                                                 style={{ width: '30px', height: '30px'}}>
+                                                <p className="m-0 p-0 mb-1 text-white">{store.username.charAt(0)}</p>
+                                            </div>
                                             <p className="m-0">{store.username}</p>
                                             <i className="bi bi-box-arrow-right ms-2 danger-color" onClick={() => {
                                                 store.logoutUser();

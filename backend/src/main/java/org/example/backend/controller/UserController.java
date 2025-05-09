@@ -1,11 +1,12 @@
 package org.example.backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.backend.DTO.OrderResponseDTO;
-import org.example.backend.DTO.OrderWithStatusDTO;
-import org.example.backend.DTO.UserOrderDTO;
+import org.apache.coyote.Response;
+import org.example.backend.DTO.*;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
+import org.example.backend.model.user.User;
+import org.example.backend.service.BalanceService;
 import org.example.backend.service.OrderService;
 import org.example.backend.service.UserService;
 import org.hibernate.annotations.Parameter;
@@ -14,8 +15,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -25,6 +28,7 @@ public class UserController {
 
     private final OrderService orderService;
     private final UserService userService;
+    private final BalanceService balanceService;
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<Page<OrderWithStatusDTO>> getUserOrders(
@@ -50,5 +54,23 @@ public class UserController {
             userInfo = userService.getMinInfo(userId);
         }
         return new ResponseEntity<>(userInfo, HttpStatus.OK);
+    }
+
+    @GetMapping("/balances")
+    public ResponseEntity<?> getUserBalances(
+            @AuthenticationPrincipal User user
+    ) {
+        List<BalanceDTO> balances = balanceService.getUserBalances(user);
+        return new ResponseEntity<>(balances, HttpStatus.OK);
+    }
+
+    @PostMapping("/balances")
+    public ResponseEntity<?> createDeposit(
+            @AuthenticationPrincipal User user,
+            @RequestBody BalanceRequestDTO dto
+    ) {
+        balanceService.createDeposit(user, dto);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

@@ -50,13 +50,13 @@ const ResponseDetails = () => {
     }, [responseId, navigate]);
 
     const calculateTimeLeft = (now, statusChangingArray) => {
-        // Деструктурируем массив [год, месяц, день, часы, минуты, секунды]
+        if (statusChangingArray === null) {
+            return
+        }
         const [year, month, day, hours, minutes, seconds] = statusChangingArray;
 
-        // Создаем объект Date (месяцы в JS начинаются с 0)
         const statusTime = new Date(year, month - 1, day, hours, minutes, seconds);
 
-        // Проверяем валидность даты
         if (isNaN(statusTime.getTime())) {
             console.error('Invalid date from array:', statusChangingArray);
             return 0;
@@ -67,7 +67,7 @@ const ResponseDetails = () => {
         return Math.max(0, totalTime - timePassed); // не меньше 0
     };
 
-    useSubscription(`/user/${store.id}/queue/responses`, (msg) => {
+    useSubscription(`/user/queue/responses`, (msg) => {
         try {
 
             if (msg.id === Number(responseId)) {

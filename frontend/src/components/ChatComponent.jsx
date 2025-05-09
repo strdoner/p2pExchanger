@@ -35,7 +35,8 @@ const ChatComponent = ({contragent}) => {
         scrollToBottom();
     }, [chatMessages]);
 
-    useSubscription(`/user/${store.id}/queue/messages`, (msg) => {
+    useSubscription(`/user/queue/messages`, (msg) => {
+
         try {
             console.log(msg)
             if (msg.orderResponseId === Number(responseId)) {
@@ -107,7 +108,7 @@ const ChatComponent = ({contragent}) => {
 
                                 >
                                     {/* Header with username and time */}
-                                    <div className="d-flex justify-content-between align-items-center small mb-2">
+                                    <div className={`d-flex justify-content-between align-items-center small mb-2`}>
                                       <span className={`fw-bold ${msg.senderId === store.id ? 'text-white' : 'text-color'}`}>
                                         {msg.senderId === store.id ? 'Вы' : contragent.username}
                                       </span>

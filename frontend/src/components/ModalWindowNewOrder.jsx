@@ -37,17 +37,14 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
 
             }
             else {
-                setErrors({...errors, server: er.error.error})
-                console.log("error while creating order: " + er.error.error)
+                setErrors({...errors, amount: er.error})
+                console.log("error while creating order: " + er.error)
             }
         })
     }
 
     const isValid = (order) => {
-        if (order.amount > 1000) {
-            setErrors({...errors, amount: "Недостаточно валюты"})
-            return false
-        }
+
         if (order.paymentDetails > 500) {
             setErrors({...errors, paymentsDetails: "Комментарий слишком длинный. Максимальная длина - 500 символов"})
             return false
