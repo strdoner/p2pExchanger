@@ -4,7 +4,7 @@ Stack:
 - Spring
 - React
 
-**** This is a learning project that cannot be used in production. ****
+** This is a learning project that cannot be used in production. **
 
 - Realised auth via sessions using Spring Security
 - Realised orders system with statuses of them, like: Active, Disputed, Cancelled...
