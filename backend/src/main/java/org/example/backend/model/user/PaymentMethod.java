@@ -1,67 +1,33 @@
 package org.example.backend.model.user;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.backend.utils.AESUtils;
 
 @Entity
-
+@Data
 @Table(name = "payment_method")
 @NoArgsConstructor
 public class PaymentMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     private User user;
+    private String cardHolderName;
 
     @ManyToOne
     private Bank bank;
 
-    @Column(nullable = true)
-    private String customBankName;
+    private String LastFour;
 
     private String encryptedDetails;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Bank getBank() {
-        return bank;
-    }
-
-    public void setBank(Bank bank) {
-        this.bank = bank;
-    }
-
-    public String getCustomBankName() {
-        return customBankName;
-    }
-
-    public void setCustomBankName(String customBankName) {
-        this.customBankName = customBankName;
-    }
-
-    public String getEncryptedDetails() {
-        return encryptedDetails;
-    }
-
-    public void setEncryptedDetails(String encryptedDetails) {
-        this.encryptedDetails = encryptedDetails;
+    public void setEncryptedDetails(String encryptedDetails) throws Exception {
+        this.encryptedDetails = AESUtils.encrypt(encryptedDetails);
     }
 }

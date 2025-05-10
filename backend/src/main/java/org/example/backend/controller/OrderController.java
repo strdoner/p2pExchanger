@@ -36,7 +36,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderResponseDTO>> getAllOrders(
+    public ResponseEntity<Page<OrderResponseDTO >> getAllOrders(
             @RequestParam(defaultValue = "USDT") String coin,
             @RequestParam(required = false) String method,
             @RequestParam(defaultValue = "BUY") String type,
@@ -66,7 +66,7 @@ public class OrderController {
     @PostMapping("/accept/{id}")
     public ResponseEntity<?> acceptOrder(
             @PathVariable Long id
-    ) {
+    ) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(auth.getPrincipal());
         User user = (User) auth.getPrincipal();

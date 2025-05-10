@@ -132,7 +132,7 @@ public class OrderService {
         );
     }
 
-    public OrderDetailsDTO createResponse(Long orderId, User user) {
+    public OrderDetailsDTO createResponse(Long orderId, User user) throws Exception {
         Order order = read(orderId);
         if (order.getType() == OrderType.BUY) {
             Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, order.getCurrency());

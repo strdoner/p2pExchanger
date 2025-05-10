@@ -2,6 +2,7 @@ import {makeAutoObservable} from "mobx"
 import axios from "axios";
 // @ts-ignore
 import UserService from "../services/UserService.ts";
+import PaymentMethodsService from "../services/PaymentMethodsService.ts";
 // @ts-ignore
 import AuthService from "../services/AuthService.ts";
 import OrderResponseService from "../services/OrderResponseService.ts";
@@ -173,6 +174,28 @@ export default class Store {
     async getUserMinInfo(userId: number) {
         try {
             const response = await UserService.getUserMinInfo(userId)
+            console.log(response.data)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getFullUserInfo(userId: number) {
+        try {
+            const response = await UserService.getFullUserInfo(userId)
             console.log(response.data)
             // @ts-ignore
             return {success: true, content: response.data};
@@ -411,6 +434,48 @@ export default class Store {
     async createDeposit(balance: object) {
         try {
             const response = await UserService.deposit(balance)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async createPaymentMethod(method: object) {
+        try {
+            const response = await PaymentMethodsService.createPaymentMethod(method);
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getPaymentMethods() {
+        try {
+            const response = await PaymentMethodsService.getPaymentMethods();
             // @ts-ignore
             return {success: true, content: response.data};
         } catch (e) {

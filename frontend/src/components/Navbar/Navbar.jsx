@@ -88,7 +88,7 @@ function Navbar() {
                                             <NotificationsIcon listNotifications={listNotifications}
                                                                setListNotifications={setListNotifications}/>
                                             <li className="nav-item ms-2 ms-md-0">
-                                                <a className="nav-link">
+                                                <div className="nav-link">
                                                     <i className="bi bi-chat-fill position-relative">
                                                         {isNotifications
                                                             ? (
@@ -102,7 +102,7 @@ function Navbar() {
                                                             <></>
                                                         }
                                                     </i>
-                                                </a>
+                                                </div>
                                             </li>
                                         </div>
                                     )
@@ -116,17 +116,17 @@ function Navbar() {
                                 {store.isAuth
                                     ?
                                     (
-                                        <a className="nav-link d-flex username-link justify-content-center align-items-center">
+                                        <div className="nav-link d-flex username-link justify-content-center align-items-center">
                                             <div className="rounded-circle bg-secondary me-1 d-flex align-items-center justify-content-center"
                                                  style={{ width: '30px', height: '30px'}}>
                                                 <p className="m-0 p-0 mb-1 text-white">{store.username.charAt(0)}</p>
                                             </div>
-                                            <p className="m-0">{store.username}</p>
+                                            <Link to={`/user/${store.id}`} className="m-0">{store.username}</Link>
                                             <i className="bi bi-box-arrow-right ms-2 danger-color" onClick={() => {
                                                 store.logoutUser();
                                                 store.setAuth(false)
                                             }}></i>
-                                        </a>
+                                        </div>
 
                                     )
                                     :

@@ -615,6 +615,11 @@ input, select, textarea {
   color: var(--text-color) !important;
 }
 
+input[type="checkbox"]:checked {
+  background: var(--main-accent-color) !important;
+  accent-color: #C56FFF;
+}
+
 
 
 option:hover {
@@ -846,4 +851,23 @@ input::placeholder, textarea::placeholder {
 .bnb-bg {
   background-color: #f0b90b;
   color: #f0b90b;
+}
+
+.profile-header {
+  .border {
+    border-color: var(--table-separator) !important;
+    border-radius: 10px;
+    background-color: var(--second-background-color);
+
+    h4 {
+      padding: 0;
+      margin: 0;
+    }
+
+  }
+}
+
+.payment__method-item {
+  background-color: var(--second-background-color);
+  border-top: 1px solid var(--table-separator) !important;
 }

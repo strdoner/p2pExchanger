@@ -27,7 +27,7 @@ public class ResponseController {
     public ResponseEntity<?> getResponseById(
             @PathVariable Long id,
             @AuthenticationPrincipal User user
-    ) {
+    ) throws Exception {
         OrderResponse response = responseService.read(user, id);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

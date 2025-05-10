@@ -112,7 +112,7 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
                                 justifyContent: 'center'
                             }}
                         >
-                                            <span className="fw-bold text-white">
+                                            <span className={`fw-bold ${response.paymentMethod.bank.color !== "yellow" ? "text-white": ""}`}>
                                                 {response.paymentMethod.bank.name.charAt(0)}
                                             </span>
                         </div>

@@ -3,8 +3,11 @@ package org.example.backend.service;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.backend.DTO.EncryptedPaymentMethodDTO;
+import org.example.backend.DTO.FullUserInfoDTO;
 import org.example.backend.DTO.UserOrderDTO;
 import org.example.backend.model.order.OrderStatus;
+import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.Role;
 import org.example.backend.model.user.User;
 import org.example.backend.repository.OrderRepository;
@@ -17,6 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,7 +32,7 @@ public class UserService implements UserDetailsService {
 
 
     private final RoleRepository roleRepository;
-
+    private final PaymentMethodService paymentMethodService;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final OrderRepository orderRepository;
     private final OrderResponseRepository orderResponseRepository;
@@ -101,4 +106,26 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public FullUserInfoDTO getMaxInfo(User authUser, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                EntityNotFoundException::new
+        );
+
+        long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
+        long completedBuyOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY);
+        long completedSellOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL);
+        long completedMakerOrders = completedBuyOrders + completedSellOrders;
+        Long completionPercentage = totalMakerOrders > 0
+                ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)
+                : 0;
+
+        List<EncryptedPaymentMethodDTO> paymentMethods = null;
+        if (Objects.equals(authUser.getId(), userId)) {
+            paymentMethods = paymentMethodService.getEncryptedPaymentMethods(authUser);
+        }
+
+        return new FullUserInfoDTO(user, totalMakerOrders, completedBuyOrders, completedSellOrders, completionPercentage, paymentMethods);
+
+
+    }
 }

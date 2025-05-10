@@ -47,13 +47,18 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserInfo(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "min") String info
+            @RequestParam(defaultValue = "min") String info,
+            @AuthenticationPrincipal User user
     ) {
-        UserOrderDTO userInfo = null;
         if (Objects.equals(info, "min")) {
-            userInfo = userService.getMinInfo(userId);
+            UserOrderDTO userInfo = userService.getMinInfo(userId);
+            return new ResponseEntity<>(userInfo, HttpStatus.OK);
         }
-        return new ResponseEntity<>(userInfo, HttpStatus.OK);
+
+        else {
+            FullUserInfoDTO userInfo = userService.getMaxInfo(user, userId);
+            return new ResponseEntity<>(userInfo, HttpStatus.OK);
+        }
     }
 
     @GetMapping("/balances")

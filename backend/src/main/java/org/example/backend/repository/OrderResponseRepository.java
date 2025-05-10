@@ -3,6 +3,7 @@ package org.example.backend.repository;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
+import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,6 +16,7 @@ public interface OrderResponseRepository extends JpaRepository<OrderResponse, Lo
 
     Long countByTakerAndStatus(User taker, OrderStatus status);
     Long countByOrder_MakerAndStatus(User user, OrderStatus status);
+    Long countByOrder_MakerAndStatusAndOrder_Type(User user, OrderStatus status, OrderType type);
 
     Long countByOrder_Maker(User maker);
 }

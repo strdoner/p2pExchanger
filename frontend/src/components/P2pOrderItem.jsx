@@ -22,7 +22,7 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
             </th>
             <th>
                 <div className='order__volume placeholder-glow'>
-                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{`${placeholder ? "2333" : order.amount} ${placeholder ? "" : order.currency.name}`}</p>
+                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{`${placeholder ? "2333" : order.amount} ${placeholder ? "" : order.currency.shortName}`}</p>
                 </div>
             </th>
             <th className='placeholder-glow'>

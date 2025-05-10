@@ -6,6 +6,7 @@ import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 import CustomSelect from "./CustomSelect/CustomSelect";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
+import PaymentMethodSelect from "./CustomSelect/PaymentMethodSelect";
 
 function ModalWindowNewOrder({modalShow,setModalShow, action}) {
     const navigate = useNavigate()
@@ -16,14 +17,26 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
     const [isLoading, setIsLoading] = useState(false)
     const [order, setOrder] = useState({currency:"USDT", price:200, amount: 2000, paymentMethodId: 1, paymentDetails:""})
     const [coin, setCoin] = useState("USDT")
-    const [paymentsMethod, setPaymentMethod] = useState("Сбербанк")
+    const [paymentMethods, setPaymentMethods] = useState("Сбербанк")
+    const [paymentMethod, setPaymentMethod] = useState()
     const [errors, setErrors] = useState({})
 
     useEffect(() => {
-        setOrder({...order, currency: coin, paymentMethodId: 1})
-    }, [coin, paymentsMethod]);
+        setOrder({...order, currency: coin, paymentMethodId: paymentMethod})
+    }, [coin, paymentMethods, paymentMethod]);
+
+    useEffect(() => {
+        const response = store.getPaymentMethods()
+        response.then(paymentMethod => {
+            if (paymentMethod.success) {
+                console.log(paymentMethod.content)
+                setPaymentMethods(paymentMethod.content)
+            }
+        })
+    }, []);
 
     const createOrderHandler = () => {
+        console.log(paymentMethod)
         setErrors(null)
         if (!isValid(order)) {
             return;
@@ -34,7 +47,7 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
             setIsLoading(false)
             if (er.success) {
                 console.log(er)
-
+                handleClose()
             }
             else {
                 setErrors({...errors, amount: er.error})
@@ -58,17 +71,8 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
         {label:"ETH", value:"3", name:"ETH"},
         {label:"BTC", value:"4", name:"BTC"},
         {label:"BNB", value:"5", name:"BNB"},
-
     ]
 
-    var paymentsMethods = [
-        {label:"Сбербанк", value:"2", name:"Сбербанк"},
-        {label:"Т-Банк", value:"3", name:"Т-Банк"},
-        {label:"АльфаБанк", value:"4", name:"АльфаБанк"},
-        {label:"Райффайзен", value:"5", name:"Райффайзен"},
-        {label:"ВТБ", value:"6", name:"ВТБ"},
-
-    ]
 
     return (
         <>
@@ -127,7 +131,7 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentMethod" className="form-label">Способ оплаты</label>
-                            <CustomFormSelect options={paymentsMethods} size={"full"} setOption={setPaymentMethod} initialValue={paymentsMethod}/>
+                            <PaymentMethodSelect setOption={setPaymentMethod} options={paymentMethods} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentDetails" className="form-label">Реквизиты/Комментарий</label>

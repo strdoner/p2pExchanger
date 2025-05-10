@@ -25,7 +25,7 @@ public class OrderDetailsDTO {
     private LocalDateTime statusChangingTime;
 
 
-    public OrderDetailsDTO(OrderResponse response) {
+    public OrderDetailsDTO(OrderResponse response) throws Exception {
         this.setStatusChangingTime(response.getStatusChangingTime());
         this.setOrderId(response.getOrder().getId());
         this.setResponseId(response.getId());
