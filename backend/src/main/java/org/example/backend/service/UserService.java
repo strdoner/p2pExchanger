@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.EncryptedPaymentMethodDTO;
 import org.example.backend.DTO.FullUserInfoDTO;
 import org.example.backend.DTO.UserOrderDTO;
+import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.Role;
@@ -112,8 +113,10 @@ public class UserService implements UserDetailsService {
         );
 
         long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
-        long completedBuyOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY);
-        long completedSellOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL);
+        long completedBuyOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY)
+                + orderResponseRepository.countByTakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY);
+        long completedSellOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL)
+                + orderResponseRepository.countByTakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL);
         long completedMakerOrders = completedBuyOrders + completedSellOrders;
         Long completionPercentage = totalMakerOrders > 0
                 ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)

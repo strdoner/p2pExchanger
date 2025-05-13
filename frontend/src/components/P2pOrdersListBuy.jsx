@@ -38,7 +38,6 @@ const P2pOrdersListBuy = () => {
     }, [searchParams, store]);
 
 
-
     if (store.isLoading) {
         return (
             <table className='order__list'>
@@ -47,13 +46,21 @@ const P2pOrdersListBuy = () => {
 
                     <th>Пользователь</th>
                     <th>Цена</th>
-                    <th>Доступно|Лимиты</th>
+                    <th>Количество</th>
                     <th>Платежный метод</th>
                     <th>Действие</th>
                 </tr>
                 </thead>
                 <tbody>
-                <P2pOrderItem placeholder={true}/>
+                <tr>
+                    <td colSpan="5" className="text-center py-4">
+                        <div className="spinner-border" role="status">
+                            <span className="sr-only"></span>
+                        </div>
+                    </td>
+                </tr>
+
+                {/*<P2pOrderItem placeholder={true}/>*/}
                 </tbody>
             </table>
         );
@@ -81,7 +88,7 @@ const P2pOrdersListBuy = () => {
                     )
                     : (
                         <tr>
-                            <td colSpan="5" className="text-center py-4">
+                            <td colSpan="5" className="text-center py-4" style={{height: 20}}>
                                 Нет доступных ордеров
                             </td>
                         </tr>

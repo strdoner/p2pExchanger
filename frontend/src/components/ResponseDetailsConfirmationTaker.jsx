@@ -8,18 +8,17 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [timer, setTimer] = useState(responseTimer);
-    const { responseId } = useParams();
+    const {responseId} = useParams();
     const [isPaid, setIsPaid] = useState(false)
     const [isCancelling, setIsCancelling] = useState(false)
     const [contragent, setContragent] = useState(null)
 
     useEffect(() => {
         const ans = store.getUserMinInfo(response.maker.id)
-        ans.then(function(er) {
+        ans.then(function (er) {
             if (er.success) {
                 setContragent(er.content)
-            }
-            else {
+            } else {
                 console.log("some error: " + er.error)
             }
         })
@@ -27,11 +26,10 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
 
     const handleCancelOrder = () => {
         const response = store.cancelResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
-                navigate('/p2p-trade')
-            }
-            else {
+                navigate('/p2p-trade/buy?coin=USDT')
+            } else {
                 console.log("some errors")
             }
         })
@@ -54,16 +52,14 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
     };
 
 
-
     const handlePaymentConfirm = () => {
         const response = store.confirmResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
                 setIsPaid(true)
                 statusHandler("CONFIRMED")
                 console.log("confirmed")
-            }
-            else {
+            } else {
                 console.log("some errors")
             }
         })
@@ -93,7 +89,6 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
                 </div>
 
 
-
                 <div className="mb-3">
                     <h6>Детали сделки</h6>
                     <div className="d-flex justify-content-between mb-2">
@@ -119,15 +114,18 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
                 <div className="border-top pt-3">
                     <h6>Продавец</h6>
                     <div className="d-flex align-items-center mb-3">
-                        <div className="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center"
-                             style={{ width: '40px', height: '40px' }}>
+                        <div
+                            className="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center"
+                            style={{width: '40px', height: '40px'}}>
                             <i className="bi bi-person-fill text-white fs-5"></i>
                         </div>
                         <div className={"placeholder-glow"}>
-                            <div className={`fw-bold ${contragent !== null ? "" : "placeholder"}`}>{contragent !== null ? contragent.username : "username"}</div>
+                            <div
+                                className={`fw-bold ${contragent !== null ? "" : "placeholder"}`}>{contragent !== null ? contragent.username : "username"}</div>
                             <div></div>
                             <div className={`secondary-text-color small ${contragent !== null ? "" : "placeholder"}`}>
-                                {contragent !== null ? contragent.percentOrdersCompleted : "4"}% | {contragent !== null ? contragent.ordersCount : "122"} сделок
+                                {contragent !== null ? contragent.percentOrdersCompleted : "4"}%
+                                | {contragent !== null ? contragent.ordersCount : "122"} сделок
                             </div>
                         </div>
                     </div>
@@ -145,7 +143,8 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
 
                     <div className="alert alert-warning small">
                         <i className="bi bi-exclamation-triangle me-2"></i>
-                        <strong>Не закрывайте эту страницу!</strong> При возникновении проблем используйте чат с продавцом
+                        <strong>Не закрывайте эту страницу!</strong> При возникновении проблем используйте чат с
+                        продавцом
                     </div>
                 </div>
             </div>

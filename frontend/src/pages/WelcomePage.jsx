@@ -48,31 +48,22 @@ function WelcomePage() {
                         </div>
                     </div>
 
-                    <div className='preferences_comissions row justify-content-around'>
-                        <div className="col-4 text-center">
-                            <i className='bi-percent'></i>
-                        </div>
-                        <div className="col-4 text-end align-content-center">
-                            <h2>Низкие комиссии</h2>
-                            <p>Платите только за успешные сделки.</p>
-                        </div>
-                    </div>
                     <div className='preferences_fast row justify-content-around'>
-                        <div className="col-4 text-left align-content-center">
-                            <h2>Быстрые сделки</h2>
-                            <p>Выбирайте контрагентов с мгновенными платежами (СБП, карты).</p>
-                        </div>
                         <div className="col-4 text-center">
                             <i className='bi-rocket'></i>
                         </div>
+                        <div className="col-4 text-end align-content-center">
+                            <h2>Быстрые сделки</h2>
+                            <p>Выбирайте контрагентов с мгновенными платежами (СБП, карты).</p>
+                        </div>
                     </div>
                     <div className='preferences_truly_course row justify-content-around'>
-                        <div className="col-4 text-center">
-                            <i className='bi-eye'></i>
-                        </div>
-                        <div className="col-4 text-end align-content-center">
+                        <div className="col-4 text-left align-content-center">
                             <h2>Честный курс</h2>
                             <p>Свободное ценообразование без скрытых надбавок.</p>
+                        </div>
+                        <div className="col-4 text-center">
+                            <i className='bi-eye'></i>
                         </div>
                     </div>
                 </div>

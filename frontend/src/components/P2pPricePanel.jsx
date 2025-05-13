@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite';
-import React, {useState} from 'react';
+import {observer} from 'mobx-react-lite';
+import React from 'react';
 
 const P2pPricePanel = ({isOpen, onToggle}) => {
 

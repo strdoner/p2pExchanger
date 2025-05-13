@@ -1,23 +1,28 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, {useContext, useEffect, useState} from "react";
-import PaymentMethod from "./PaymentMethod";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
-import CustomSelect from "./CustomSelect/CustomSelect";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import PaymentMethodSelect from "./CustomSelect/PaymentMethodSelect";
 
-function ModalWindowNewOrder({modalShow,setModalShow, action}) {
+function ModalWindowNewOrder({modalShow, setModalShow, action}) {
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [isChoosen, setIsChoosen] = useState(false)
     const handleClose = () => setModalShow(false);
     const handleShow = () => setModalShow(true);
-    const [isLoading, setIsLoading] = useState(false)
-    const [order, setOrder] = useState({currency:"USDT", price:200, amount: 2000, paymentMethodId: 1, paymentDetails:""})
+    const [isOrderCreating, setIsOrderCreating] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const [order, setOrder] = useState({
+        currency: "USDT",
+        price: 200,
+        amount: 2000,
+        paymentMethodId: 1,
+        paymentDetails: ""
+    })
     const [coin, setCoin] = useState("USDT")
-    const [paymentMethods, setPaymentMethods] = useState("Сбербанк")
+    const [paymentMethods, setPaymentMethods] = useState([])
     const [paymentMethod, setPaymentMethod] = useState()
     const [errors, setErrors] = useState({})
 
@@ -26,11 +31,16 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
     }, [coin, paymentMethods, paymentMethod]);
 
     useEffect(() => {
+        setIsLoading(true)
         const response = store.getPaymentMethods()
         response.then(paymentMethod => {
+
+            setIsLoading(false)
             if (paymentMethod.success) {
                 console.log(paymentMethod.content)
                 setPaymentMethods(paymentMethod.content)
+            } else {
+                console.log("error")
             }
         })
     }, []);
@@ -41,15 +51,14 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
         if (!isValid(order)) {
             return;
         }
-        setIsLoading(true)
+        setIsOrderCreating(true)
         const response = store.createOrder({...order, type: action})
-        response.then(function(er) {
-            setIsLoading(false)
+        response.then(function (er) {
+            setIsOrderCreating(false)
             if (er.success) {
                 console.log(er)
                 handleClose()
-            }
-            else {
+            } else {
                 setErrors({...errors, amount: er.error})
                 console.log("error while creating order: " + er.error)
             }
@@ -66,11 +75,11 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
     }
 
     var coinsTo = [
-        {label:"USDT", value:"1", name:"USDT"},
-        {label:"USDC", value:"2", name:"USDC"},
-        {label:"ETH", value:"3", name:"ETH"},
-        {label:"BTC", value:"4", name:"BTC"},
-        {label:"BNB", value:"5", name:"BNB"},
+        {label: "USDT", value: "1", name: "USDT"},
+        {label: "USDC", value: "2", name: "USDC"},
+        {label: "ETH", value: "3", name: "ETH"},
+        {label: "BTC", value: "4", name: "BTC"},
+        {label: "BNB", value: "5", name: "BNB"},
     ]
 
 
@@ -131,7 +140,26 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentMethod" className="form-label">Способ оплаты</label>
-                            <PaymentMethodSelect setOption={setPaymentMethod} options={paymentMethods} />
+                            {!isLoading
+                                ? (
+                                    <>
+                                        {paymentMethods.length > 0
+                                            ?
+                                            (
+                                                <PaymentMethodSelect setOption={setPaymentMethod}
+                                                                     options={paymentMethods}/>
+                                            )
+                                            :
+                                            (
+                                                <div>Вы не добавили платежных методов</div>
+                                            )
+                                        }
+                                    </>
+                                )
+                                : (
+                                    <div className="">loading</div>
+                                )
+                            }
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentDetails" className="form-label">Реквизиты/Комментарий</label>
@@ -179,4 +207,5 @@ function ModalWindowNewOrder({modalShow,setModalShow, action}) {
         </>
     );
 }
+
 export default ModalWindowNewOrder;

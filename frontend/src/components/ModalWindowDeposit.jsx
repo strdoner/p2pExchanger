@@ -5,7 +5,7 @@ import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import Button from "react-bootstrap/Button";
 import {Context} from "../index";
 
-const ModalWindowDeposit = ({modalShow,setModalShow,getUserBalancesHandler}) => {
+const ModalWindowDeposit = ({modalShow, setModalShow, getUserBalancesHandler}) => {
     const {store} = useContext(Context)
     const [balance, setBalance] = React.useState({});
     const [coin, setCoin] = useState("USDT")
@@ -14,16 +14,16 @@ const ModalWindowDeposit = ({modalShow,setModalShow,getUserBalancesHandler}) => 
     const handleShow = () => setModalShow(true);
 
     var coinsTo = [
-        {label:"USDT", value:"1", name:"USDT"},
-        {label:"USDC", value:"2", name:"USDC"},
-        {label:"ETH", value:"3", name:"ETH"},
-        {label:"BTC", value:"4", name:"BTC"},
-        {label:"BNB", value:"5", name:"BNB"},
+        {label: "USDT", value: "1", name: "USDT"},
+        {label: "USDC", value: "2", name: "USDC"},
+        {label: "ETH", value: "3", name: "ETH"},
+        {label: "BTC", value: "4", name: "BTC"},
+        {label: "BNB", value: "5", name: "BNB"},
     ]
 
     const createDepositHandler = () => {
 
-        const response = store.createDeposit({currency:coin, ...balance})
+        const response = store.createDeposit({currency: coin, ...balance})
         response.then((er) => {
             if (er.success) {
                 console.log("deposited")
@@ -43,7 +43,7 @@ const ModalWindowDeposit = ({modalShow,setModalShow,getUserBalancesHandler}) => 
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        Депозит в казик
+                        Внести депозит
                     </Modal.Title>
                 </Modal.Header>
 
@@ -55,7 +55,7 @@ const ModalWindowDeposit = ({modalShow,setModalShow,getUserBalancesHandler}) => 
                         </div>
                         <div className="row mb-3">
                             <div className="col-md-6">
-                                <label htmlFor="price" className="form-label">Цена за 1 ед., RUB</label>
+                                <label htmlFor="price" className="form-label">Количество</label>
                                 <div className="input-group">
                                     <input
                                         type="number"
@@ -65,13 +65,13 @@ const ModalWindowDeposit = ({modalShow,setModalShow,getUserBalancesHandler}) => 
                                         step="0.01"
                                         onChange={(e) => setBalance({...balance, amount: e.target.value})}
                                     />
-                                    <span className="input-group-text">RUB</span>
+                                    <span className="input-group-text">{coin}</span>
                                 </div>
 
                             </div>
 
 
-                                <div className={"danger-color"}>{errors?.amount}</div>
+                            <div className={"danger-color"}>{errors?.amount}</div>
                         </div>
                         <div className={"danger-color"}>{errors?.server}</div>
                     </div>
@@ -87,7 +87,7 @@ const ModalWindowDeposit = ({modalShow,setModalShow,getUserBalancesHandler}) => 
                             variant={'primary'}
                             onClick={createDepositHandler}
                         >
-                            Депнуть
+                            Внести депозит
                         </Button>
                     </div>
                 </Modal.Footer>

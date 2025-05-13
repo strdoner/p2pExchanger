@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.BalanceDTO;
 import org.example.backend.DTO.BalanceRequestDTO;
 import org.example.backend.model.Currency;
+import org.example.backend.model.order.OrderResponse;
+import org.example.backend.model.order.OrderStatus;
+import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.Balance;
 import org.example.backend.model.user.User;
 import org.example.backend.repository.BalanceRepository;
@@ -56,4 +59,46 @@ public class BalanceService {
         balanceRepository.save(balance);
 
     }
+
+    public void lockCurrency(OrderResponse response) {
+        User userToSubtract;
+        if (response.getOrder().getType() == OrderType.BUY) {
+            userToSubtract = response.getTaker();
+        }
+        else {
+//            userToSubtract = response.getOrder().getMaker();
+            return;
+        }
+        Balance userBalanceToSubtract = balanceRepository.findBalanceByUserAndCurrency(userToSubtract, response.getOrder().getCurrency());
+        userBalanceToSubtract.setAvailable(userBalanceToSubtract.getAvailable().subtract(response.getOrder().getAmount()));
+        userBalanceToSubtract.setLocked(userBalanceToSubtract.getLocked().add(response.getOrder().getAmount()));
+
+        balanceRepository.save(userBalanceToSubtract);
+    }
+
+    public void unlockCurrency(OrderResponse response) {
+        User userToSubtract, userToAdd;
+        if (response.getOrder().getType() == OrderType.BUY) {
+            userToSubtract = response.getTaker();
+            userToAdd = response.getOrder().getMaker();
+        }
+        else {
+            userToSubtract = response.getOrder().getMaker();
+            userToAdd = response.getTaker();
+        }
+        Balance userBalanceToSubtract = balanceRepository.findBalanceByUserAndCurrency(userToSubtract, response.getOrder().getCurrency());
+        userBalanceToSubtract.setLocked(userBalanceToSubtract.getLocked().subtract(response.getOrder().getAmount()));
+        if (response.getStatus() == OrderStatus.CANCELLED) {
+            userBalanceToSubtract.setAvailable(userBalanceToSubtract.getAvailable().add(response.getOrder().getAmount()));
+        }
+        balanceRepository.save(userBalanceToSubtract);
+
+        if (response.getStatus() != OrderStatus.CANCELLED) {
+            Balance userBalanceToAdd = balanceRepository.findBalanceByUserAndCurrency(userToAdd, response.getOrder().getCurrency());
+            userBalanceToAdd.setAvailable(userBalanceToAdd.getAvailable().add(response.getOrder().getAmount()));
+            balanceRepository.save(userBalanceToAdd);
+        }
+
+    }
+
 }

@@ -25,14 +25,13 @@ import java.util.concurrent.ScheduledExecutorService;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final OrderResponseRepository orderResponseRepository;
     private final CurrencyRepository currencyRepository;
     private final UserService userService;
-    private final NotificationService notificationService;
     private final ResponseService responseService;
     private final BalanceRepository balanceRepository;
+
     public void create(OrderRequestDTO order, User user) {
         Currency orderCurrency = currencyRepository.findByShortName(order.getCurrency());
         Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, orderCurrency);
@@ -109,6 +108,7 @@ public class OrderService {
             }
             else if (Objects.equals(takerId, userId)) {
                 taker = order.getMaker();
+                order.setType(order.getType() == OrderType.BUY ? OrderType.SELL : OrderType.BUY);
             }
             else {
                 taker = userService.findUserById(takerId);
@@ -139,16 +139,19 @@ public class OrderService {
             if (userBalance.getAvailable().compareTo(order.getAmount()) < 0) {
                 throw new IllegalArgumentException("Недостаточно средств для отклика на объявление");
             }
-            userBalance.setLocked(userBalance.getLocked().add(order.getAmount()));
-            userBalance.setAvailable(userBalance.getAvailable().subtract(order.getAmount()));
-            balanceRepository.save(userBalance);
         }
 
         order.setIsAvailable(false);
         orderRepository.save(order);
+
         OrderResponse response = responseService.createResponse(order, user);
 
         return new OrderDetailsDTO(response);
+    }
+
+    public void makeOrderAvailable(Order order) {
+        order.setIsAvailable(true);
+        orderRepository.save(order);
     }
 
 

@@ -1,12 +1,14 @@
 import {observer} from 'mobx-react-lite'
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link, Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import Footer from '../components/Footer/Footer'
 import CustomSelect from '../components/CustomSelect/CustomSelect'
 import P2pPricePanel from '../components/P2pPricePanel'
 import ModalWindowNewOrder from "../components/ModalWindowNewOrder";
+import {Context} from "../index";
 
 function P2pTrade() {
+    const {store} = useContext(Context)
     const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams();
     const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -84,8 +86,17 @@ function P2pTrade() {
                                 <button className={`select-button ${isPanelOpen ? "hidden" : ""} me-3`}
                                         onClick={IsPanelOpenHandler}><i
                                     className="bi bi-graph-up"></i></button>
-                                <button className='select-button' onClick={createOrderHandler}><i
-                                    className="bi bi-plus-lg"></i></button>
+                                {store.id > 0
+                                    ? (
+                                        <button className='select-button' onClick={createOrderHandler}><i
+                                            className="bi bi-plus-lg"></i></button>
+                                    )
+                                    : (
+                                        <></>
+                                    )
+
+                                }
+
                             </div>
 
                         </div>

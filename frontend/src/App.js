@@ -18,6 +18,7 @@ import ResponseDetails from "./pages/response-details";
 import {connect} from "./websocket/connection";
 import WalletPage from "./pages/wallet-page";
 import UserProfile from "./pages/user-profile";
+import PrivateRoute from "./pages/PrivateRoute";
 
 function App() {
     const {store} = useContext(Context)
@@ -53,10 +54,18 @@ function App() {
                     <Route path="buy" element={<P2pOrdersListBuy/>}/>
                     <Route path="sell" element={<P2pOrdersListSell/>}/>
                 </Route>
-                <Route path='orders-history' element={<OrdersHistory/>}/>
-                <Route path='wallet' element={<WalletPage/>}/>
-                <Route path='/response/:responseId' element={<ResponseDetails/>}/>
                 <Route path='/user/:userId' element={<UserProfile/>}/>
+                <Route path="/wallet" element={<PrivateRoute/>}>
+                    <Route path="" element={<WalletPage/>}/>
+                </Route>
+
+                <Route path="/response/:responseId" element={<PrivateRoute/>}>
+                    <Route path="" element={<ResponseDetails/>}/>
+                </Route>
+
+                <Route path="orders-history" element={<PrivateRoute/>}>
+                    <Route path="" element={<OrdersHistory/>}/>
+                </Route>
                 {/* <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} /> */}
                 {/* <Route path="*" element={<Page404 />} /> */}
