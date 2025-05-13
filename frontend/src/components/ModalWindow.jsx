@@ -5,7 +5,7 @@ import PaymentMethod from "./PaymentMethod";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 
-function ModalWindow({modalShow,setModalShow, action, order}) {
+function ModalWindow({modalShow, setModalShow, action, order}) {
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [isChoosen, setIsChoosen] = useState(false)
@@ -16,22 +16,20 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
     useEffect(() => {
         if (order !== null) {
             setIsChoosen(true)
-        }
-        else {
+        } else {
             setIsChoosen(false)
         }
     }, []);
 
     const createResponseHandler = () => {
         setIsLoading(true)
-        const response = store.createResponse(order.id)
-        response.then(function(er) {
+        const response = store.acceptResponse(order.id)
+        response.then(function (er) {
             setIsLoading(false)
             if (er.success) {
                 console.log(er)
                 navigate(`/response/${er.responseId}`)
-            }
-            else {
+            } else {
                 console.log("some error: " + er.error)
             }
         })
@@ -89,24 +87,27 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                             <div className="d-flex justify-content-between mb-3">
                                 <span className="text-color">Способ оплаты:</span>
                                 <span className="fw-bold">
-                                    {isChoosen ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={isChoosen ? "" : order?.paymentMethod?.name} color={order?.paymentMethod?.color} className={isChoosen ? "placeholder" : ""}/>}
+                                    {isChoosen ? <div className='placeholder p-2 w-100'></div> :
+                                        <PaymentMethod name={isChoosen ? "" : order?.paymentMethod?.name}
+                                                       color={order?.paymentMethod?.color}
+                                                       className={isChoosen ? "placeholder" : ""}/>}
                                     {/*{order?.paymentMethod.name} ({order?.paymentDetails.slice(-4)})*/}
                                 </span>
                             </div>
                         </div>
                         {action === 'BUY' ? (
-                            <div className="alert alert-warning mt-3">
-                                <div className="d-flex align-items-center">
-                                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <span>Продавец ожидает оплату в течение 15 минут</span>
+                                <div className="alert alert-warning mt-3">
+                                    <div className="d-flex align-items-center">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Продавец ожидает оплату в течение 15 минут</span>
+                                    </div>
+                                    <div className="d-flex align-items-center mt-2">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Переводите только на указанные реквизиты</span>
+                                    </div>
                                 </div>
-                                <div className="d-flex align-items-center mt-2">
-                                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <span>Переводите только на указанные реквизиты</span>
-                                </div>
-                            </div>
-                        )
-                        : (
+                            )
+                            : (
                                 <div className="alert alert-warning mt-3">
                                     <div className="d-flex align-items-center">
                                         <i className="bi bi-exclamation-triangle-fill me-2"></i>
@@ -152,4 +153,5 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
         </>
     );
 }
+
 export default ModalWindow;

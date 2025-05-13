@@ -29,6 +29,7 @@ public class NotificationService {
     public void notifyAboutStatusChanging(OrderResponse response, User user) {
         NotificationCreationDTO notification = new NotificationCreationDTO();
         switch (response.getStatus()) {
+            case PENDING -> notification.setMessage("Ваше объявление № "+ response.getId() +" было успешно опубликовано");
             case ACTIVE -> notification.setMessage("На ваше объявление № "+ response.getId() +" был получен отклик");
             case CANCELLED -> notification.setMessage("Объявление № " + response.getId() + " было отменено");
             case COMPLETED -> notification.setMessage("Объявление № " + response.getId() + " было успешно завершено");

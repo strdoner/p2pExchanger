@@ -1,18 +1,14 @@
 package org.example.backend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.example.backend.DTO.*;
-import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.User;
 import org.example.backend.service.BalanceService;
-import org.example.backend.service.OrderService;
+import org.example.backend.service.ResponseService;
 import org.example.backend.service.UserService;
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,11 +22,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final OrderService orderService;
+    private final ResponseService responseService;
     private final UserService userService;
     private final BalanceService balanceService;
 
-    @GetMapping("/{userId}/orders")
+    @GetMapping("/{userId}/responses")
     public ResponseEntity<Page<OrderWithStatusDTO>> getUserOrders(
             @PathVariable Long userId,
             @RequestParam(required = false) String status,
@@ -40,7 +36,7 @@ public class UserController {
             @RequestParam(defaultValue = "5") int limit
     ) {
 
-        Page<OrderWithStatusDTO> orders = orderService.getUserOrders(userId, status, currency, type, PageRequest.of(page, limit));
+        Page<OrderWithStatusDTO> orders = responseService.getUserResponses(userId, status, currency, type, PageRequest.of(page, limit));
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 

@@ -2,7 +2,6 @@ package org.example.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.user.User;
 import org.hibernate.annotations.CreationTimestamp;

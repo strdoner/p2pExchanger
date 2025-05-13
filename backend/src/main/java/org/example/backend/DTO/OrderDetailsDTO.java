@@ -1,11 +1,7 @@
 package org.example.backend.DTO;
 
 import lombok.Data;
-import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
-import org.example.backend.model.order.OrderStatus;
-import org.example.backend.model.user.PaymentMethod;
-import org.example.backend.model.user.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,15 +23,15 @@ public class OrderDetailsDTO {
 
     public OrderDetailsDTO(OrderResponse response) throws Exception {
         this.setStatusChangingTime(response.getStatusChangingTime());
-        this.setOrderId(response.getOrder().getId());
+        this.setOrderId(response.getId());
         this.setResponseId(response.getId());
-        this.setMaker(new OrderDetailsUserDTO(response.getOrder().getMaker()));
+        this.setMaker(new OrderDetailsUserDTO(response.getMaker()));
         this.setTaker(new OrderDetailsUserDTO(response.getTaker()));
-        this.setType(response.getOrder().getType().toString());
-        this.setCurrency(response.getOrder().getCurrency().getName());
-        this.setPrice(response.getOrder().getPrice());
-        this.setAmount(response.getOrder().getAmount());
-        this.setPaymentMethod(new PaymentMethodDTO(response.getOrder().getPaymentMethod()));
+        this.setType(response.getType().toString());
+        this.setCurrency(response.getCurrency().getName());
+        this.setPrice(response.getPrice());
+        this.setAmount(response.getAmount());
+        this.setPaymentMethod(new PaymentMethodDTO(response.getPaymentMethod()));
         this.setStatus(response.getStatus().toString());
     }
 }

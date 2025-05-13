@@ -24,6 +24,11 @@ public class BalanceService {
     private final BalanceRepository balanceRepository;
     private final CurrencyRepository currencyRepository;
 
+    public boolean checkUserBalance(User user, Currency currency, BigDecimal amount) {
+        Balance balance = balanceRepository.findBalanceByUserAndCurrency(user, currency);
+        return balance.getAvailable().compareTo(amount) >= 0;
+    }
+
     public Balance getUserBalanceByCurrency(User user, Currency currency) {
         return balanceRepository.findBalanceByUserAndCurrency(user, currency);
     }
@@ -49,7 +54,9 @@ public class BalanceService {
     }
 
     public void createDeposit(User user, BalanceRequestDTO dto) {
-        Currency currency = currencyRepository.findByShortName(dto.getCurrency());
+        Currency currency = currencyRepository.findByShortName(dto.getCurrency()).orElseThrow(
+                () -> new EntityNotFoundException("Cryptocurrency not found!")
+        );
         if (currency == null) {
             throw new EntityNotFoundException("Currency not found");
         }
@@ -61,41 +68,29 @@ public class BalanceService {
     }
 
     public void lockCurrency(OrderResponse response) {
-        User userToSubtract;
-        if (response.getOrder().getType() == OrderType.BUY) {
-            userToSubtract = response.getTaker();
-        }
-        else {
-//            userToSubtract = response.getOrder().getMaker();
-            return;
-        }
-        Balance userBalanceToSubtract = balanceRepository.findBalanceByUserAndCurrency(userToSubtract, response.getOrder().getCurrency());
-        userBalanceToSubtract.setAvailable(userBalanceToSubtract.getAvailable().subtract(response.getOrder().getAmount()));
-        userBalanceToSubtract.setLocked(userBalanceToSubtract.getLocked().add(response.getOrder().getAmount()));
+        User userToSubtract = response.getMaker(); // на продажу мейкер, на покупку тейкер
+
+        Balance userBalanceToSubtract = balanceRepository.findBalanceByUserAndCurrency(userToSubtract, response.getCurrency());
+        userBalanceToSubtract.setAvailable(userBalanceToSubtract.getAvailable().subtract(response.getAmount()));
+        userBalanceToSubtract.setLocked(userBalanceToSubtract.getLocked().add(response.getAmount()));
 
         balanceRepository.save(userBalanceToSubtract);
     }
 
     public void unlockCurrency(OrderResponse response) {
-        User userToSubtract, userToAdd;
-        if (response.getOrder().getType() == OrderType.BUY) {
-            userToSubtract = response.getTaker();
-            userToAdd = response.getOrder().getMaker();
-        }
-        else {
-            userToSubtract = response.getOrder().getMaker();
-            userToAdd = response.getTaker();
-        }
-        Balance userBalanceToSubtract = balanceRepository.findBalanceByUserAndCurrency(userToSubtract, response.getOrder().getCurrency());
-        userBalanceToSubtract.setLocked(userBalanceToSubtract.getLocked().subtract(response.getOrder().getAmount()));
+        User userToSubtract = response.getMaker();
+        User userToAdd = response.getTaker();
+
+        Balance userBalanceToSubtract = balanceRepository.findBalanceByUserAndCurrency(userToSubtract, response.getCurrency());
+        userBalanceToSubtract.setLocked(userBalanceToSubtract.getLocked().subtract(response.getAmount()));
         if (response.getStatus() == OrderStatus.CANCELLED) {
-            userBalanceToSubtract.setAvailable(userBalanceToSubtract.getAvailable().add(response.getOrder().getAmount()));
+            userBalanceToSubtract.setAvailable(userBalanceToSubtract.getAvailable().add(response.getAmount()));
         }
         balanceRepository.save(userBalanceToSubtract);
 
         if (response.getStatus() != OrderStatus.CANCELLED) {
-            Balance userBalanceToAdd = balanceRepository.findBalanceByUserAndCurrency(userToAdd, response.getOrder().getCurrency());
-            userBalanceToAdd.setAvailable(userBalanceToAdd.getAvailable().add(response.getOrder().getAmount()));
+            Balance userBalanceToAdd = balanceRepository.findBalanceByUserAndCurrency(userToAdd, response.getCurrency());
+            userBalanceToAdd.setAvailable(userBalanceToAdd.getAvailable().add(response.getAmount()));
             balanceRepository.save(userBalanceToAdd);
         }
 

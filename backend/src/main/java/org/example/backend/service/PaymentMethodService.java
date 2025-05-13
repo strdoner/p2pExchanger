@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.EncryptedPaymentMethodDTO;
 import org.example.backend.DTO.PaymentMethodDTO;
@@ -44,6 +45,12 @@ public class PaymentMethodService {
         }
 
         return methodsDTO;
+    }
+
+    public PaymentMethod findById(Long id) {
+        return paymentMethodRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Метод оплаты не найден!")
+        );
     }
 
 

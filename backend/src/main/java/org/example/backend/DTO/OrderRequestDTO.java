@@ -19,6 +19,6 @@ public class OrderRequestDTO {
     private BigDecimal amount; // количество покупаемой валюты
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
-    private long paymentMethodId;
+    private Long paymentMethodId;
     private String paymentDetails;
 }

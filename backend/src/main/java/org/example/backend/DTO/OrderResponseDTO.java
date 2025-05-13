@@ -2,10 +2,9 @@ package org.example.backend.DTO;
 
 import lombok.Data;
 import org.example.backend.model.Currency;
-import org.example.backend.model.order.Order;
+import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.Bank;
-import org.example.backend.service.OrderService;
 
 import java.math.BigDecimal;
 
@@ -19,14 +18,14 @@ public class OrderResponseDTO {
     private Currency currency;
     private Bank paymentMethod;
 
-    public OrderResponseDTO(Order order, Long ordersCount, Long percentOrdersCompleted) {
-        this.id = order.getId();
-        this.maker = new UserOrderDTO(order.getMaker(), ordersCount, percentOrdersCompleted);
-        this.type = order.getType();
-        this.price = order.getPrice();
-        this.amount = order.getAmount();
-        this.currency = order.getCurrency();
-        this.paymentMethod = order.getPaymentMethod().getBank();
+    public OrderResponseDTO(OrderResponse response, Long ordersCount, Long percentOrdersCompleted) {
+        this.id = response.getId();
+        this.maker = new UserOrderDTO(response.getMaker() == null ? response.getTaker() : response.getMaker(), ordersCount, percentOrdersCompleted);
+        this.type = response.getType();
+        this.price = response.getPrice();
+        this.amount = response.getAmount();
+        this.currency = response.getCurrency();
+        this.paymentMethod = response.getPaymentMethod().getBank();
     }
 
 

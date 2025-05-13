@@ -6,12 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.EncryptedPaymentMethodDTO;
 import org.example.backend.DTO.FullUserInfoDTO;
 import org.example.backend.DTO.UserOrderDTO;
-import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.Role;
 import org.example.backend.model.user.User;
-import org.example.backend.repository.OrderRepository;
 import org.example.backend.repository.OrderResponseRepository;
 import org.example.backend.repository.RoleRepository;
 import org.example.backend.repository.UserRepository;
@@ -35,7 +33,6 @@ public class UserService implements UserDetailsService {
     private final RoleRepository roleRepository;
     private final PaymentMethodService paymentMethodService;
     private final PasswordEncoder bCryptPasswordEncoder;
-    private final OrderRepository orderRepository;
     private final OrderResponseRepository orderResponseRepository;
     private final BalanceService balanceService;
 
@@ -98,8 +95,8 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId).orElseThrow(
                 EntityNotFoundException::new
         );
-        long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
-        long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(user, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(user, OrderStatus.COMPLETED);
+        long totalMakerOrders = orderResponseRepository.countByTaker(user) + orderResponseRepository.countByMaker(user);
+        long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(user, OrderStatus.COMPLETED) + orderResponseRepository.countByMakerAndStatus(user, OrderStatus.COMPLETED);
         Long completionPercentage = totalMakerOrders > 0
                 ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)
                 : 0;
@@ -112,11 +109,11 @@ public class UserService implements UserDetailsService {
                 EntityNotFoundException::new
         );
 
-        long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
-        long completedBuyOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY)
-                + orderResponseRepository.countByTakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY);
-        long completedSellOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL)
-                + orderResponseRepository.countByTakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL);
+        long totalMakerOrders = orderResponseRepository.countByTaker(user) + orderResponseRepository.countByMaker(user);
+        long completedBuyOrders = orderResponseRepository.countByMakerAndStatusAndType(user, OrderStatus.COMPLETED, OrderType.BUY)
+                + orderResponseRepository.countByTakerAndStatusAndType(user, OrderStatus.COMPLETED, OrderType.BUY);
+        long completedSellOrders = orderResponseRepository.countByMakerAndStatusAndType(user, OrderStatus.COMPLETED, OrderType.SELL)
+                + orderResponseRepository.countByTakerAndStatusAndType(user, OrderStatus.COMPLETED, OrderType.SELL);
         long completedMakerOrders = completedBuyOrders + completedSellOrders;
         Long completionPercentage = totalMakerOrders > 0
                 ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)

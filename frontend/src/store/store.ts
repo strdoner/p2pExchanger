@@ -215,10 +215,10 @@ export default class Store {
         }
     }
 
-    async createResponse(orderId: number) {
+    async acceptResponse(orderId: number) {
         this.setLoading(true)
         try {
-            const response = await OrderResponseService.createResponse(orderId)
+            const response = await OrderResponseService.acceptResponse(orderId)
             console.log(response.data)
             // @ts-ignore
             return {success: true, responseId: response.data.responseId};
@@ -370,6 +370,7 @@ export default class Store {
             };
         }
     }
+
     async sendMessage(message: object) {
         try {
             const response = await UserService.sendMessage(message)
@@ -411,6 +412,7 @@ export default class Store {
             };
         }
     }
+
     async getUserBalances() {
         try {
             const response = await UserService.getUserBalances()
@@ -431,6 +433,7 @@ export default class Store {
             };
         }
     }
+
     async createDeposit(balance: object) {
         try {
             const response = await UserService.deposit(balance)

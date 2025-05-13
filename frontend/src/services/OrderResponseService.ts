@@ -1,12 +1,12 @@
-import { AxiosResponse } from "axios";
+import {AxiosResponse} from "axios";
 // @ts-ignore
 import $api from "../api/index.ts"
 // @ts-ignore
-import { OrdersResponse } from "../models/response/OrdersResponse.ts";
+import {OrdersResponse} from "../models/response/OrdersResponse.ts";
 
 export default class OrderResponseService {
-    static async createResponse(orderId: number): Promise<AxiosResponse<OrdersResponse>> {
-        return $api.post(`orders/accept/${orderId}`)
+    static async acceptResponse(orderId: number): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.post(`responses/${orderId}/accept`)
     }
 
     static async getResponse(responseId: number): Promise<AxiosResponse<OrdersResponse>> {

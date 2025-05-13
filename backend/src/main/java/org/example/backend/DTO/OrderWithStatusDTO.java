@@ -2,13 +2,12 @@ package org.example.backend.DTO;
 
 import lombok.Data;
 import org.example.backend.model.Currency;
-import org.example.backend.model.order.Order;
+import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.User;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class OrderWithStatusDTO {
@@ -23,16 +22,16 @@ public class OrderWithStatusDTO {
     private Long contragentId;
     private OrderStatus status;
 
-    public OrderWithStatusDTO(Order order, OrderStatus status, long responseId, User contragent) {
-        this.setId(order.getId());
-        this.setResponseId(responseId);
-        this.setType(order.getType());
-        this.setPrice(order.getPrice());
-        this.setAmount(order.getAmount());
-        this.setCurrency(order.getCurrency());
-        this.setCreatedAt(order.getCreatedAt().toString());
+    public OrderWithStatusDTO(OrderResponse response, User contragent) {
+        this.setId(response.getId());
+        this.setResponseId(response.getId());
+        this.setType(response.getType());
+        this.setPrice(response.getPrice());
+        this.setAmount(response.getAmount());
+        this.setCurrency(response.getCurrency());
+        this.setCreatedAt(response.getCreatedAt().toString());
         this.setContragentId(contragent.getId());
         this.setContragentName(contragent.getUsername());
-        this.setStatus(status);
+        this.setStatus(response.getStatus());
     }
 }

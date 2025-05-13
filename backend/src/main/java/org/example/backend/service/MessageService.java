@@ -33,7 +33,7 @@ public class MessageService {
         OrderResponse orderResponse = orderResponseRepository.findById(responseId).orElseThrow(
                 EntityNotFoundException::new
         );
-        if (!Objects.equals(user.getId(), orderResponse.getTaker().getId()) && !Objects.equals(user.getId(), orderResponse.getOrder().getMaker().getId())) {
+        if (!Objects.equals(user.getId(), orderResponse.getTaker().getId()) && !Objects.equals(user.getId(), orderResponse.getMaker().getId())) {
             return null;
         }
         List<Message> messages = messageRepository.findAllByResponseId(responseId);
@@ -61,8 +61,8 @@ public class MessageService {
         );
         if ((!Objects.equals(orderResponse.getTaker().getId(), messageRequestDTO.getSenderId()) &&
                 !Objects.equals(orderResponse.getTaker().getId(), messageRequestDTO.getRecipientId())) ||
-            (!Objects.equals(orderResponse.getOrder().getMaker().getId(), messageRequestDTO.getSenderId()) &&
-                !Objects.equals(orderResponse.getOrder().getMaker().getId(), messageRequestDTO.getRecipientId()))
+            (!Objects.equals(orderResponse.getMaker().getId(), messageRequestDTO.getSenderId()) &&
+                !Objects.equals(orderResponse.getMaker().getId(), messageRequestDTO.getRecipientId()))
         ) {
             throw new IllegalArgumentException();
         }
