@@ -65,6 +65,10 @@ const PaymentMethodSelect = ({options, setOption}) => {
         }
     };
 
+    if (Object.keys(options).length === 0) {
+        return <>У вас нет методов</>
+    }
+
     return (
         <div
             className={`custom-select select-full`}

@@ -4,44 +4,63 @@ import React, {useContext, useEffect, useState} from "react";
 import PaymentMethod from "./PaymentMethod";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
+import PaymentMethodSelect from "./CustomSelect/PaymentMethodSelect";
 
-function ModalWindow({modalShow,setModalShow, action, order}) {
+function ModalWindow({modalShow, setModalShow, action, order}) {
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [isChoosen, setIsChoosen] = useState(false)
-    const handleClose = () => setModalShow(false);
-    const handleShow = () => setModalShow(true);
     const [isLoading, setIsLoading] = useState(false)
+    const [paymentMethods, setPaymentMethods] = useState({})
+    const [isPaymentMethodsLoaded, setIsPaymentMethodsLoaded] = useState(false)
+    const [paymentMethod, setPaymentMethod] = useState()
+    const handleClose = () => {
+        console.log("qwe")
+        setModalShow(false)
+    };
+    const handleShow = () => setModalShow(true);
+    const [error, setError] = useState("")
 
     useEffect(() => {
         if (order !== null) {
             setIsChoosen(true)
-        }
-        else {
+        } else {
             setIsChoosen(false)
         }
-    }, []);
+        if (order?.paymentMethod && action === "SELL") {
+            const response = store.getPaymentMethods(order?.paymentMethod?.id)
+            response.then((er) => {
+                if (er.success) {
+                    setPaymentMethods(er.content)
+                    setIsPaymentMethodsLoaded(true)
+                }
+            })
+        }
+    }, [order]);
 
-    const createResponseHandler = () => {
-        setIsLoading(true)
-        const response = store.createResponse(order.id)
-        response.then(function(er) {
-            setIsLoading(false)
-            if (er.success) {
-                console.log(er)
-                navigate(`/response/${er.responseId}`)
+    const createResponseHandler = async (e) => {
+        e.preventDefault()
+        try {
+            console.log(paymentMethod)
+            const response = await store.createResponse(order.id, paymentMethod);
+            if (response.success) {
+                navigate(`/response/${response.responseId}`);
+            } else {
+                setError(response.error || "Произошла ошибка");
             }
-            else {
-                console.log("some error: " + er.error)
-            }
-        })
+        } catch (err) {
+            setError("Ошибка сети или сервера");
+            console.error("Error creating response:", err);
+        } finally {
+            setIsLoading(false); // Разблокируем кнопку
+        }
     }
 
     return (
         <>
             <Modal
                 show={modalShow}
-                onHide={handleClose}
+                onHide={isLoading ? null : handleClose}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
@@ -58,14 +77,14 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                         <div className="deal-summary mb-4">
                             <h5 className="text-center">
                                 {action === 'BUY' ? (
-                                    <span className="success-color">Покупка {order?.currency?.name}</span>
+                                    <span className="success-color">Покупка {order?.currency?.shortName}</span>
                                 ) : (
-                                    <span className="danger-color">Продажа {order?.currency?.name}</span>
+                                    <span className="danger-color">Продажа {order?.currency?.shortName}</span>
                                 )}
                             </h5>
 
                             <div className="price-display text-center my-3">
-                                <span className="h4">1 {order?.currency?.name} = </span>
+                                <span className="h4">1 {order?.currency?.shortName} = </span>
                                 <span className="h3 fw-bold">{order?.price} RUB</span>
                             </div>
                         </div>
@@ -75,7 +94,7 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                             <div className="d-flex justify-content-between mb-2">
                                 <span className="text-color">Сумма:</span>
                                 <span className="fw-bold">
-                                    {order?.amount} {order?.currency?.name}
+                                    {order?.amount} {order?.currency?.shortName}
                                 </span>
                             </div>
 
@@ -89,24 +108,45 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                             <div className="d-flex justify-content-between mb-3">
                                 <span className="text-color">Способ оплаты:</span>
                                 <span className="fw-bold">
-                                    {isChoosen ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={isChoosen ? "" : order?.paymentMethod?.name} color={order?.paymentMethod?.color} className={isChoosen ? "placeholder" : ""}/>}
-                                    {/*{order?.paymentMethod.name} ({order?.paymentDetails.slice(-4)})*/}
+                                    {action === 'SELL' ? (
+                                        order?.paymentMethod && isPaymentMethodsLoaded ? (
+                                            (Object.keys(paymentMethods).length !== 0
+                                                    ? <PaymentMethodSelect
+                                                        setOption={setPaymentMethod}
+                                                        options={paymentMethods}/>
+                                                    : <div className="danger-color">У вас нет подходящих методов</div>
+                                            )
+
+
+                                        ) : (
+                                            <div className='placeholder p-2 w-100'></div>
+                                        )
+                                    ) : (
+                                        order?.paymentMethod ? (
+                                            <PaymentMethod
+                                                name={order?.paymentMethod?.name}
+                                                color={order?.paymentMethod?.color}
+                                            />
+                                        ) : (
+                                            <div className='placeholder p-2 w-100'></div>
+                                        )
+                                    )}
                                 </span>
                             </div>
                         </div>
                         {action === 'BUY' ? (
-                            <div className="alert alert-warning mt-3">
-                                <div className="d-flex align-items-center">
-                                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <span>Продавец ожидает оплату в течение 15 минут</span>
+                                <div className="alert alert-warning mt-3">
+                                    <div className="d-flex align-items-center">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Продавец ожидает оплату в течение 15 минут</span>
+                                    </div>
+                                    <div className="d-flex align-items-center mt-2">
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Переводите только на указанные реквизиты</span>
+                                    </div>
                                 </div>
-                                <div className="d-flex align-items-center mt-2">
-                                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <span>Переводите только на указанные реквизиты</span>
-                                </div>
-                            </div>
-                        )
-                        : (
+                            )
+                            : (
                                 <div className="alert alert-warning mt-3">
                                     <div className="d-flex align-items-center">
                                         <i className="bi bi-exclamation-triangle-fill me-2"></i>
@@ -121,10 +161,18 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                                         <span>Общайтесь только через чат обменника — это защитит вас в случае спора.</span>
                                     </div>
                                 </div>
+
                             )
 
                         }
-
+                        <div className="alert alert-info">
+                            <span
+                                className="fw-bolder">Комментарий {action === "SELL" ? "Покупателя" : "Продавца"}
+                            </span>
+                            <div></div>
+                            <span>{order?.paymentDetails}</span>
+                        </div>
+                        <div className="danger-color">{error}</div>
                     </div>
                 </Modal.Body>
 
@@ -141,8 +189,11 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
                             Отменить
                         </Button>
                         <Button
+                            className={isLoading ? "disabled" : ""}
                             variant={action === 'BUY' ? 'success' : 'danger'}
-                            onClick={createResponseHandler}
+                            onClick={(e) => {
+                                createResponseHandler(e)
+                            }}
                         >
                             {action === 'BUY' ? 'Купить' : 'Продать'}
                         </Button>
@@ -152,4 +203,5 @@ function ModalWindow({modalShow,setModalShow, action, order}) {
         </>
     );
 }
+
 export default ModalWindow;

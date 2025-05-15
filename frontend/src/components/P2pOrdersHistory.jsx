@@ -56,11 +56,13 @@ const P2pOrdersHistory = () => {
                 </tr>
                 </thead>
                 <tbody>
-                <P2pOrderHistoryItem placeholder={true}/>
-                <P2pOrderHistoryItem placeholder={true}/>
-                <P2pOrderHistoryItem placeholder={true}/>
-                <P2pOrderHistoryItem placeholder={true}/>
-                <P2pOrderHistoryItem placeholder={true}/>
+                <tr>
+                    <td colSpan="7" className="text-center py-4">
+                        <div className="spinner-border" role="status">
+                            <span className="sr-only"></span>
+                        </div>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         );
@@ -85,7 +87,7 @@ const P2pOrdersHistory = () => {
                     )
                     : (
                         <tr>
-                            <td colSpan="5" className="text-center py-4">
+                            <td colSpan="7" className="text-center py-4">
                                 Ваша история пуста
                             </td>
                         </tr>

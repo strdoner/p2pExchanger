@@ -1,9 +1,8 @@
 package org.example.backend.controller;
 
 
-import org.example.backend.DTO.OrderDetailsDTO;
-import org.example.backend.DTO.OrderRequestDTO;
-import org.example.backend.DTO.OrderResponseDTO;
+import org.example.backend.DTO.*;
+import org.example.backend.exception.InsufficientBalanceException;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderType;
@@ -19,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,28 +52,34 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> createOrder(
-            @RequestBody OrderRequestDTO orderDTO,
+            @Validated(OrderRequestDTO.New.class) @RequestBody OrderRequestDTO orderDTO,
             @AuthenticationPrincipal User user
     ) {
         try {
             orderService.create(orderDTO, user);
-        } catch (IllegalArgumentException e) {
+        } catch (InsufficientBalanceException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/accept/{id}")
     public ResponseEntity<?> acceptOrder(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestBody(required = false) PaymentMethodIdDTO paymentMethodIdDTO,
+            @AuthenticationPrincipal User user
     ) throws Exception {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth.getPrincipal());
-        User user = (User) auth.getPrincipal();
-        OrderDetailsDTO response = orderService.createResponse(
-                id,
-                user
-        );
+        OrderDetailsDTO response;
+        try {
+            response = orderService.createResponse(
+                    id,
+                    paymentMethodIdDTO.getPaymentMethodId(),
+                    user
+            );
+        } catch (InsufficientBalanceException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

@@ -30,7 +30,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid username or password!");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails, password, new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
     }
 
     @Override

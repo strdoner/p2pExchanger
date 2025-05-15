@@ -124,7 +124,7 @@ public class UserService implements UserDetailsService {
 
         List<EncryptedPaymentMethodDTO> paymentMethods = null;
         if (Objects.equals(authUser.getId(), userId)) {
-            paymentMethods = paymentMethodService.getEncryptedPaymentMethods(authUser);
+            paymentMethods = paymentMethodService.getEncryptedPaymentMethods(authUser, null);
         }
 
         return new FullUserInfoDTO(user, totalMakerOrders, completedBuyOrders, completedSellOrders, completionPercentage, paymentMethods);

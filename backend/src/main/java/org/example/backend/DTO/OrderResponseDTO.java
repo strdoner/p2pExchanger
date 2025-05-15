@@ -17,7 +17,9 @@ public class OrderResponseDTO {
     private BigDecimal price;
     private BigDecimal amount;
     private Currency currency;
+    private String paymentDetails;
     private Bank paymentMethod;
+    private Bank preferredBank;
 
     public OrderResponseDTO(Order order, Long ordersCount, Long percentOrdersCompleted) {
         this.id = order.getId();
@@ -26,7 +28,8 @@ public class OrderResponseDTO {
         this.price = order.getPrice();
         this.amount = order.getAmount();
         this.currency = order.getCurrency();
-        this.paymentMethod = order.getPaymentMethod().getBank();
+        this.paymentMethod = order.getPaymentMethod() == null ? order.getPreferredBank() : order.getPaymentMethod().getBank();
+        this.paymentDetails = order.getPaymentDetails();
     }
 
 

@@ -33,12 +33,22 @@ public class PaymentMethodsController {
 
     @GetMapping
     public ResponseEntity<List<EncryptedPaymentMethodDTO>> getPaymentMethods(
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User user,
+            @RequestParam(required = false) Long bankId
     ) throws Exception {
-        List<EncryptedPaymentMethodDTO> userMethods = paymentMethodService.getEncryptedPaymentMethods(user);
+        List<EncryptedPaymentMethodDTO> userMethods = paymentMethodService.getEncryptedPaymentMethods(user, bankId);
 
 
         return new ResponseEntity<>(userMethods, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{methodId}")
+    public ResponseEntity<?> removePaymentMethod(
+            @PathVariable Long methodId,
+            @AuthenticationPrincipal User user
+    ) throws Exception {
+        paymentMethodService.remove(methodId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

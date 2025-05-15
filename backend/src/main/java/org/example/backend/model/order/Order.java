@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.backend.DTO.OrderRequestDTO;
 import org.example.backend.model.Currency;
+import org.example.backend.model.user.Bank;
 import org.example.backend.model.user.PaymentMethod;
 import org.example.backend.model.user.User;
 
@@ -53,7 +54,11 @@ public class Order {
 
     @JsonIgnore
     @ManyToOne
+
     private PaymentMethod paymentMethod;
+
+    @ManyToOne
+    private Bank preferredBank;
 
     @Column(length = 500)
     private String paymentDetails;

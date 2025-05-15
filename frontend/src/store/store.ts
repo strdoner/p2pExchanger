@@ -215,10 +215,9 @@ export default class Store {
         }
     }
 
-    async createResponse(orderId: number) {
-        this.setLoading(true)
+    async createResponse(orderId: number, paymentMethodId: number) {
         try {
-            const response = await OrderResponseService.createResponse(orderId)
+            const response = await OrderResponseService.createResponse(orderId, paymentMethodId)
             console.log(response.data)
             // @ts-ignore
             return {success: true, responseId: response.data.responseId};
@@ -370,6 +369,7 @@ export default class Store {
             };
         }
     }
+
     async sendMessage(message: object) {
         try {
             const response = await UserService.sendMessage(message)
@@ -411,6 +411,7 @@ export default class Store {
             };
         }
     }
+
     async getUserBalances() {
         try {
             const response = await UserService.getUserBalances()
@@ -431,6 +432,7 @@ export default class Store {
             };
         }
     }
+
     async createDeposit(balance: object) {
         try {
             const response = await UserService.deposit(balance)
@@ -473,11 +475,32 @@ export default class Store {
         }
     }
 
-    async getPaymentMethods() {
+    async getPaymentMethods(bankId: number) {
         try {
-            const response = await PaymentMethodsService.getPaymentMethods();
+            const response = await PaymentMethodsService.getPaymentMethods(bankId);
             // @ts-ignore
             return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async deletePaymentMethod(methodId: number) {
+        try {
+            const response = await PaymentMethodsService.deletePaymentMethod(methodId);
+            // @ts-ignore
+            return {success: true};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {

@@ -1,18 +1,24 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import Modal from "react-bootstrap/Modal";
-import {Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {observer} from "mobx-react-lite";
-import CustomSelect from "./CustomSelect/CustomSelect";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import {Context} from "../index";
 
 const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => {
     const {store} = useContext(Context)
-    const handleCloseModal = () => {setShowModal(false);};
+    const handleCloseModal = () => {
+        console.log("sdf")
+        setShowModal(false);
+    };
     const [paymentMethod, setPaymentMethod] = React.useState({});
     const [bank, setBank] = React.useState("Сбербанк");
-    const [cardDetails, setCardDetails] = React.useState({firstName: "", secondName: "", fatherName:"", cardNumber: ""});
+    const [cardDetails, setCardDetails] = React.useState({
+        firstName: "",
+        secondName: "",
+        fatherName: "",
+        cardNumber: ""
+    });
     const [error, setError] = useState()
     var paymentsMethods = [
         {label: "Сбербанк", value: "2", name: "Сбербанк"},
@@ -23,25 +29,22 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
 
     ]
 
+    const handleAddPaymentMethod = async (e) => {
 
-    const handleAddPaymentMethod = (e) => {
-        e.preventDefault();
         setError("")
         if (!isValid()) {
             return
         }
-        const response = store.createPaymentMethod({...cardDetails, bankName:bank})
-        response.then((response) => {
+        const response = store.createPaymentMethod({...cardDetails, bankName: bank})
+        response.then(async (response) => {
             if (response.success) {
-
+                // handleCloseModal()
                 setPaymentMethods(prev => [...prev, response.content]);
-                setPaymentMethod({ cardNumber: '', bank: '' });
+                setPaymentMethod({cardNumber: '', bank: ''});
             }
         })
 
 
-
-        handleCloseModal();
     };
 
     const isValid = () => {
@@ -59,11 +62,17 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
             setError("Длина указанных полей не может быть меньше 2 символов!")
             return false
         }
+
+        if (!/^[a-zA-Zа-яА-Я]+$/.test(cardDetails.firstName) || !/^[a-zA-Zа-яА-Я]+$/.test(cardDetails.secondName) || !/^[a-zA-Zа-яА-Я]+$/.test(cardDetails.fatherName)) {
+            setError("ФИО может не может состоять из посторонних символов")
+            return false
+        }
         return true
     }
 
     return (
-        <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal show={showModal} onHide={handleCloseModal} aria-labelledby="contained-modal-title-vcenter" size="lg"
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Добавить платежную карту</Modal.Title>
             </Modal.Header>
@@ -74,7 +83,7 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
                     type="text"
                     name={"cardNumber"}
                     value={cardDetails.cardNumber}
-                    onChange={e => setCardDetails({...cardDetails, cardNumber:e.target.value})}
+                    onChange={e => setCardDetails({...cardDetails, cardNumber: e.target.value})}
                     placeholder="0000 0000 0000 0000"
                 />
                 <label htmlFor="">Фамилия</label>
@@ -83,7 +92,7 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
                     type="text"
                     name={"cardNumber"}
                     value={cardDetails.secondName}
-                    onChange={e => setCardDetails({...cardDetails, secondName:e.target.value})}
+                    onChange={e => setCardDetails({...cardDetails, secondName: e.target.value})}
                     placeholder="Иванов"
                 />
                 <label htmlFor="">Имя</label>
@@ -92,7 +101,7 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
                     type="text"
                     name={"cardNumber"}
                     value={cardDetails.firstName}
-                    onChange={e => setCardDetails({...cardDetails, firstName:e.target.value})}
+                    onChange={e => setCardDetails({...cardDetails, firstName: e.target.value})}
                     placeholder="Иван"
                 />
                 <label htmlFor="">Отчество</label>
@@ -101,12 +110,12 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
                     type="text"
                     name={"cardNumber"}
                     value={cardDetails.fatherName}
-                    onChange={e => setCardDetails({...cardDetails, fatherName:e.target.value})}
+                    onChange={e => setCardDetails({...cardDetails, fatherName: e.target.value})}
                     placeholder="Иванович"
                 />
                 <label htmlFor="">Название банка</label>
 
-                <CustomFormSelect options={paymentsMethods} setOption={setBank} initialValue={bank} size={"full"} />
+                <CustomFormSelect options={paymentsMethods} setOption={setBank} initialValue={bank} size={"full"}/>
                 <span className="danger-color small">{error}</span>
                 <div className="d-flex justify-content-end gap-2 mt-5">
 

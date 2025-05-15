@@ -37,6 +37,24 @@ public class ResponseService {
     private final OrderResponseRepository orderResponseRepository;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    public static boolean isSeller(OrderResponse response, User user) {
+        if (response.getOrder().getType() == OrderType.BUY) {
+            return Objects.equals(response.getTaker().getId(), user.getId());
+        }
+        else {
+            return Objects.equals(response.getOrder().getMaker().getId(), user.getId());
+        }
+    }
+
+    public static  boolean isBuyer(OrderResponse response, User user) {
+        if (response.getOrder().getType() == OrderType.BUY) {
+            return Objects.equals(response.getOrder().getMaker().getId(), user.getId());
+        }
+        else {
+            return Objects.equals(response.getTaker().getId(), user.getId());
+        }
+    }
+
     private void scheduleOrderHandling(Long responseId, OrderStatus from, OrderStatus to) {
         scheduler.schedule(() -> {
             try {
@@ -90,7 +108,11 @@ public class ResponseService {
                 () -> new EntityNotFoundException("Запись не найдена!")
         );
 
-        if (Objects.equals(response.getTaker().getId(), user.getId()) || Objects.equals(response.getOrder().getMaker().getId(), user.getId())) {
+        if (response.getStatus() != OrderStatus.ACTIVE)   {
+            return null;
+        }
+
+        if (isBuyer(response, user) || isSeller(response, user)) {
             return changeResponseStatus(response, OrderStatus.CANCELLED);
         }
         else {
@@ -102,10 +124,12 @@ public class ResponseService {
         OrderResponse response = orderResponseRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Запись не найдена!")
         );
-        if (
-                ((response.getOrder().getType() == OrderType.BUY) && Objects.equals(response.getTaker().getId(), user.getId())) ||
-                ((response.getOrder().getType() == OrderType.SELL) && Objects.equals(response.getOrder().getMaker().getId(), user.getId()))
-        ) {
+
+        if (response.getStatus() != OrderStatus.CONFIRMATION) {
+            return null;
+        }
+
+        if (isSeller(response, user)) {
             return changeResponseStatus(response, OrderStatus.COMPLETED);
         }
         else {
@@ -120,10 +144,11 @@ public class ResponseService {
                 () -> new EntityNotFoundException("Запись не найдена!")
         );
 
-        if (
-                ((response.getOrder().getType() == OrderType.BUY) && Objects.equals(response.getOrder().getMaker().getId(), user.getId())) ||
-                ((response.getOrder().getType() == OrderType.SELL) && Objects.equals(response.getTaker().getId(), user.getId()))
-        ) {
+        if (response.getStatus() != OrderStatus.ACTIVE) {
+            return null;
+        }
+
+        if (isBuyer(response, user)) {
             response = changeResponseStatus(response, OrderStatus.CONFIRMATION);
 
             scheduleOrderHandling(response.getId(), OrderStatus.CONFIRMATION, OrderStatus.CANCELLED);

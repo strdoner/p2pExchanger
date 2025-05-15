@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.*;
+import org.example.backend.exception.InsufficientBalanceException;
 import org.example.backend.model.Currency;
 import org.example.backend.model.NotificationType;
 import org.example.backend.model.order.Order;
@@ -11,6 +12,8 @@ import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
 import org.example.backend.model.user.Balance;
+import org.example.backend.model.user.Bank;
+import org.example.backend.model.user.PaymentMethod;
 import org.example.backend.model.user.User;
 import org.example.backend.repository.*;
 import org.springframework.data.domain.Page;
@@ -31,23 +34,28 @@ public class OrderService {
     private final UserService userService;
     private final ResponseService responseService;
     private final BalanceRepository balanceRepository;
+    private final BankRepository bankRepository;
 
     public void create(OrderRequestDTO order, User user) {
         Currency orderCurrency = currencyRepository.findByShortName(order.getCurrency());
         Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, orderCurrency);
+        Order newOrder = new Order();
         if (order.getType() == OrderType.SELL) {
             if (userBalance.getAvailable().compareTo(order.getAmount()) < 0) {
-                throw new IllegalArgumentException("Недостаточно средств для размещения объявления");
+                throw new InsufficientBalanceException("Недостаточно средств для размещения объявления");
             }
             userBalance.setLocked(userBalance.getLocked().add(order.getAmount()));
             userBalance.setAvailable(userBalance.getAvailable().subtract(order.getAmount()));
             balanceRepository.save(userBalance);
+            newOrder.setPaymentMethod(paymentMethodRepository.getReferenceById(order.getPaymentMethodId()));
         }
-        Order newOrder = new Order();
+        else {
+            Bank bank = bankRepository.findBankByName(order.getPreferredBank());
+            newOrder.setPreferredBank(bank);
+        }
         newOrder.copyFrom(order);
         newOrder.setCurrency(orderCurrency);
         newOrder.setMaker(user);
-        newOrder.setPaymentMethod(paymentMethodRepository.getReferenceById(order.getPaymentMethodId()));
 
         orderRepository.save(newOrder);
     }
@@ -61,7 +69,7 @@ public class OrderService {
         ordersPage = orderRepository.findAllByCurrencyAndTypeAndUserFilter(
                 method,
                 coin,
-                type,
+                Objects.equals(type, "BUY") ? OrderType.BUY: OrderType.SELL,
                 user,
                 paging
         );
@@ -103,12 +111,14 @@ public class OrderService {
             Long takerId = tuple.get(2, Long.class);
             Long responseId = tuple.get(3, Long.class);
             User taker;
+            OrderType ordertype = order.getType();
+
             if (takerId == null) {
                 taker = new User();
             }
             else if (Objects.equals(takerId, userId)) {
                 taker = order.getMaker();
-                order.setType(order.getType() == OrderType.BUY ? OrderType.SELL : OrderType.BUY);
+                ordertype = order.getType() == OrderType.BUY ? OrderType.SELL : OrderType.BUY;
             }
             else {
                 taker = userService.findUserById(takerId);
@@ -118,7 +128,8 @@ public class OrderService {
                     order,
                     status != null ? status : OrderStatus.PENDING,
                     responseId != null ? responseId : -1,
-                    taker
+                    taker,
+                    ordertype
             );
         });
     }
@@ -132,12 +143,14 @@ public class OrderService {
         );
     }
 
-    public OrderDetailsDTO createResponse(Long orderId, User user) throws Exception {
+    public OrderDetailsDTO createResponse(Long orderId, Long paymentMethodId, User user) throws Exception {
         Order order = read(orderId);
         if (order.getType() == OrderType.BUY) {
+            PaymentMethod method = paymentMethodRepository.getReferenceById(paymentMethodId);
+            order.setPaymentMethod(method);
             Balance userBalance = balanceRepository.findBalanceByUserAndCurrency(user, order.getCurrency());
             if (userBalance.getAvailable().compareTo(order.getAmount()) < 0) {
-                throw new IllegalArgumentException("Недостаточно средств для отклика на объявление");
+                throw new InsufficientBalanceException("Недостаточно средств для отклика на объявление");
             }
         }
 

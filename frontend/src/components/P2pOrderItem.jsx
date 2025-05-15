@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import React, {useContext} from 'react';
 import PaymentMethod from './PaymentMethod';
 import {Context} from "../index";
@@ -8,7 +8,8 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
     return (
         <tr>
             <th className='merchant_info placeholder-glow'>
-                <span className={placeholder ? "placeholder" : ""}>{placeholder ? "username" : order.maker.username}</span>
+                <span
+                    className={placeholder ? "placeholder" : ""}>{placeholder ? "username" : order.maker.username}</span>
                 <div className={`d-flex align-items-center ${placeholder ? "placeholder" : ""}`}>
                     <div className='online_icon'></div>
                     <p className={placeholder ? "placeholder" : ""}>В сети</p>|
@@ -18,7 +19,8 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
                 </div>
             </th>
             <th className='order__price placeholder-glow'>
-                <div className={placeholder ? "placeholder" : ""}><span className={`h4`}>{placeholder ? "1233" : order.price}</span><span className='ms-1'>RUB</span></div>
+                <div className={placeholder ? "placeholder" : ""}><span
+                    className={`h4`}>{placeholder ? "1233" : order.price}</span><span className='ms-1'>RUB</span></div>
             </th>
             <th>
                 <div className='order__volume placeholder-glow'>
@@ -26,11 +28,19 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
                 </div>
             </th>
             <th className='placeholder-glow'>
-                {placeholder ? <div className='placeholder p-2 w-100'></div> : <PaymentMethod name={placeholder ? "" : order.paymentMethod.name} color={order.paymentMethod.color} className={placeholder ? "placeholder" : ""}/>}
-                
+                {placeholder ? <div className='placeholder p-2 w-100'></div> :
+                    <PaymentMethod name={placeholder ? "" : order?.paymentMethod.name} color={order.paymentMethod.color}
+                                   className={placeholder ? "placeholder" : ""}/>
+
+                }
+
             </th>
             <th>
-                <button onClick={() => {modalHandler(true); orderHandler(order)}} className={`${order?.maker?.userId === store.id ? "disabled": ""} btn ${action === "buy" ? "btn-success" : "btn-danger"}`}>{action === "buy" ? "Купить": "Продать"}</button>
+                <button onClick={() => {
+                    modalHandler(true);
+                    orderHandler(order)
+                }}
+                        className={`${order?.maker?.userId === store.id || store.id < 0 ? "disabled" : ""} btn ${action === "buy" ? "btn-success" : "btn-danger"}`}>{action === "buy" ? "Купить" : "Продать"}</button>
             </th>
         </tr>
     )

@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.EncryptedPaymentMethodDTO;
 import org.example.backend.DTO.PaymentMethodDTO;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +38,14 @@ public class PaymentMethodService {
         return new EncryptedPaymentMethodDTO(paymentMethod);
     }
 
-    public List<EncryptedPaymentMethodDTO> getEncryptedPaymentMethods(User user) {
-        List<PaymentMethod> methods = paymentMethodRepository.findAllByUser(user);
+    public List<EncryptedPaymentMethodDTO> getEncryptedPaymentMethods(User user, Long bankId) {
+        List<PaymentMethod> methods;
+        if (bankId == null) {
+            methods = paymentMethodRepository.findAllByUser(user);
+        }
+        else {
+            methods = paymentMethodRepository.findAllByUserAndBank_Id(user, bankId);
+        }
         List<EncryptedPaymentMethodDTO> methodsDTO = new ArrayList<>();
         for (PaymentMethod paymentMethod : methods) {
             methodsDTO.add(new EncryptedPaymentMethodDTO(paymentMethod));
@@ -47,5 +55,16 @@ public class PaymentMethodService {
     }
 
 
+    public void remove(Long methodId, User user) throws Exception {
 
+        PaymentMethod method = paymentMethodRepository.findById(methodId).orElseThrow(
+                () -> new EntityNotFoundException("Платежный метод не найден!")
+        );
+        if (Objects.equals(method.getUser().getId(), user.getId())) {
+            paymentMethodRepository.delete(method);
+        }
+        else {
+            throw new Exception();
+        }
+    }
 }

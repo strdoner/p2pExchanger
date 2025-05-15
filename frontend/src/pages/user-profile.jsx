@@ -44,7 +44,12 @@ const UserProfile = () => {
 
     // Удаление карты
     const handleRemovePaymentMethod = (id) => {
-        setPaymentMethods(prev => prev.filter(method => method.id !== id));
+        const response = store.deletePaymentMethod(id)
+        response.then((e) => {
+            if (e.success) {
+                setPaymentMethods(prev => prev.filter(method => method.id !== id));
+            }
+        })
     };
 
     if (!isLoaded) {

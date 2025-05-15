@@ -9,7 +9,7 @@ import ModalWindow from "./ModalWindow";
 
 const P2pOrdersListBuy = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [modalShow, setmodalShow] = useState(false)
+    const [modalShow, setModalShow] = useState(false)
     const {store} = useContext(Context)
     const [order, setOrder] = useState(null)
     const [orders, setOrders] = useState([])
@@ -69,7 +69,7 @@ const P2pOrdersListBuy = () => {
 
     return (
         <>
-            <ModalWindow modalShow={modalShow} setModalShow={setmodalShow} action={"BUY"} order={order}/>
+            <ModalWindow modalShow={modalShow} setModalShow={setModalShow} action={"BUY"} order={order}/>
             <table className='order__list'>
                 <thead>
                 <tr>
@@ -77,13 +77,13 @@ const P2pOrdersListBuy = () => {
                     <th>Пользователь</th>
                     <th>Цена</th>
                     <th>Количество</th>
-                    <th>Платежные методы</th>
+                    <th>Платежный метод</th>
                     <th>Действие</th>
                 </tr>
                 </thead>
                 <tbody>
                 {!orders?.empty ? orders?.content?.map(order =>
-                        <P2pOrderItem action="buy" order={order} key={order.id} modalHandler={setmodalShow}
+                        <P2pOrderItem action="buy" order={order} key={order.id} modalHandler={setModalShow}
                                       orderHandler={setOrder}/>
                     )
                     : (

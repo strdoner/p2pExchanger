@@ -61,19 +61,20 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("""
     SELECT o FROM Order o 
-    WHERE o.isAvailable = true 
-    AND (:method IS NULL OR o.paymentMethod.bank.name = :method)
+    WHERE o.isAvailable = true
+    
     AND o.currency.shortName = :coin 
     AND (
         (:type = 'BUY' AND ((o.maker != :currentUser AND o.type = 'SELL') OR (o.maker = :currentUser AND o.type = 'BUY')))
         OR
         (:type = 'SELL' AND ((o.maker != :currentUser AND o.type = 'BUY') OR (o.maker = :currentUser AND o.type = 'SELL')))
+        OR (:currentUser is NULL and o.type = :type)
     )
     """)
     Page<Order> findAllByCurrencyAndTypeAndUserFilter(
             @Param("method") String method,
             @Param("coin") String coin,
-            @Param("type") String type,
+            @Param("type") OrderType type,
             @Param("currentUser") User currentUser,
             Pageable paging
     );

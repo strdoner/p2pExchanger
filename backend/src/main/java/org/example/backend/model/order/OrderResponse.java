@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
-public class OrderResponse {
+public class OrderResponse { // Можно сделать так: Создать здесь два поля с buyer и seller (которые не будут сохраняться в бд) и при поиске сразу определять байера и селлера
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

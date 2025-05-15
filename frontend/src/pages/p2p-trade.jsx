@@ -6,6 +6,7 @@ import CustomSelect from '../components/CustomSelect/CustomSelect'
 import P2pPricePanel from '../components/P2pPricePanel'
 import ModalWindowNewOrder from "../components/ModalWindowNewOrder";
 import {Context} from "../index";
+import ModalWindowNewOrderBuy from "../components/ModalWindowNewOrderBuy";
 
 function P2pTrade() {
     const {store} = useContext(Context)
@@ -63,8 +64,12 @@ function P2pTrade() {
 
     return (
         <>
-            <ModalWindowNewOrder modalShow={showForm} setModalShow={setShowForm}
-                                 action={isSellOrders ? "SELL" : "BUY"}/>
+            {isSellOrders
+                ? <ModalWindowNewOrder modalShow={showForm} setModalShow={setShowForm}
+                                       action={"SELL"}/>
+                : <ModalWindowNewOrderBuy modalShow={showForm} setModalShow={setShowForm}
+                                          action={"BUY"}/>
+            }
             <div className='container pt-5'>
                 <div className='header__block p-5'>
                     <h1 className='text-center'>P2P-торговля</h1>

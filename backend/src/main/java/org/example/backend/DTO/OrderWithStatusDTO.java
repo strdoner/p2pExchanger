@@ -23,10 +23,10 @@ public class OrderWithStatusDTO {
     private Long contragentId;
     private OrderStatus status;
 
-    public OrderWithStatusDTO(Order order, OrderStatus status, long responseId, User contragent) {
+    public OrderWithStatusDTO(Order order, OrderStatus status, long responseId, User contragent, OrderType ordertype) {
         this.setId(order.getId());
         this.setResponseId(responseId);
-        this.setType(order.getType());
+        this.setType(ordertype);
         this.setPrice(order.getPrice());
         this.setAmount(order.getAmount());
         this.setCurrency(order.getCurrency());

@@ -32,7 +32,6 @@
 }
 
 
-
 :root[data-theme="dark"] {
   --background-color: #212121;
   --second-background-color: #2e2e2e;
@@ -70,7 +69,7 @@ $font-primary: 'Manrope', sans-serif;
 * {
   font-family: 'Manrope', sans-serif;
   font-weight: 600;
-  transition: color 0.3s, background-color 0.3s!important;
+  transition: color 0.3s, background-color 0.3s !important;
 }
 
 body {
@@ -621,7 +620,6 @@ input[type="checkbox"]:checked {
 }
 
 
-
 option:hover {
   background: var(--select-hover-color) !important;
 }
@@ -758,13 +756,19 @@ input::placeholder, textarea::placeholder {
 
 .message-item {
   max-width: 75%;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.3s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .chat-container {
@@ -799,26 +803,25 @@ input::placeholder, textarea::placeholder {
 }
 
 .message-item:hover {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15) !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15) !important;
 
 }
 
 .balance-card {
   background: var(--main-accent-background-color);
-  background: linear-gradient(90deg,var(--main-accent-background-color) 0%, var(--second-accent-background-color) 100%);
+  background: linear-gradient(90deg, var(--main-accent-background-color) 0%, var(--second-accent-background-color) 100%);
 
   border-radius: 10px;
 }
 
 
-
-
 .currency-card {
   transition: all .3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
   border-radius: 10px;
   overflow: hidden;
   background: var(--second-background-color);
+
   .currency-header {
     .currency-icon {
       width: 37px;
@@ -828,7 +831,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .currency-card:hover {
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
   transform: translateY(-3px);
 }
 
@@ -836,18 +839,22 @@ input::placeholder, textarea::placeholder {
   background-color: #f7931a;
 
 }
+
 .eth-bg {
   background-color: #627eea;
   color: #627eea;
 }
+
 .usdt-bg {
   background-color: #26a17b;
   color: #26a17b;
 }
+
 .usdc-bg {
   background-color: #2775ca;
   color: #2775ca;
 }
+
 .bnb-bg {
   background-color: #f0b90b;
   color: #f0b90b;
