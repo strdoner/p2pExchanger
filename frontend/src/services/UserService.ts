@@ -16,6 +16,7 @@ export default class UserService {
     static async getUserMinInfo(userId: number): Promise<AxiosResponse<OrdersResponse>> {
         return $api.get(`users/${userId}`)
     }
+
     static async getFullUserInfo(userId: number): Promise<AxiosResponse<OrdersResponse>> {
         return $api.get(`users/${userId}?info=max`)
     }
@@ -32,8 +33,18 @@ export default class UserService {
         return $api.patch(`/notifications/${notificationId}/read`)
     }
 
-    static async sendMessage(message: object): Promise<AxiosResponse<OrdersResponse>> {
-        return $api.post(`/messages`, message)
+    static async sendMessage(formData: FormData): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.post(`/messages`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+    }
+
+    static async downloadFile(fileId: number): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.get(`/files/${fileId}`, {
+            responseType: "blob"
+        })
     }
 
     static async getResponseMessages(responseId: number): Promise<AxiosResponse<OrdersResponse>> {

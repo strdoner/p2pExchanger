@@ -32,7 +32,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
 
     useEffect(() => {
         setIsLoading(true)
-        const response = store.getPaymentMethods()
+        const response = store.getPaymentMethods(null)
         response.then(paymentMethod => {
 
             setIsLoading(false)
@@ -159,7 +159,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
                                             )
                                             :
                                             (
-                                                <div>Вы не добавили платежных методов</div>
+                                                <div className="danger-color">Вы не добавили платежных методов</div>
                                             )
                                         }
                                     </>

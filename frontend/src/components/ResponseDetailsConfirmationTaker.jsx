@@ -135,10 +135,6 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
                             <div className="fw-bold">Время ожидания</div>
                             <div className="text-primary fs-4">{formatTime(timer)}</div>
                         </div>
-                        <div className="col">
-                            <div className="fw-bold">Обычно отвечает</div>
-                            <div className="text-success fs-4">2-5 мин</div>
-                        </div>
                     </div>
 
                     <div className="alert alert-warning small">
@@ -148,22 +144,7 @@ const ResponseDetailsConfirmationTaker = ({response, statusHandler, responseTime
                     </div>
                 </div>
             </div>
-            <div className="card-footer bg-light d-flex flex-column">
-                <button
-                    className="btn btn-danger"
-                    onClick={handleCancelOrder}
-                    disabled={isCancelling}
-                >
-                    {isCancelling ? (
-                        <>
-                            <span className="spinner-border spinner-border-sm me-2"></span>
-                            Отмена...
-                        </>
-                    ) : (
-                        'Отменить сделку'
-                    )}
-                </button>
-            </div>
+            
         </div>
     )
 }

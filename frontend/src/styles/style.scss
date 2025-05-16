@@ -878,3 +878,18 @@ input::placeholder, textarea::placeholder {
   background-color: var(--second-background-color);
   border-top: 1px solid var(--table-separator) !important;
 }
+
+.file {
+
+  background: rgb(0, 0, 0, 0.15);
+
+  .file-icon {
+    background: rgba(186, 67, 67, 0.5);
+    cursor: pointer;
+  }
+
+  .ms-2 {
+    cursor: pointer;
+  }
+
+}

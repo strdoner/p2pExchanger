@@ -3,11 +3,14 @@ import {observer} from "mobx-react-lite";
 import {useSubscription} from "../websocket/hooks";
 import {Context} from "../index";
 import {useParams} from "react-router-dom";
+import FileUploadButton from "./FileUploadButton";
+import MessageFileComponent from "./MessageFileComponent";
 
 const ChatComponent = ({contragent}) => {
     const {store} = useContext(Context)
     const [chatMessages, setChatMessages] = useState([]);
     const [message, setMessage] = useState("");
+    const [file, setFile] = useState(null)
     const messagesEndRef = useRef(null);
 
 
@@ -17,6 +20,26 @@ const ChatComponent = ({contragent}) => {
         messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
     }
 
+    const fileSelectHandler = (file) => {
+        console.log(file)
+        console.log('Выбран файл:', file?.name);
+        setFile(file)
+    };
+
+    const downloadFileHandler = (fileId, fileName) => {
+        const response = store.downloadFile(fileId, fileName)
+            .then((e) => {
+                if (e.success) {
+                    console.log("down")
+                } else {
+                    console.log("error")
+                }
+            })
+    }
+
+    const cancelFilePickingHandler = () => {
+        setFile(null)
+    }
 
 
     useEffect(() => {
@@ -24,8 +47,7 @@ const ChatComponent = ({contragent}) => {
         response.then((er) => {
             if (er.success) {
                 setChatMessages(er.content)
-            }
-            else {
+            } else {
                 console.log(er)
             }
         })
@@ -51,13 +73,21 @@ const ChatComponent = ({contragent}) => {
         if (message.length === 0) {
             return
         }
-
-        const response = store.sendMessage({
+        const formData = new FormData();
+        const messageData = {
             recipientId: contragent.id,
             senderId: store.id,
             content: message,
-            orderResponseId: Number(responseId),
-        })
+            orderResponseId: Number(responseId)
+        };
+        formData.append("data", new Blob([
+            JSON.stringify(messageData)
+        ], {type: "application/json"}))
+        if (file !== null) {
+            formData.append('file', file);
+        }
+
+        const response = store.sendMessage(formData)
         response.then((er) => {
             if (er.success) {
                 console.log("sended")
@@ -107,12 +137,13 @@ const ChatComponent = ({contragent}) => {
                                         : 'receiver-message'}`}
 
                                 >
-                                    {/* Header with username and time */}
                                     <div className={`d-flex justify-content-between align-items-center small mb-2`}>
-                                      <span className={`fw-bold ${msg.senderId === store.id ? 'text-white' : 'text-color'}`}>
+                                      <span
+                                          className={`fw-bold ${msg.senderId === store.id ? 'text-white' : 'text-color'}`}>
                                         {msg.senderId === store.id ? 'Вы' : contragent.username}
                                       </span>
-                                                                    <span className={`ms-2 ${msg.senderId === store.id ? 'text-white-50' : 'secondary-text-color'}`}>
+                                        <span
+                                            className={`ms-2 ${msg.senderId === store.id ? 'text-white-50' : 'secondary-text-color'}`}>
                                         {new Date(msg.createdAt).toLocaleTimeString([], {
                                             hour: '2-digit',
                                             minute: '2-digit'
@@ -120,39 +151,70 @@ const ChatComponent = ({contragent}) => {
                                       </span>
                                     </div>
 
-                                    <div className="message-content" style={{ wordWrap: 'break-word' }}>
+                                    <div className="message-content" style={{wordWrap: 'break-word'}}>
                                         {msg.content}
                                     </div>
+                                    <div className="message-content" style={{wordWrap: 'break-word'}}>
+                                        {msg.files.map((file) => (
+                                            <MessageFileComponent file={file} downloadHandler={downloadFileHandler}/>
 
+                                        ))}
+                                    </div>
                                     {msg.senderId === store.id && (
-                                        <div className="position-absolute end-0 bottom-0 me-2 mb-1" style={{ fontSize: '0.7rem' }}>
+                                        <div className="position-absolute end-0 bottom-0 me-2 mb-1"
+                                             style={{fontSize: '0.7rem'}}>
                                             {msg.isRead ? '✓✓' : '✓'}
                                         </div>
                                     )}
                                 </div>
-                                <div ref={messagesEndRef} />
+                                <div ref={messagesEndRef}/>
                             </div>
                         ))}
                     </div>
                 )}
             </div>
             <div className="card-footer">
-                <div className="input-group">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Написать сообщение..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    />
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleSendMessage}
-                        disabled={!message.trim()}
-                    >
-                        <i className="bi bi-send-fill text-white"></i>
-                    </button>
+                <div className="input-group d-flex justify-content-between">
+                    <FileUploadButton onFileSelect={fileSelectHandler}/>
+                    <div className="d-flex flex-fill">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Написать сообщение..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        />
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleSendMessage}
+                            disabled={!message.trim()}
+                        >
+                            <i className="bi bi-send-fill text-white"></i>
+                        </button>
+                    </div>
+                </div>
+                <div className="pt-2 px-2">
+                    {file === null
+                        ? (
+                            ""
+                        )
+
+                        : (
+                            <div
+                                className=" p-2 rounded-3 me-2 d-flex align-items-center justify-content-center file-icon text-center bg-secondary position-relative"
+                                style={{width: 50, height: 50}}>
+                                <span className="position-absolute top-0 end-0"
+                                      onClick={cancelFilePickingHandler}>
+                                    <button className="bi bi-x btn-toolbar btn p-0 text-white"></button>
+                                </span>
+                                <span className="small text-white">
+                                    {file.name.slice(file.name.lastIndexOf(".") + 1)}
+                                </span>
+                            </div>
+                        )
+
+                    }
                 </div>
             </div>
         </div>

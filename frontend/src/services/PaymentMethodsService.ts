@@ -9,8 +9,8 @@ export default class UserService {
         return $api.post(`cards`, method);
     }
 
-    static async getPaymentMethods(bankId): Promise<AxiosResponse<OrdersResponse>> {
-        return $api.get(`cards?bankId=${bankId}`);
+    static async getPaymentMethods(bankId: number): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.get(`cards${bankId === null ? "" : "?bankId=" + bankId}`);
     }
 
     static async deletePaymentMethod(methodId: number): Promise<AxiosResponse<OrdersResponse>> {

@@ -370,9 +370,9 @@ export default class Store {
         }
     }
 
-    async sendMessage(message: object) {
+    async sendMessage(formData: FormData) {
         try {
-            const response = await UserService.sendMessage(message)
+            const response = await UserService.sendMessage(formData)
             // @ts-ignore
             return {success: true, content: response.data};
         } catch (e) {
@@ -396,6 +396,52 @@ export default class Store {
             const response = await UserService.getResponseMessages(responseId)
             // @ts-ignore
             return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async downloadFile(fileId: number, fileName: String) {
+        try {
+            const response = await UserService.downloadFile(fileId)
+
+
+            const contentDisposition = response.headers['content-disposition'];
+
+            if (contentDisposition) {
+                const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (fileNameMatch && fileNameMatch[1]) {
+                    fileName = fileNameMatch[1].replace(/['"]/g, '');
+                }
+            }
+
+            // 2. Создание ссылки для скачивания
+            // @ts-ignore
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+
+            // 3. Очистка
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }, 100);
+            // @ts-ignore
+            return {success: true};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {

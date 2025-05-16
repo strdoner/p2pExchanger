@@ -1,17 +1,22 @@
 package org.example.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.example.backend.DTO.MessageDTO;
 import org.example.backend.DTO.MessageRequestDTO;
 import org.example.backend.model.Message;
+import org.example.backend.model.MessageFile;
 import org.example.backend.model.Notification;
 import org.example.backend.model.user.User;
+import org.example.backend.service.FileStorageService;
 import org.example.backend.service.MessageService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
+    private final FileStorageService fileStorageService;
 
 
     @GetMapping("/response/{responseId}")
@@ -36,15 +42,15 @@ public class MessageController {
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> sendMessage(
-            @RequestBody MessageRequestDTO dto,
-            @AuthenticationPrincipal User user
-
+            @RequestPart(value = "data") MessageRequestDTO dto,
+            @AuthenticationPrincipal User user,
+            @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         MessageDTO message;
         try {
-            message = messageService.createAndSendMessage(user, dto);
+            message = messageService.createAndSendMessage(user, dto, file);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

@@ -29,7 +29,8 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
             </th>
             <th className='placeholder-glow'>
                 {placeholder ? <div className='placeholder p-2 w-100'></div> :
-                    <PaymentMethod name={placeholder ? "" : order?.paymentMethod.name} color={order.paymentMethod.color}
+                    <PaymentMethod name={placeholder ? "" : order?.paymentMethod?.name}
+                                   color={order?.paymentMethod?.color}
                                    className={placeholder ? "placeholder" : ""}/>
 
                 }

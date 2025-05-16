@@ -10,18 +10,34 @@ const WalletPage = () => {
     const [currencies, setCurrencies] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
+    const prices = {"USDT": 80, "BTC": 8351747, "USDC": 80, "BNB": 52609, "ETH": 206108}
+    const [totalPrice, setTotalPrice] = useState(0)
 
     const getUserBalances = () => {
         const response = store.getUserBalances()
         response.then((e) => {
             if (e.success) {
-                console.log(response)
                 setCurrencies(e.content)
+
                 setLoading(false)
             }
 
         })
     }
+
+    const totalAmountHandler = () => {
+        let price = 0;
+        for (let i = 0; i < currencies.length; i++) {
+            console.log(prices[currencies[i].currency])
+            price += prices[currencies[i].currency] * (currencies[i].available + currencies[i].locked)
+        }
+        console.log(price)
+        setTotalPrice(price)
+    }
+
+    useEffect(() => {
+        totalAmountHandler()
+    }, [currencies]);
 
     useEffect(() => {
         setLoading(true)
@@ -50,7 +66,7 @@ const WalletPage = () => {
                             className="balance-card p-4 d-flex align-items-center justify-content-between placeholder-glow">
                             <div>
                                 <h5 className="text-white">Общий баланс</h5>
-                                <h2 className={`text-white fw-bolder ${loading ? "placeholder" : ""}`}>24,499.59</h2>
+                                <h2 className={`text-white fw-bolder ${loading ? "placeholder" : ""}`}>{totalPrice.toLocaleString()}</h2>
                             </div>
                             <div className="pe-4">
                                 <span className="fs-1 text-white-50 fw-light">₽</span>
@@ -66,7 +82,8 @@ const WalletPage = () => {
                     {currencies.map((currency) =>
                         (
                             (currency?.available !== 0 || currency?.locked !== 0)
-                                ? (<CurrencyItem currency={currency} key={currency.id} loading={loading}/>)
+                                ? (
+                                    <CurrencyItem currency={currency} key={currency.id} loading={loading} prices={prices}/>)
                                 : <></>
 
                         )

@@ -1,7 +1,7 @@
 import React from "react";
 import {observer} from "mobx-react-lite";
 
-const CurrencyItem = ({currency, loading}) => {
+const CurrencyItem = ({currency, loading, prices}) => {
     return (
         <div className="col-lg-6 mb-4">
 
@@ -17,17 +17,19 @@ const CurrencyItem = ({currency, loading}) => {
                 </div>
                 <div className="currency-body mt-3 d-flex align-items-center placeholder-glow">
                     <div className="me-3">
-                        <h4 className={`fw-bolder m-0 ${loading ? "placeholder":"" }`}>{currency?.available} {currency?.currency}</h4>
+                        <h4 className={`fw-bolder m-0 ${loading ? "placeholder" : ""}`}>{currency?.available} {currency?.currency}</h4>
                         <div></div>
-                        <span className={`secondary-text-color  ${loading ? "placeholder":"" }`}>≈ 12,234.20 RUB</span>
+                        <span
+                            className={`secondary-text-color  ${loading ? "placeholder" : ""}`}>≈ {(prices[currency?.currency] * currency?.available).toLocaleString()} RUB</span>
                     </div>
                     <div className="ps-3 border-start">
-                        <h4 className={`fw-bolder second-accent-color m-0  ${loading ? "placeholder":"" }`}>
+                        <h4 className={`fw-bolder second-accent-color m-0  ${loading ? "placeholder" : ""}`}>
                             <i className="bi bi-snow3 fs-4 second-accent-color me-1"></i>
                             {currency?.locked} {currency?.currency}
                         </h4>
                         <div></div>
-                        <span className={`secondary-text-color  ${loading ? "placeholder":"" }`}>≈ 12,234.20 RUB</span>
+                        <span
+                            className={`secondary-text-color  ${loading ? "placeholder" : ""}`}>≈ {(prices[currency?.currency] * currency?.locked).toLocaleString()} RUB</span>
                     </div>
                 </div>
             </div>
