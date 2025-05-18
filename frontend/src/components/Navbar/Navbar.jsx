@@ -64,6 +64,13 @@ function Navbar() {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/wallet">Кошелек</Link>
                             </li>
+                            {store.isAdmin ? (
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/disputes">Открытые споры</Link>
+                                </li>
+                            ) : (
+                                <></>
+                            )}
                         </ul>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                             <div className="d-flex justify-content-center align-items-center">

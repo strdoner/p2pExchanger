@@ -27,7 +27,15 @@ const ResponseDetailsConfirmationMaker = ({response, statusHandler, responseTime
     }, []);
 
     const handleDispute = () => {
-
+        const ans = store.disputeResponse(responseId)
+        ans.then(function(er) {
+            if (er.success) {
+                console.log("disputed")
+            }
+            else {
+                console.log("some error: " + er.error)
+            }
+        })
     }
 
     const handleConfirmPayment = () => {

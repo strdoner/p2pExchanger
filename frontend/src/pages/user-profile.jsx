@@ -108,6 +108,12 @@ const UserProfile = () => {
                                     </button>
                                 </div>
                                 <div className=" mt-4 ">
+                                    {paymentMethods.length === 0 ? (
+                                        <div className="secondary-text-color">Вы не добавили ни одного платежного метода</div>
+
+                                    ): (
+                                        <></>
+                                    )}
                                     {paymentMethods.map((method, index) => (
                                         <div
                                             className="payment__method-item p-3 d-flex align-items-center justify-content-between"

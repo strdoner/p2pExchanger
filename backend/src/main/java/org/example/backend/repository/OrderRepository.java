@@ -6,6 +6,7 @@ import org.example.backend.model.Currency;
 import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
+import org.example.backend.model.user.Bank;
 import org.example.backend.model.user.PaymentMethod;
 import org.example.backend.model.user.User;
 import org.springframework.data.domain.Page;
@@ -62,17 +63,31 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("""
     SELECT o FROM Order o 
     WHERE o.isAvailable = true
-    
-    AND o.currency.shortName = :coin 
+    AND o.currency.shortName = :coin
     AND (
-        (:type = 'BUY' AND ((o.maker != :currentUser AND o.type = 'SELL') OR (o.maker = :currentUser AND o.type = 'BUY')))
+        (:type = org.example.backend.model.order.OrderType.BUY AND (
+            (o.maker != :currentUser AND o.type = org.example.backend.model.order.OrderType.SELL AND 
+                (:bank IS NULL OR o.paymentMethod.bank = :bank))
+            OR
+            (o.maker = :currentUser AND o.type = org.example.backend.model.order.OrderType.BUY AND (
+                (:bank IS NULL OR o.preferredBank = :bank)
+            ))
+        ))
         OR
-        (:type = 'SELL' AND ((o.maker != :currentUser AND o.type = 'BUY') OR (o.maker = :currentUser AND o.type = 'SELL')))
-        OR (:currentUser is NULL and o.type = :type)
+        (:type = org.example.backend.model.order.OrderType.SELL AND (
+            (o.maker != :currentUser AND o.type = org.example.backend.model.order.OrderType.BUY AND (
+                (:bank IS NULL OR o.preferredBank = :bank)
+            ))
+            OR
+            (o.maker = :currentUser AND o.type = org.example.backend.model.order.OrderType.SELL AND (
+                (:bank IS NULL OR o.paymentMethod.bank = :bank)
+            ))
+        ))
+        OR (:currentUser IS NULL AND o.type = :type)
     )
     """)
     Page<Order> findAllByCurrencyAndTypeAndUserFilter(
-            @Param("method") String method,
+            @Param("bank") Bank bank,
             @Param("coin") String coin,
             @Param("type") OrderType type,
             @Param("currentUser") User currentUser,
@@ -86,4 +101,41 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllByIsAvailableTrueAndPaymentMethod_Bank_NameAndCurrency_NameAndType(String method, String coin, OrderType type, Pageable paging);
 
     Long countByMakerAndIsAvailableTrue(User maker);
+    @Query("""
+        SELECT o from Order o
+        WHERE o.isAvailable = true
+        AND o.currency.shortName = :coin
+        AND (
+            (o.maker = :user AND o.type = 'BUY' AND (:bank IS NULL or o.preferredBank = :bank)) OR 
+            (o.maker != :user AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
+            
+        )
+
+
+    """)
+    //(:user is NULL AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
+    Page<Order> findAllByCurrencyAndType_SellAndUserFilter(
+            @Param("bank") Bank methodBank,
+            @Param("coin") String coin,
+            @Param("user") User user,
+            Pageable paging);
+
+    @Query("""
+        SELECT o from Order o
+        WHERE o.isAvailable = true
+        AND o.currency.shortName = :coin
+        AND (
+            (o.maker = :user AND o.type = 'SELL') OR 
+            (o.maker != :user AND o.type = 'BUY')
+            
+        )
+
+
+    """)
+        //(:user is NULL AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
+    Page<Order> findAllByCurrencyAndType_BuyAndUserFilter(
+            @Param("bank") String methodBank,
+            @Param("coin") String coin,
+            @Param("user") User user,
+            Pageable paging);
 }

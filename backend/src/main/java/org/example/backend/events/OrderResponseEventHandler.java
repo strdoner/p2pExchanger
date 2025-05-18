@@ -6,10 +6,7 @@ import org.example.backend.model.order.Order;
 import org.example.backend.model.order.OrderResponse;
 import org.example.backend.model.order.OrderStatus;
 import org.example.backend.model.order.OrderType;
-import org.example.backend.service.BalanceService;
-import org.example.backend.service.NotificationService;
-import org.example.backend.service.OrderService;
-import org.example.backend.service.ResponseService;
+import org.example.backend.service.*;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +17,7 @@ public class OrderResponseEventHandler {
     private final BalanceService balanceService;
     private final OrderService orderService;
     private final NotificationService notificationService;
+    private final DisputeService disputeService;
 
     @EventListener
     @Transactional
@@ -27,7 +25,6 @@ public class OrderResponseEventHandler {
         Order order = event.getResponse().getOrder();
         OrderResponse response = event.getResponse();
         if (event.getStatus() == OrderStatus.CANCELLED) {
-            balanceService.unlockCurrency(response);
             orderService.makeOrderAvailable(order);
         }
         if (event.getStatus() == OrderStatus.ACTIVE) {
@@ -36,7 +33,9 @@ public class OrderResponseEventHandler {
         if (event.getStatus() == OrderStatus.COMPLETED) {
             balanceService.unlockCurrency(response);
         }
-
+        if (event.getStatus() == OrderStatus.DISPUTED) {
+            disputeService.create(response);
+        }
 
         notificationService.notifyAboutStatusChanging(response, response.getTaker());
         notificationService.notifyAboutStatusChanging(response, response.getOrder().getMaker());

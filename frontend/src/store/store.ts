@@ -6,10 +6,12 @@ import PaymentMethodsService from "../services/PaymentMethodsService.ts";
 // @ts-ignore
 import AuthService from "../services/AuthService.ts";
 import OrderResponseService from "../services/OrderResponseService.ts";
+import DisputeService from "../services/DisputeService.ts";
 
 export default class Store {
     username = "";
     id = -2;
+    isAdmin = false;
     isAuth = false;
     isLoading = false;
     isAuthLoading = false;
@@ -29,6 +31,10 @@ export default class Store {
 
     setIsWebSocketConnected(bool: boolean) {
         this.isWebSocketConnected = bool
+    }
+
+    setIsAdmin(role: string) {
+        this.isAdmin = (role === "ROLE_ADMIN");
     }
 
     setUser(username: string) {
@@ -114,6 +120,7 @@ export default class Store {
             this.setUser(response.data?.username)
             // @ts-ignore
             this.setId(response.data?.userId)
+            this.setIsAdmin(response.data?.role)
             this.setAuthLoading(false)
             return {success: true};
         } catch (e) {
@@ -286,6 +293,28 @@ export default class Store {
     async confirmResponse(responseId: number) {
         try {
             const response = await OrderResponseService.confirmResponse(responseId)
+            console.log(response.data)
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async disputeResponse(responseId: number) {
+        try {
+            const response = await OrderResponseService.disputeResponse(responseId)
             console.log(response.data)
             // @ts-ignore
             return {success: true, content: response.data};
@@ -545,6 +574,91 @@ export default class Store {
     async deletePaymentMethod(methodId: number) {
         try {
             const response = await PaymentMethodsService.deletePaymentMethod(methodId);
+            // @ts-ignore
+            return {success: true};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getDisputes(status: string, page: number, pageSize: number) {
+        try {
+            const response = await DisputeService.getDisputes(status, page, 5);
+            console.log(response.data);
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getDispute(disputeID:number) {
+        try {
+            const response = await DisputeService.getDisputeById(disputeID);
+            console.log(response.data);
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async completeDispute(disputeID:number, comment: string) {
+        try {
+            const response = await DisputeService.completeDispute(disputeID, comment);
+            // @ts-ignore
+            return {success: true};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+    async cancelDispute(disputeID:number, comment: string) {
+        try {
+            const response = await DisputeService.cancelDispute(disputeID, comment);
             // @ts-ignore
             return {success: true};
         } catch (e) {

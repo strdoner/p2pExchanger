@@ -64,15 +64,26 @@ public class OrderService {
 
     public Page<OrderResponseDTO> readAll(String method, String coin, String type, User user, Pageable paging) {
         Page<Order> ordersPage;
+        Bank methodBank = bankRepository.findBankByName(method);
+
+        if (Objects.equals(type, "BUY")) {
+            ordersPage = orderRepository.findAllByCurrencyAndType_SellAndUserFilter(
+                    methodBank,
+                    coin,
+                    user,
+                    paging
+            );
+        }
+        else {
+            ordersPage = orderRepository.findAllByCurrencyAndType_BuyAndUserFilter(
+                    method,
+                    coin,
+                    user,
+                    paging
+            );
+        }
 
 
-        ordersPage = orderRepository.findAllByCurrencyAndTypeAndUserFilter(
-                method,
-                coin,
-                Objects.equals(type, "BUY") ? OrderType.BUY: OrderType.SELL,
-                user,
-                paging
-        );
 
         return ordersPage.map(order -> {
             User maker = order.getMaker();

@@ -1,5 +1,6 @@
 import {observer} from 'mobx-react-lite'
 import Footer from '../components/Footer/Footer'
+import {Link} from "react-router-dom";
 
 function WelcomePage() {
     return (
@@ -8,7 +9,10 @@ function WelcomePage() {
                 <div className="header__block pt-5 mt-5 text-center">
                     <h1>P2P-обменник криптовалюты</h1>
                     <p>Покупайте и продавайте BTC, USDT и другие активы напрямую у других пользователей.</p>
-                    <button className='btn btn-primary mt-5'>Начать торговать</button>
+                    <Link to="/p2p-trade/buy">
+                        <button className='btn btn-primary mt-5'>Начать торговать</button>
+                    </Link>
+
                 </div>
                 <div className="howto__block text-center">
                     <h1>Как это работает?</h1>
@@ -69,7 +73,8 @@ function WelcomePage() {
                 </div>
                 <div className='start__block text-center'>
                     <h1>Готовы к первой сделке?</h1>
-                    <button className='btn btn-primary mt-4'>Зарегистрироваться</button>
+                    <Link to="/register"><button className='btn btn-primary mt-4'>Зарегистрироваться</button></Link>
+
                 </div>
                 <Footer/>
             </div>

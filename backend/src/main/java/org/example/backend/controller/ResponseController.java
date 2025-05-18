@@ -59,6 +59,16 @@ public class ResponseController {
                 : new ResponseEntity<>(details, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}/dispute")
+    public ResponseEntity<?> disputeResponse(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        OrderResponse details = responseService.createDispute(id, user);
+        return details == null
+                ? new ResponseEntity<>(HttpStatus.FORBIDDEN)
+                : new ResponseEntity<>(details, HttpStatus.OK);
+    }
+
     @PatchMapping("/{id}/complete")
     public ResponseEntity<?> completeResponse(
             @PathVariable Long id,

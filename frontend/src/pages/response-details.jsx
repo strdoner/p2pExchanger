@@ -11,6 +11,8 @@ import ResponseDetailsCancelled from "../components/ResponseDetailsCancelled";
 import ResponseDetailsWaiting from "../components/ResponseDetailsWaiting";
 import {useSubscription} from "../websocket/hooks";
 import ChatComponent from "../components/ChatComponent";
+import ChatTabsComponent from "../components/ChatTabsComponent";
+import DisputeOrderResponseDetails from "../components/DisputeOrderResponseDetails";
 
 const ResponseDetails = () => {
     const {store} = useContext(Context)
@@ -24,6 +26,8 @@ const ResponseDetails = () => {
     const [timer, setTimer] = useState(900);
     const [status, setStatus] = useState(null)
     const [contragent, setContragent] = useState(null)
+    const admin = {username: "admin", id: 1, isAdmin: true};
+
 
     useEffect(() => {
         setIsLoading(true)
@@ -81,13 +85,12 @@ const ResponseDetails = () => {
     }, [responseId, navigate, store.id]);
 
 
-    const handleSendMessage = () => {
-
-    }
-
     const ResponseComponent = useMemo(() => {
 
         if (status === null || response === null) return null;
+        if (status === "DISPUTED") {
+            return <DisputeOrderResponseDetails response={response} />
+        }
         if (status === "ACTIVE") {
             if ((response.taker.id === store.id && response.type === "SELL") || (response.maker.id === store.id && response.type === "BUY")) {
                 return <ResponseDetailsActive response={response} statusHandler={setStatus} responseTimer={responseTimer}/>
@@ -135,8 +138,12 @@ const ResponseDetails = () => {
                                 {ResponseComponent}
                             </div>
 
-                            <div className="col-md-6">
-                                <ChatComponent contragent={contragent}/>
+                            <div className="col-md-6 h-100">
+                                {status === "DISPUTED"?(
+                                    <ChatTabsComponent responseId={Number(responseId)} contragents={[admin, {...contragent, isAdmin:false}]}/>
+                                ):(
+                                    <ChatComponent responseId={Number(responseId)} contragent={{...contragent, isAdmin:false}}/>
+                                )}
                             </div>
                         </div>
                     </div>

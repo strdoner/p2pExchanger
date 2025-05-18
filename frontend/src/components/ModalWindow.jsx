@@ -1,10 +1,11 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import PaymentMethod from "./PaymentMethod";
 import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 import PaymentMethodSelect from "./CustomSelect/PaymentMethodSelect";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 function ModalWindow({modalShow, setModalShow, action, order}) {
     const navigate = useNavigate()
@@ -56,6 +57,48 @@ function ModalWindow({modalShow, setModalShow, action, order}) {
         }
     }
 
+    const ButtonHandler = useMemo(() => {
+        if (action === "SELL") {
+            if (order?.paymentMethod && isPaymentMethodsLoaded && Object.keys(paymentMethods).length !== 0) {
+                return (
+                    <Button
+                        className={isLoading ? "disabled" : ""}
+                        variant={"danger"}
+                        onClick={(e) => {
+                            createResponseHandler(e)
+                        }}
+                    >
+                        Продать
+                    </Button>
+                )
+            }
+            else {
+                return (
+                    <OverlayTrigger placement={"bottom"} overlay={<Tooltip id="tooltip-disabled">Вы не добавили платежных методов</Tooltip>}>
+                                  <span className="d-inline-block">
+                                    <Button disabled style={{ pointerEvents: 'none' }}>
+                                      Продать
+                                    </Button>
+                                  </span>
+                    </OverlayTrigger>
+                )
+            }
+        }
+        else {
+            return (
+                <Button
+                    className={isLoading ? "disabled" : ""}
+                    variant={'success'}
+                    onClick={(e) => {
+                        createResponseHandler(e)
+                    }}
+                >
+                    Купить
+                </Button>
+            )
+        }
+    }, [action, createResponseHandler, isLoading, isPaymentMethodsLoaded, order?.paymentMethod, paymentMethods])
+
     return (
         <>
             <Modal
@@ -89,7 +132,6 @@ function ModalWindow({modalShow, setModalShow, action, order}) {
                             </div>
                         </div>
 
-                        {/* Детали сделки */}
                         <div className="deal-details">
                             <div className="d-flex justify-content-between mb-2">
                                 <span className="text-color">Сумма:</span>
@@ -165,13 +207,18 @@ function ModalWindow({modalShow, setModalShow, action, order}) {
                             )
 
                         }
-                        <div className="alert alert-info">
+                        {order?.paymentDetails.length > 0 ? (
+                            <div className="alert alert-info">
                             <span
                                 className="fw-bolder">Комментарий {action === "SELL" ? "Покупателя" : "Продавца"}
                             </span>
-                            <div></div>
-                            <span>{order?.paymentDetails}</span>
-                        </div>
+                                <div></div>
+                                <span>{order?.paymentDetails}</span>
+                            </div>
+                        ): (
+                            <></>
+                        )}
+
                         <div className="danger-color">{error}</div>
                     </div>
                 </Modal.Body>
@@ -188,15 +235,8 @@ function ModalWindow({modalShow, setModalShow, action, order}) {
                         <Button variant="secondary" onClick={handleClose} className="me-2">
                             Отменить
                         </Button>
-                        <Button
-                            className={isLoading ? "disabled" : ""}
-                            variant={action === 'BUY' ? 'success' : 'danger'}
-                            onClick={(e) => {
-                                createResponseHandler(e)
-                            }}
-                        >
-                            {action === 'BUY' ? 'Купить' : 'Продать'}
-                        </Button>
+
+                        {ButtonHandler}
                     </div>
                 </Modal.Footer>
             </Modal>

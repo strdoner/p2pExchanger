@@ -19,6 +19,9 @@ import {connect} from "./websocket/connection";
 import WalletPage from "./pages/wallet-page";
 import UserProfile from "./pages/user-profile";
 import PrivateRoute from "./pages/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
+import DisputsPage from "./pages/disputes-page";
+import DisputeDetails from "./pages/dispute-details";
 
 function App() {
     const {store} = useContext(Context)
@@ -58,10 +61,16 @@ function App() {
                 <Route path="/wallet" element={<PrivateRoute/>}>
                     <Route path="" element={<WalletPage/>}/>
                 </Route>
-
+                <Route path="/disputes" element={<AdminRoute/>}>
+                    <Route path="" element={<DisputsPage/>}/>
+                </Route>
                 <Route path="/response/:responseId" element={<PrivateRoute/>}>
                     <Route path="" element={<ResponseDetails/>}/>
                 </Route>
+                <Route path="/dispute/:disputeId" element={<AdminRoute/>}>
+                    <Route path="" element={<DisputeDetails/>}/>
+                </Route>
+
 
                 <Route path="orders-history" element={<PrivateRoute/>}>
                     <Route path="" element={<OrdersHistory/>}/>

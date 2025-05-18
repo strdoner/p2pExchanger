@@ -2,6 +2,7 @@ import {AxiosResponse} from "axios";
 import {AuthResponse} from "../models/response/AuthResponse";
 // @ts-ignore
 import $api from "../api/index.ts";
+import {CheckAuthResponse} from "../models/response/CheckAuthResponse";
 
 export default class AuthService {
     static async loginUser(username: string, password: string): Promise<AxiosResponse<number>> {
@@ -21,7 +22,7 @@ export default class AuthService {
         return $api.post('auth/logout')
     }
 
-    static async checkAuth(): Promise<AxiosResponse<string>> {
+    static async checkAuth(): Promise<AxiosResponse<CheckAuthResponse>> {
         return $api.get('auth/whoami')
     }
 }

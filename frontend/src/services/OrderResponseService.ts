@@ -24,4 +24,8 @@ export default class OrderResponseService {
     static async completeResponse(responseId: number): Promise<AxiosResponse<OrdersResponse>> {
         return $api.patch(`responses/${responseId}/complete`)
     }
+
+    static async disputeResponse(responseId: number): Promise<AxiosResponse<OrdersResponse>> {
+        return $api.patch(`responses/${responseId}/dispute`)
+    }
 }

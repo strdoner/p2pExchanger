@@ -11,20 +11,19 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
                 <span
                     className={placeholder ? "placeholder" : ""}>{placeholder ? "username" : order.maker.username}</span>
                 <div className={`d-flex align-items-center ${placeholder ? "placeholder" : ""}`}>
-                    <div className='online_icon'></div>
-                    <p className={placeholder ? "placeholder" : ""}>В сети</p>|
+
                     <p className={placeholder ? "placeholder" : ""}>{placeholder ? "999" : order.maker.ordersCount} ордеров</p>|
-                    <p className={placeholder ? "placeholder" : ""}>{placeholder ? "99" : order.maker.percentOrdersCompleted}%</p>|
-                    <p className={placeholder ? "placeholder" : ""}>20 мин.</p>
+                    <p className={placeholder ? "placeholder" : ""}>{placeholder ? "99" : order.maker.percentOrdersCompleted}%</p>
+
                 </div>
             </th>
             <th className='order__price placeholder-glow'>
                 <div className={placeholder ? "placeholder" : ""}><span
-                    className={`h4`}>{placeholder ? "1233" : order.price}</span><span className='ms-1'>RUB</span></div>
+                    className={`h4`}>{placeholder ? "1233" : order.price.toLocaleString()}</span><span className='ms-1'>RUB</span></div>
             </th>
             <th>
                 <div className='order__volume placeholder-glow'>
-                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{`${placeholder ? "2333" : order.amount} ${placeholder ? "" : order.currency.shortName}`}</p>
+                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{`${placeholder ? "2333" : order.amount.toLocaleString()} ${placeholder ? "" : order.currency.shortName}`}</p>
                 </div>
             </th>
             <th className='placeholder-glow'>

@@ -10,7 +10,8 @@ const NotificationsIcon = ({listNotifications = [], setListNotifications}) => {
     const unreadCount = listNotifications.filter(n => !n.read).length;
 
     const formatTime = (dateString) => {
-        return new Date(dateString).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        console.log(dateString)
+        return new Date(dateString * 1000).toLocaleString([], {hour: '2-digit', minute: '2-digit'});
     };
 
     const readNotificationHandler = (notificationId) => {

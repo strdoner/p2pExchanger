@@ -5,6 +5,7 @@ import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import PaymentMethodSelect from "./CustomSelect/PaymentMethodSelect";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 function ModalWindowNewOrder({modalShow, setModalShow, action}) {
     const navigate = useNavigate()
@@ -56,8 +57,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
         response.then(function (er) {
             setIsOrderCreating(false)
             if (er.success) {
-                console.log(er)
-                // handleClose()
+                navigate("/p2p-trade/sell")
             } else {
                 setError(er.error)
                 console.log("error while creating order: " + er.error)
@@ -203,12 +203,24 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
                         <Button variant="secondary" onClick={handleClose} className="me-2">
                             Отменить
                         </Button>
-                        <Button
-                            variant={'primary'}
-                            onClick={createOrderHandler}
-                        >
-                            Создать
-                        </Button>
+                        {paymentMethods.length > 0?(
+                            <Button
+                                variant={'primary'}
+                                onClick={createOrderHandler}
+
+                            >
+                                Создать
+                            </Button>
+                        ): (
+                            <OverlayTrigger placement={"bottom"} overlay={<Tooltip id="tooltip-disabled">Вы не добавили платежных методов</Tooltip>}>
+                                  <span className="d-inline-block">
+                                    <Button disabled style={{ pointerEvents: 'none' }}>
+                                      Создать
+                                    </Button>
+                                  </span>
+                            </OverlayTrigger>
+                        )}
+
                     </div>
                 </Modal.Footer>
             </Modal>

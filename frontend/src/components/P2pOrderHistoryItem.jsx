@@ -8,24 +8,24 @@ const P2pOrderHistoryItem = ({action, order, placeholder}) => {
         <tr>
             <th className='history__type placeholder-glow'>
                 <span className={`${action === 'BUY' ? "success-color" : "danger-color"} ${placeholder ? "placeholder" : ""}`}>{placeholder ? "Покупка" : (order.type === "BUY" ? "Покупка" : "Продажа")}</span>
-                <p className={placeholder ? "placeholder" : ""}>{order?.createdAt}</p>
+                <p className={placeholder ? "placeholder" : ""}>{new Date(order?.createdAt).toLocaleString()}</p>
             </th>
             <th>
                 <span>{order?.responseId === -1 ? "-": order?.responseId}</span>
             </th>
             <th>
                 <div className='order__volume placeholder-glow'>
-                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "1234" : order.amount} {placeholder ? "RUB" : order.currency.name}</p>
+                    <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "1234" : order.amount} {placeholder ? "RUB" : order.currency.shortName}</p>
                     <div>
-                        <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "123" : order.price} RUB</p>/
-                        <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "USDT" : order.currency.name}</p>
+                        <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "123" : order.price.toLocaleString()} RUB</p>/
+                        <p className={`text-color ${placeholder ? "placeholder" : ""}`}>{placeholder ? "USDT" : order.currency.shortName}</p>
                     </div>
                 </div>
             </th>
             <th>
                 <div className='d-flex placeholder-glow'>
                     <p className={`text-color m-0 ${placeholder ? "placeholder" : ""}`}>RUB</p>/
-                    <p className={`text-color m-0 ${placeholder ? "placeholder" : ""}`}>{placeholder ? "USDT" : order.currency.name}</p>
+                    <p className={`text-color m-0 ${placeholder ? "placeholder" : ""}`}>{placeholder ? "USDT" : order.currency.shortName}</p>
                 </div>
             </th>
             <th className='history__agent placeholder-glow'>

@@ -4,8 +4,10 @@ import Modal from "react-bootstrap/Modal";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import Button from "react-bootstrap/Button";
 import {Context} from "../index";
+import {useNavigate} from "react-router-dom";
 
 const ModalWindowDeposit = ({modalShow, setModalShow, getUserBalancesHandler}) => {
+    const navigate = useNavigate();
     const {store} = useContext(Context)
     const [balance, setBalance] = React.useState({});
     const [coin, setCoin] = useState("USDT")
@@ -26,7 +28,7 @@ const ModalWindowDeposit = ({modalShow, setModalShow, getUserBalancesHandler}) =
         const response = store.createDeposit({currency: coin, ...balance})
         response.then((er) => {
             if (er.success) {
-                console.log("deposited")
+                navigate("wallet")
                 getUserBalancesHandler()
             }
         })

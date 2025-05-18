@@ -36,10 +36,10 @@ public class MessageService {
         OrderResponse orderResponse = orderResponseRepository.findById(responseId).orElseThrow(
                 EntityNotFoundException::new
         );
-        if (!Objects.equals(user.getId(), orderResponse.getTaker().getId()) && !Objects.equals(user.getId(), orderResponse.getOrder().getMaker().getId())) {
+        if (!Objects.equals(user.getRole().getName(), "ROLE_ADMIN") && !Objects.equals(user.getId(), orderResponse.getTaker().getId()) && !Objects.equals(user.getId(), orderResponse.getOrder().getMaker().getId())) {
             return null;
         }
-        List<Message> messages = messageRepository.findAllByResponseId(responseId);
+        List<Message> messages = messageRepository.findAllByResponseIdAndRecipientOrResponseIdAndSender(responseId, user, responseId, user);
         List<MessageDTO> messagesDTO = new ArrayList<>();
 
         for (Message message : messages) {
@@ -62,13 +62,15 @@ public class MessageService {
         OrderResponse orderResponse = orderResponseRepository.findById(messageRequestDTO.getOrderResponseId()).orElseThrow(
                 EntityNotFoundException::new
         );
-        if ((!Objects.equals(orderResponse.getTaker().getId(), messageRequestDTO.getSenderId()) &&
-                !Objects.equals(orderResponse.getTaker().getId(), messageRequestDTO.getRecipientId())) ||
-            (!Objects.equals(orderResponse.getOrder().getMaker().getId(), messageRequestDTO.getSenderId()) &&
-                !Objects.equals(orderResponse.getOrder().getMaker().getId(), messageRequestDTO.getRecipientId()))
-        ) {
-            throw new IllegalArgumentException();
-        }
+//        if ((!Objects.equals(orderResponse.getTaker().getId(), messageRequestDTO.getSenderId()) &&
+//                !Objects.equals(orderResponse.getTaker().getId(), messageRequestDTO.getRecipientId())) ||
+//            (!Objects.equals(orderResponse.getOrder().getMaker().getId(), messageRequestDTO.getSenderId()) &&
+//                !Objects.equals(orderResponse.getOrder().getMaker().getId(), messageRequestDTO.getRecipientId()) ||
+//            (!Objects.equals(1L, messageRequestDTO.getSenderId()) &&
+//                    !Objects.equals(1L, messageRequestDTO.getRecipientId()))
+//        ) {
+//            throw new IllegalArgumentException();
+//        }
         Message message = new Message();
         message.setContent(messageRequestDTO.getContent());
         message.setRead(message.isRead());

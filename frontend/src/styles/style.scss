@@ -893,3 +893,18 @@ input::placeholder, textarea::placeholder {
   }
 
 }
+
+.nav-tabs {
+  border-color: var(--table-separator) !important;
+
+  .nav-link.active {
+    color: var(--text-color) !important;
+    background-color: var(--second-background-color) !important;
+    border-color: var(--table-separator) !important;
+  }
+
+  .nav-link:hover {
+    border-color: var(--table-separator) !important;
+  }
+}
+

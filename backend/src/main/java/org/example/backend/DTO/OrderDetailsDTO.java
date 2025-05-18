@@ -32,7 +32,7 @@ public class OrderDetailsDTO {
         this.setMaker(new OrderDetailsUserDTO(response.getOrder().getMaker()));
         this.setTaker(new OrderDetailsUserDTO(response.getTaker()));
         this.setType(response.getOrder().getType().toString());
-        this.setCurrency(response.getOrder().getCurrency().getName());
+        this.setCurrency(response.getOrder().getCurrency().getShortName());
         this.setPrice(response.getOrder().getPrice());
         this.setAmount(response.getOrder().getAmount());
         this.setPaymentMethod(new PaymentMethodDTO(response.getOrder().getPaymentMethod()));

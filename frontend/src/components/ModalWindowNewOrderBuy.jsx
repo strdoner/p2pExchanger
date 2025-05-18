@@ -5,7 +5,7 @@ import {Context} from "../index";
 import {useNavigate} from "react-router-dom";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 
-function ModalWindowNewOrder({modalShow, setModalShow, action}) {
+function ModalWindowNewOrderBuy({modalShow, setModalShow, action}) {
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [isChoosen, setIsChoosen] = useState(false)
@@ -30,7 +30,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
 
     ]
 
-    const [preferredBank, setPreferredBank] = useState()
+    const [preferredBank, setPreferredBank] = useState(banks[0].label)
     const [error, setError] = useState("")
 
     useEffect(() => {
@@ -49,7 +49,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
             setIsOrderCreating(false)
             if (er.success) {
                 console.log(er)
-                // handleClose()
+                // navigate("/p2p-trade/buy")
             } else {
                 setError(er.error)
                 console.log("error while creating order: " + er.error)
@@ -190,4 +190,4 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
     );
 }
 
-export default ModalWindowNewOrder;
+export default ModalWindowNewOrderBuy;

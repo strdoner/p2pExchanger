@@ -6,15 +6,14 @@ import {useParams} from "react-router-dom";
 import FileUploadButton from "./FileUploadButton";
 import MessageFileComponent from "./MessageFileComponent";
 
-const ChatComponent = ({contragent}) => {
+const ChatComponent = ({contragent, responseId, showHeader=true}) => {
     const {store} = useContext(Context)
     const [chatMessages, setChatMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [file, setFile] = useState(null)
     const messagesEndRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-
-    const {responseId} = useParams();
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
@@ -43,15 +42,30 @@ const ChatComponent = ({contragent}) => {
 
 
     useEffect(() => {
+
+        setIsLoading(true);
+        console.log(responseId)
         const response = store.getResponseMessages(responseId)
         response.then((er) => {
             if (er.success) {
-                setChatMessages(er.content)
+                console.log(er.content)
+                let msgs = []
+                for (let i = 0; i < er.content.length; i++) {
+
+                    if ((er.content[i].senderId === contragent.id && er.content[i].recipientId === store.id) ||
+                        (er.content[i].recipientId === contragent.id && er.content[i].senderId === store.id)) {
+                        msgs.push(er.content[i])
+                    }
+                }
+
+                setChatMessages(msgs)
+                setIsLoading(false);
             } else {
+                setIsLoading(false);
                 console.log(er)
             }
         })
-    }, [responseId])
+    }, [responseId, contragent])
 
     useEffect(() => {
         scrollToBottom();
@@ -61,13 +75,13 @@ const ChatComponent = ({contragent}) => {
 
         try {
             console.log(msg)
-            if (msg.orderResponseId === Number(responseId)) {
+            if (msg.orderResponseId === responseId && msg.senderId === contragent.id) {
                 setChatMessages(prev => [...prev, msg]);
             }
         } catch (error) {
             console.error("Error via getting new messages:", error);
         }
-    }, [responseId, store.id]);
+    }, [responseId, store.id, contragent]);
 
     const handleSendMessage = () => {
         if (message.length === 0) {
@@ -78,7 +92,7 @@ const ChatComponent = ({contragent}) => {
             recipientId: contragent.id,
             senderId: store.id,
             content: message,
-            orderResponseId: Number(responseId)
+            orderResponseId: responseId
         };
         formData.append("data", new Blob([
             JSON.stringify(messageData)
@@ -97,19 +111,26 @@ const ChatComponent = ({contragent}) => {
         })
     }
 
+
     return (
         <div className="card shadow-sm h-100">
-            <div className="card-header">
-                <div className="d-flex align-items-center">
-                    <div className="flex-grow-1">
-                        <h5 className="mb-0 text-color">Чат с {contragent.username}</h5>
-                    </div>
-                    <div className="badge bg-primary rounded-pill">
-                        <i className="bi bi-shield-check me-1 text-white"></i>
-                        P2P сделка
+            {showHeader ?(
+                <div className="card-header">
+                    <div className="d-flex align-items-center">
+                        <div className="flex-grow-1">
+                            <h5 className="mb-0 text-color">Чат с {contragent.username} {contragent.isAdmin ? "(админ)" : ""}</h5>
+
+                        </div>
+                        <div className="badge bg-primary rounded-pill">
+                            <i className="bi bi-shield-check me-1 text-white"></i>
+                            P2P сделка
+                        </div>
                     </div>
                 </div>
-            </div>
+            ):(
+                <></>
+            )}
+
             <div
                 className="card-body p-0"
                 style={{
@@ -117,11 +138,15 @@ const ChatComponent = ({contragent}) => {
                     overflowY: 'auto',
                 }}
             >
-                {chatMessages.length === 0 ? (
+                {isLoading || chatMessages.length === 0 ? (
                     <div className="d-flex justify-content-center align-items-center h-100">
                         <div className="text-center secondary-text-color">
                             <i className="bi bi-chat-left-text fs-1"></i>
-                            <p>Начните общение с контрагентом</p>
+                            {contragent.isAdmin ? (
+                                <p>Предоставьте доказательства своей правоты</p>
+                            ):(
+                                <p>Начните общение с контрагентом</p>
+                            )}
                         </div>
                     </div>
                 ) : (
@@ -144,7 +169,7 @@ const ChatComponent = ({contragent}) => {
                                       </span>
                                         <span
                                             className={`ms-2 ${msg.senderId === store.id ? 'text-white-50' : 'secondary-text-color'}`}>
-                                        {new Date(msg.createdAt).toLocaleTimeString([], {
+                                        {new Date(msg.createdAt * 1000).toLocaleTimeString([], {
                                             hour: '2-digit',
                                             minute: '2-digit'
                                         })}

@@ -73,9 +73,7 @@ function P2pTrade() {
             <div className='container pt-5'>
                 <div className='header__block p-5'>
                     <h1 className='text-center'>P2P-торговля</h1>
-                    <p className='pt-3'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laudantium, porro
-                        incidunt? Quae, id deserunt fugiat reprehenderit, numquam repellendus tenetur exercitationem
-                        modi consequuntur eos vitae accusamus explicabo iste quas perferendis aspernatur.</p>
+
                 </div>
                 <div className='orders__list'>
                     <div className='orders__list_header'>

@@ -72,8 +72,6 @@ public class ResponseService {
 
         if (response.getStatus() == from) {
             changeResponseStatus(response, to);
-            response.setStatus(to);
-            orderResponseRepository.save(response);
 
         }
     }
@@ -120,6 +118,9 @@ public class ResponseService {
         }
     }
 
+    public OrderResponse changeStatusByAdmin(OrderResponse response, OrderStatus status) {
+        return changeResponseStatus(response, status);
+    }
     public OrderResponse completeResponse(Long id, User user) {
         OrderResponse response = orderResponseRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Запись не найдена!")
@@ -151,12 +152,29 @@ public class ResponseService {
         if (isBuyer(response, user)) {
             response = changeResponseStatus(response, OrderStatus.CONFIRMATION);
 
-            scheduleOrderHandling(response.getId(), OrderStatus.CONFIRMATION, OrderStatus.CANCELLED);
+            scheduleOrderHandling(response.getId(), OrderStatus.CONFIRMATION, OrderStatus.DISPUTED);
             return response;
         }
-        else {
+
+        return null;
+    }
+
+    public OrderResponse createDispute(Long id, User user) {
+        OrderResponse response = orderResponseRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Запись не найдена")
+        );
+
+        if (response.getStatus() != OrderStatus.CONFIRMATION) {
             return null;
         }
+
+        if (isBuyer(response, user) || isSeller(response, user)) {
+            response = changeResponseStatus(response, OrderStatus.DISPUTED);
+
+            return response;
+        }
+
+        return null;
     }
 
     public OrderResponse changeResponseStatus(OrderResponse response, OrderStatus status) {

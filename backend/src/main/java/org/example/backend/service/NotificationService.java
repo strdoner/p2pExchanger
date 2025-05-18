@@ -32,7 +32,7 @@ public class NotificationService {
             case ACTIVE -> notification.setMessage("На ваше объявление № "+ response.getId() +" был получен отклик");
             case CANCELLED -> notification.setMessage("Объявление № " + response.getId() + " было отменено");
             case COMPLETED -> notification.setMessage("Объявление № " + response.getId() + " было успешно завершено");
-            case CONFIRMATION -> notification.setMessage("Объявление № " + response.getId() + " ожидает вашего подтверждения");
+            case CONFIRMATION -> notification.setMessage("Объявление № " + response.getId() + " ожидает подтверждения");
             case DISPUTED -> notification.setMessage("Объявление № " + response.getId() + " было отправлено на разбирательство");
         }
         notification.setType(NotificationType.ORDER_STATUS_CHANGE);
@@ -45,6 +45,8 @@ public class NotificationService {
         responseWebSocketDTO.setId(response.getId());
         responseWebSocketDTO.setStatus(response.getStatus().toString());
         responseWebSocketDTO.setStatusChangingTime(response.getStatusChangingTime());
+
+
         messagingTemplate.convertAndSendToUser(
                 notification.getUser().getUsername(),
                 "/queue/responses",

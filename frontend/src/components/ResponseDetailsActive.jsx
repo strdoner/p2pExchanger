@@ -53,6 +53,11 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
         })
     }
 
+    const formatCard = (card) => {
+        let out = card.substring(0, 4) + " " + card.substring(4, 8) + " " + card.substring(8, 12) + " " + card.substring(12, 16)
+        return out
+    }
+
 
     return (
         <div className="card shadow-sm">
@@ -81,19 +86,19 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
                     <div className="d-flex justify-content-between mb-2">
                         <span className="secondary-text-color">Сумма:</span>
                         <span className="fw-bold">
-                                            {response.amount} {response.currency}
+                                            {response.amount.toLocaleString()} {response.currency}
                                         </span>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
                         <span className="secondary-text-color">Курс:</span>
                         <span className="fw-bold">
-                                            1 {response.currency} = {response.price} RUB
+                                            1 {response.currency} = {response.price.toLocaleString()} RUB
                                         </span>
                     </div>
                     <div className="d-flex justify-content-between mb-3">
                         <span className="secondary-text-color">Итого к оплате:</span>
                         <span className="fw-bold text-primary fs-5">
-                                            {(response.amount * response.price).toFixed(2)} RUB
+                                            {(response.amount * response.price).toLocaleString()} RUB
                                         </span>
                     </div>
                 </div>
@@ -119,7 +124,7 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
                         <div>
                             <div className="fw-bold">{response.paymentMethod.bank.name}</div>
                             <div className="secondary-text-color small">
-                                {response.paymentMethod.details}
+                                {formatCard(response.paymentMethod.details)}
                             </div>
                         </div>
                     </div>

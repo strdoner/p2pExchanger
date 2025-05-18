@@ -4,9 +4,12 @@ import Button from "react-bootstrap/Button";
 import {observer} from "mobx-react-lite";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import {Context} from "../index";
+import {useNavigate, useParams} from "react-router-dom";
 
 const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => {
     const {store} = useContext(Context)
+    const {userId} = useParams()
+    const navigate = useNavigate();
     const handleCloseModal = () => {
         console.log("sdf")
         setShowModal(false);
@@ -38,7 +41,7 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
         const response = store.createPaymentMethod({...cardDetails, bankName: bank})
         response.then(async (response) => {
             if (response.success) {
-                // handleCloseModal()
+                navigate(`/user/${userId}`)
                 setPaymentMethods(prev => [...prev, response.content]);
                 setPaymentMethod({cardNumber: '', bank: ''});
             }
