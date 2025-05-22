@@ -5,6 +5,16 @@ import {Context} from "../index";
 
 const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) => {
     const {store} = useContext(Context)
+
+    const deleteOrder = () => {
+        const response = store.deleteOrder(order.id)
+        response.then((er) => {
+            if (er.success) {
+                console.log("Удалено")
+            }
+        })
+    }
+
     return (
         <tr>
             <th className='merchant_info placeholder-glow'>
@@ -19,7 +29,8 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
             </th>
             <th className='order__price placeholder-glow'>
                 <div className={placeholder ? "placeholder" : ""}><span
-                    className={`h4`}>{placeholder ? "1233" : order.price.toLocaleString()}</span><span className='ms-1'>RUB</span></div>
+                    className={`h4`}>{placeholder ? "1233" : order.price.toLocaleString()}</span><span
+                    className='ms-1'>RUB</span></div>
             </th>
             <th>
                 <div className='order__volume placeholder-glow'>
@@ -37,10 +48,16 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
             </th>
             <th>
                 <button onClick={() => {
-                    modalHandler(true);
-                    orderHandler(order)
+                    if (order.maker.userId !== store.id) {
+                        modalHandler(true);
+                        orderHandler(order)
+                    } else {
+                        deleteOrder()
+                    }
                 }}
-                        className={`${order?.maker?.userId === store.id || store.id < 0 ? "disabled" : ""} btn ${action === "buy" ? "btn-success" : "btn-danger"}`}>{action === "buy" ? "Купить" : "Продать"}</button>
+                        className={`${store.id < 0 ? "disabled" : ""} btn ${action === "buy" && order?.maker?.userId !== store.id ? "btn-success" : "btn-danger"}`}>
+                    {order?.maker?.userId === store.id ? "Удалить" : (action === "buy" ? "Купить" : "Продать")}
+                </button>
             </th>
         </tr>
     )

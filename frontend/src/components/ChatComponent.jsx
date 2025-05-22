@@ -2,11 +2,10 @@ import React, {useContext, useEffect, useRef, useState} from "react"
 import {observer} from "mobx-react-lite";
 import {useSubscription} from "../websocket/hooks";
 import {Context} from "../index";
-import {useParams} from "react-router-dom";
 import FileUploadButton from "./FileUploadButton";
 import MessageFileComponent from "./MessageFileComponent";
 
-const ChatComponent = ({contragent, responseId, showHeader=true}) => {
+const ChatComponent = ({contragent, responseId, showHeader = true}) => {
     const {store} = useContext(Context)
     const [chatMessages, setChatMessages] = useState([]);
     const [message, setMessage] = useState("");
@@ -105,6 +104,7 @@ const ChatComponent = ({contragent, responseId, showHeader=true}) => {
         response.then((er) => {
             if (er.success) {
                 console.log("sended")
+                setFile(null)
                 setMessage("")
                 setChatMessages(prev => [...prev, er.content]);
             }
@@ -114,11 +114,12 @@ const ChatComponent = ({contragent, responseId, showHeader=true}) => {
 
     return (
         <div className="card shadow-sm h-100">
-            {showHeader ?(
+            {showHeader ? (
                 <div className="card-header">
                     <div className="d-flex align-items-center">
                         <div className="flex-grow-1">
-                            <h5 className="mb-0 text-color">Чат с {contragent.username} {contragent.isAdmin ? "(админ)" : ""}</h5>
+                            <h5 className="mb-0 text-color">Чат
+                                с {contragent.username} {contragent.isAdmin ? "(админ)" : ""}</h5>
 
                         </div>
                         <div className="badge bg-primary rounded-pill">
@@ -127,7 +128,7 @@ const ChatComponent = ({contragent, responseId, showHeader=true}) => {
                         </div>
                     </div>
                 </div>
-            ):(
+            ) : (
                 <></>
             )}
 
@@ -144,7 +145,7 @@ const ChatComponent = ({contragent, responseId, showHeader=true}) => {
                             <i className="bi bi-chat-left-text fs-1"></i>
                             {contragent.isAdmin ? (
                                 <p>Предоставьте доказательства своей правоты</p>
-                            ):(
+                            ) : (
                                 <p>Начните общение с контрагентом</p>
                             )}
                         </div>

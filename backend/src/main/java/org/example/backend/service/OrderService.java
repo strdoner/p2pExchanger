@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -65,20 +66,23 @@ public class OrderService {
     public Page<OrderResponseDTO> readAll(String method, String coin, String type, User user, Pageable paging) {
         Page<Order> ordersPage;
         Bank methodBank = bankRepository.findBankByName(method);
-
+        System.out.println(method);
+        System.out.println(coin);
+        System.out.println(type);
+        System.out.println(user);
         if (Objects.equals(type, "BUY")) {
             ordersPage = orderRepository.findAllByCurrencyAndType_SellAndUserFilter(
-                    methodBank,
+                    methodBank == null ? null : methodBank.getId(),
                     coin,
-                    user,
+                    user == null ? null : user.getId(),
                     paging
             );
         }
         else {
             ordersPage = orderRepository.findAllByCurrencyAndType_BuyAndUserFilter(
-                    method,
+                    methodBank == null ? null : methodBank.getId(),
                     coin,
-                    user,
+                    user == null ? null : user.getId(),
                     paging
             );
         }
@@ -179,4 +183,15 @@ public class OrderService {
     }
 
 
+    public void setIsUnavailable(Long orderId, User user) throws AccessDeniedException {
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                EntityNotFoundException::new
+        );
+        if (!Objects.equals(order.getMaker().getId(), user.getId())) {
+            throw new AccessDeniedException("Запрещено");
+        }
+        order.setIsAvailable(false);
+        orderRepository.save(order);
+
+    }
 }

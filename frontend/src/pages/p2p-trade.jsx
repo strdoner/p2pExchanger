@@ -3,7 +3,6 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Link, Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import Footer from '../components/Footer/Footer'
 import CustomSelect from '../components/CustomSelect/CustomSelect'
-import P2pPricePanel from '../components/P2pPricePanel'
 import ModalWindowNewOrder from "../components/ModalWindowNewOrder";
 import {Context} from "../index";
 import ModalWindowNewOrderBuy from "../components/ModalWindowNewOrderBuy";
@@ -36,6 +35,8 @@ function P2pTrade() {
         if (location.pathname === '/p2p-trade') {
             navigate('buy', {replace: true});
         }
+
+
     }, []);
 
     var coinsTo = [
@@ -51,7 +52,7 @@ function P2pTrade() {
         {label: null, value: "1", name: "Все методы"},
         {label: "Сбербанк", value: "2", name: "Сбербанк"},
         {label: "Т-Банк", value: "3", name: "Т-Банк"},
-        {label: "АльфаБанк", value: "4", name: "АльфаБанк"},
+        {label: "Альфабанк", value: "4", name: "АльфаБанк"},
         {label: "Райффайзен", value: "5", name: "Райффайзен"},
         {label: "ВТБ", value: "6", name: "ВТБ"},
 
@@ -85,10 +86,16 @@ function P2pTrade() {
                         <div className='d-flex orders__list_choose'>
                             <CustomSelect options={coinsTo} paramName="coin"/>
                             <CustomSelect options={paymentsMethods} size="lg" paramName="method"/>
+                            {store.isLoading ? (
+                                <div style={{width: 20, height: 20}}
+                                     className="spinner-border text-color align-self-center"
+                                     role="status">
+                                    <span className="sr-only"></span>
+                                </div>
+                            ) : (
+                                <></>
+                            )}
                             <div className={`pricePanelButton d-flex`}>
-                                <button className={`select-button ${isPanelOpen ? "hidden" : ""} me-3`}
-                                        onClick={IsPanelOpenHandler}><i
-                                    className="bi bi-graph-up"></i></button>
                                 {store.id > 0
                                     ? (
                                         <button className='select-button' onClick={createOrderHandler}><i
@@ -103,10 +110,7 @@ function P2pTrade() {
                             </div>
 
                         </div>
-                        <P2pPricePanel value="asdf"
-                                       isOpen={isPanelOpen}
-                                       onToggle={() => setIsPanelOpen(!isPanelOpen)}
-                        />
+
                         <div style={{minHeight: 590}}>
                             <Outlet/>
                         </div>

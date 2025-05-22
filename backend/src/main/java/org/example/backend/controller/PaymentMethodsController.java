@@ -42,7 +42,7 @@ public class PaymentMethodsController {
         return new ResponseEntity<>(userMethods, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{methodId}")
+    @PostMapping("/delete/{methodId}")
     public ResponseEntity<?> removePaymentMethod(
             @PathVariable Long methodId,
             @AuthenticationPrincipal User user

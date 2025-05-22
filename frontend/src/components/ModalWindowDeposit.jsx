@@ -28,7 +28,7 @@ const ModalWindowDeposit = ({modalShow, setModalShow, getUserBalancesHandler}) =
         const response = store.createDeposit({currency: coin, ...balance})
         response.then((er) => {
             if (er.success) {
-                navigate("wallet")
+                // window.location.reload();
                 getUserBalancesHandler()
             }
         })

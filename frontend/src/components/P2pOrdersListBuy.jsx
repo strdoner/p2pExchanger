@@ -38,35 +38,6 @@ const P2pOrdersListBuy = () => {
     }, [searchParams, store]);
 
 
-    if (store.isLoading) {
-        return (
-            <table className='order__list'>
-                <thead>
-                <tr>
-
-                    <th>Пользователь</th>
-                    <th>Цена</th>
-                    <th>Количество</th>
-                    <th>Платежный метод</th>
-                    <th>Действие</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colSpan="5" className="text-center py-4">
-                        <div className="spinner-border" role="status">
-                            <span className="sr-only"></span>
-                        </div>
-                    </td>
-                </tr>
-
-                {/*<P2pOrderItem placeholder={true}/>*/}
-                </tbody>
-            </table>
-        );
-    }
-
-
     return (
         <>
             <ModalWindow modalShow={modalShow} setModalShow={setModalShow} action={"BUY"} order={order}/>

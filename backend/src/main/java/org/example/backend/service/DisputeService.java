@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.backend.DTO.DisputeResponseDTO;
 import org.example.backend.DTO.DisputeResponseDetailsDTO;
 import org.example.backend.DTO.DisputeResponseOrderDetailsDTO;
+import org.example.backend.events.OrderEvent;
 import org.example.backend.model.order.Dispute;
 import org.example.backend.model.order.DisputeStatus;
 import org.example.backend.model.order.OrderResponse;
@@ -71,7 +72,7 @@ public class DisputeService {
         return disputeRepository.findByOrderResponse(orderResponse).getId();
     }
 
-    public void completeDispute(Long disputeId, String comment) {
+    public void completeDispute(Long disputeId, String comment, User user) {
         Dispute dispute = disputeRepository.findById(disputeId).orElseThrow(
                 EntityNotFoundException::new
         );
@@ -80,11 +81,11 @@ public class DisputeService {
         dispute.setDisputeStatus(DisputeStatus.RESOLVED);
         disputeRepository.save(dispute);
 
-        responseService.changeStatusByAdmin(dispute.getOrderResponse(), OrderStatus.COMPLETED);
+        responseService.changeStatusByAdmin(dispute.getOrderResponse(), OrderEvent.COMPLETE, user);
 
     }
 
-    public void cancelDispute(Long disputeId, String comment) {
+    public void cancelDispute(Long disputeId, String comment, User user) {
         Dispute dispute = disputeRepository.findById(disputeId).orElseThrow(
                 EntityNotFoundException::new
         );
@@ -92,6 +93,6 @@ public class DisputeService {
         dispute.setResolvedAt(LocalDateTime.now());
         dispute.setDisputeStatus(DisputeStatus.RESOLVED);
         disputeRepository.save(dispute);
-        responseService.changeStatusByAdmin(dispute.getOrderResponse(), OrderStatus.CANCELLED);
+        responseService.changeStatusByAdmin(dispute.getOrderResponse(), OrderEvent.CANCEL, user);
     }
 }

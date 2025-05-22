@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -44,8 +45,12 @@ public class OrderController {
             @RequestParam(defaultValue = "5") int limit,
             @AuthenticationPrincipal User user
     ) {
-
-        final Page<OrderResponseDTO> orders = orderService.readAll(method, coin, type, user, PageRequest.of(page, limit));
+        Page<OrderResponseDTO> orders;
+        try {
+            orders = orderService.readAll(method, coin, type, user, PageRequest.of(page, limit));
+        } catch (NullPointerException er) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
         return new ResponseEntity<>(orders, HttpStatus.OK);
 
     }
@@ -84,7 +89,19 @@ public class OrderController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PostMapping("/delete/{orderId}")
+    public ResponseEntity<?> deleteOrderById(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal User user
+    ) {
+        try {
+            orderService.setIsUnavailable(orderId, user);
+        } catch (AccessDeniedException er ) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
     @GetMapping("/{id}")

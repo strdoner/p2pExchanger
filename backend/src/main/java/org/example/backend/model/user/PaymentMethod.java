@@ -26,6 +26,7 @@ public class PaymentMethod {
     private String LastFour;
 
     private String encryptedDetails;
+    private boolean isDisabled;
 
     public void setEncryptedDetails(String encryptedDetails) throws Exception {
         this.encryptedDetails = AESUtils.encrypt(encryptedDetails);

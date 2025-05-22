@@ -102,40 +102,40 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Long countByMakerAndIsAvailableTrue(User maker);
     @Query("""
-        SELECT o from Order o
-        WHERE o.isAvailable = true
-        AND o.currency.shortName = :coin
-        AND (
-            (o.maker = :user AND o.type = 'BUY' AND (:bank IS NULL or o.preferredBank = :bank)) OR 
-            (o.maker != :user AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
-            
-        )
-
-
-    """)
+    SELECT o FROM Order o
+    JOIN o.currency c
+    LEFT JOIN o.paymentMethod pm
+    WHERE o.isAvailable = true
+    AND c.shortName = :coin
+    AND (
+        (o.maker.id = :userId AND o.type = 'BUY' AND (:bankId IS NULL OR o.preferredBank.id = :bankId)) 
+        OR 
+        ((:userId IS NULL OR o.maker.id != :userId) AND o.type = 'SELL' AND (:bankId IS NULL OR pm.bank.id = :bankId))
+    )
+""")
     //(:user is NULL AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
     Page<Order> findAllByCurrencyAndType_SellAndUserFilter(
-            @Param("bank") Bank methodBank,
+            @Param("bankId") Long methodBank,
             @Param("coin") String coin,
-            @Param("user") User user,
+            @Param("userId") Long userId,
             Pageable paging);
 
     @Query("""
-        SELECT o from Order o
-        WHERE o.isAvailable = true
-        AND o.currency.shortName = :coin
-        AND (
-            (o.maker = :user AND o.type = 'SELL') OR 
-            (o.maker != :user AND o.type = 'BUY')
-            
-        )
-
-
-    """)
+    SELECT o FROM Order o
+    JOIN o.currency c
+    LEFT JOIN o.paymentMethod pm
+    WHERE o.isAvailable = true
+    AND c.shortName = :coin
+    AND (
+        (o.maker.id = :userId AND o.type = 'SELL' AND (:bankId IS NULL OR pm.bank.id = :bankId)) 
+        OR 
+        ((:userId IS NULL OR o.maker.id != :userId) AND o.type = 'BUY' AND (:bankId IS NULL OR o.preferredBank.id = :bankId))
+    )
+""")
         //(:user is NULL AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
     Page<Order> findAllByCurrencyAndType_BuyAndUserFilter(
-            @Param("bank") String methodBank,
+            @Param("bankId") Long methodBank,
             @Param("coin") String coin,
-            @Param("user") User user,
+            @Param("userId") Long userId,
             Pageable paging);
 }

@@ -49,6 +49,48 @@ export default class Store {
         this.isAuthLoading = bool;
     }
 
+    async getAllBanks() {
+        try {
+            const response = await UserService.getAllBanks()
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async getAllCurrencies() {
+        try {
+            const response = await UserService.getAllCurrencies()
+            // @ts-ignore
+            return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
     async loginUser(username: string, password: string): Promise<{ success: boolean; error?: string }> {
         this.setAuthLoading(true)
         try {
@@ -162,6 +204,27 @@ export default class Store {
             console.log(response.data)
             // @ts-ignore
             return {success: true, content: response.data};
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                return {
+                    success: false,
+                    error: e.response.data
+                }
+            }
+
+            console.error('error:', e);
+            return {
+                success: false,
+                error: 'Произошла непредвиденная ошибка!'
+            };
+        }
+    }
+
+    async deleteOrder(orderId: number) {
+        try {
+            const response = await UserService.deleteOrder(orderId)
+            // @ts-ignore
+            return {success: true};
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 return {
@@ -614,7 +677,7 @@ export default class Store {
         }
     }
 
-    async getDispute(disputeID:number) {
+    async getDispute(disputeID: number) {
         try {
             const response = await DisputeService.getDisputeById(disputeID);
             console.log(response.data);
@@ -636,7 +699,7 @@ export default class Store {
         }
     }
 
-    async completeDispute(disputeID:number, comment: string) {
+    async completeDispute(disputeID: number, comment: string) {
         try {
             const response = await DisputeService.completeDispute(disputeID, comment);
             // @ts-ignore
@@ -656,7 +719,8 @@ export default class Store {
             };
         }
     }
-    async cancelDispute(disputeID:number, comment: string) {
+
+    async cancelDispute(disputeID: number, comment: string) {
         try {
             const response = await DisputeService.cancelDispute(disputeID, comment);
             // @ts-ignore

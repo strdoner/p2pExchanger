@@ -57,7 +57,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
         response.then(function (er) {
             setIsOrderCreating(false)
             if (er.success) {
-                navigate("/p2p-trade/sell")
+                // window.location.reload();
             } else {
                 setError(er.error)
                 console.log("error while creating order: " + er.error)
@@ -203,7 +203,7 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
                         <Button variant="secondary" onClick={handleClose} className="me-2">
                             Отменить
                         </Button>
-                        {paymentMethods.length > 0?(
+                        {paymentMethods.length > 0 ? (
                             <Button
                                 variant={'primary'}
                                 onClick={createOrderHandler}
@@ -211,10 +211,12 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
                             >
                                 Создать
                             </Button>
-                        ): (
-                            <OverlayTrigger placement={"bottom"} overlay={<Tooltip id="tooltip-disabled">Вы не добавили платежных методов</Tooltip>}>
+                        ) : (
+                            <OverlayTrigger placement={"bottom"}
+                                            overlay={<Tooltip id="tooltip-disabled">Вы не добавили платежных
+                                                методов</Tooltip>}>
                                   <span className="d-inline-block">
-                                    <Button disabled style={{ pointerEvents: 'none' }}>
+                                    <Button disabled style={{pointerEvents: 'none'}}>
                                       Создать
                                     </Button>
                                   </span>

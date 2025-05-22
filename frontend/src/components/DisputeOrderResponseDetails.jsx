@@ -1,13 +1,18 @@
 import React from "react"
 import {observer} from "mobx-react-lite";
 
-const DisputeOrderResponseDetails = ({response, status}) => {
+const DisputeOrderResponseDetails = ({response, status = {name: "Открыт спор", color: "orange"}}) => {
     return (
         <div className="card shadow-sm h-100">
             <div className="card-header">
                 <h5 className="mb-0 text-color d-flex justify-content-between">
                     Спор
-                    <span className="d-flex align-items-center small"><div className="rounded-5 p-1 mx-2" style={{background: status.color, width: 10, height: 10}}></div>{status.name}</span>
+                    <span className="d-flex align-items-center small"><div className="rounded-5 p-1 mx-2" style={{
+                        background: status?.color,
+                        width: 10,
+                        height: 10
+                    }}></div>
+                        {status.name}</span>
                 </h5>
             </div>
             <div className="card-body">
@@ -52,7 +57,7 @@ const DisputeOrderResponseDetails = ({response, status}) => {
                                         </span>
                             </div>
                         </>
-                    ):(
+                    ) : (
                         <></>
                     )}
                 </div>
@@ -71,7 +76,8 @@ const DisputeOrderResponseDetails = ({response, status}) => {
                                 justifyContent: 'center'
                             }}
                         >
-                                            <span className={`fw-bold ${response.paymentMethod.bank.color !== "yellow" ? "text-white": ""}`}>
+                                            <span
+                                                className={`fw-bold ${response.paymentMethod.bank.color !== "yellow" ? "text-white" : ""}`}>
                                                 {response.paymentMethod.bank.name.charAt(0)}
                                             </span>
                         </div>

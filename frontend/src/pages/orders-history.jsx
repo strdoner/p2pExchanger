@@ -49,10 +49,6 @@ const OrdersHistory = () => {
                         <p>Статус</p>
                         <CustomSelect options={status} size={"full"} paramName="status"/>
                     </div>
-                    <div className="col-3">
-                        <p>Дата</p>
-                        {/* <CustomSelect  size={"full"}/> */}
-                    </div>
                 </div>
                 <div style={{minHeight: 590}}>
                     <P2pOrdersHistory/>

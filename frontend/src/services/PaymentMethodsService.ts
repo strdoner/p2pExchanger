@@ -14,7 +14,7 @@ export default class UserService {
     }
 
     static async deletePaymentMethod(methodId: number): Promise<AxiosResponse<OrdersResponse>> {
-        return $api.delete(`cards/delete/${methodId}`)
+        return $api.post(`cards/delete/${methodId}`)
     }
 
 

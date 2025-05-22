@@ -43,12 +43,8 @@ public class AdminController {
             @RequestBody String comment,
             @PathVariable Long disputeId
     ) {
-        try {
-            disputeService.completeDispute(disputeId, comment);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        disputeService.completeDispute(disputeId, comment, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/disputes/{disputeId}/cancel")
@@ -57,12 +53,9 @@ public class AdminController {
             @RequestBody String comment,
             @PathVariable Long disputeId
     ) {
-        try {
-            disputeService.cancelDispute(disputeId, comment);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        disputeService.cancelDispute(disputeId, comment, user);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 

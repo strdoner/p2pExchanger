@@ -12,6 +12,7 @@ import org.example.backend.repository.BankRepository;
 import org.example.backend.repository.PaymentMethodRepository;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,10 +42,10 @@ public class PaymentMethodService {
     public List<EncryptedPaymentMethodDTO> getEncryptedPaymentMethods(User user, Long bankId) {
         List<PaymentMethod> methods;
         if (bankId == null) {
-            methods = paymentMethodRepository.findAllByUser(user);
+            methods = paymentMethodRepository.findAllByUserAndIsDisabledIsFalse(user);
         }
         else {
-            methods = paymentMethodRepository.findAllByUserAndBank_Id(user, bankId);
+            methods = paymentMethodRepository.findAllByUserAndBank_IdAndIsDisabledIsFalse(user, bankId);
         }
         List<EncryptedPaymentMethodDTO> methodsDTO = new ArrayList<>();
         for (PaymentMethod paymentMethod : methods) {
@@ -55,16 +56,15 @@ public class PaymentMethodService {
     }
 
 
-    public void remove(Long methodId, User user) throws Exception {
+    public void remove(Long methodId, User user) throws AccessDeniedException {
 
         PaymentMethod method = paymentMethodRepository.findById(methodId).orElseThrow(
                 () -> new EntityNotFoundException("Платежный метод не найден!")
         );
-        if (Objects.equals(method.getUser().getId(), user.getId())) {
-            paymentMethodRepository.delete(method);
+        if (!Objects.equals(method.getUser().getId(), user.getId())) {
+            throw new AccessDeniedException("Запрещено");
         }
-        else {
-            throw new Exception();
-        }
+        method.setDisabled(true);
+        paymentMethodRepository.save(method);
     }
 }

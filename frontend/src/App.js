@@ -22,6 +22,7 @@ import PrivateRoute from "./pages/PrivateRoute";
 import AdminRoute from "./components/AdminRoute";
 import DisputsPage from "./pages/disputes-page";
 import DisputeDetails from "./pages/dispute-details";
+import Loading from "./components/Loading";
 
 function App() {
     const {store} = useContext(Context)
@@ -41,7 +42,7 @@ function App() {
     }, [store.id]);
 
     if (store.id === -2 || (!store.isWebSocketConnected && store.id > 0)) {
-        return <div>Loading</div>
+        return <Loading/>
     }
     return (
         <BrowserRouter>

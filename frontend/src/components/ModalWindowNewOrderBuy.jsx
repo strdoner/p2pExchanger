@@ -49,7 +49,7 @@ function ModalWindowNewOrderBuy({modalShow, setModalShow, action}) {
             setIsOrderCreating(false)
             if (er.success) {
                 console.log(er)
-                // navigate("/p2p-trade/buy")
+                // window.location.reload();
             } else {
                 setError(er.error)
                 console.log("error while creating order: " + er.error)

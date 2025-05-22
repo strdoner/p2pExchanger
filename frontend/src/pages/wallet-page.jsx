@@ -74,9 +74,19 @@ const WalletPage = () => {
                         </div>
                     </div>
                     <div className="col-12 col-sm-6 mb-4">
-                        <div className="d-flex align-items-center justify-content-center">
-                            <button className="btn btn-success fs-1" onClick={createBalanceHandler}>Внести депозит
-                            </button>
+                        <div className="d-flex justify-content-lg-end justify-content-center">
+                            <div className="currency-card p-4 w-100 ">
+                                <button
+                                    className="text-center w-100 btn btn-deposit px-5 py-3 rounded-3 fw-bold d-flex align-items-center"
+                                    onClick={createBalanceHandler}
+                                >
+                                    <div className="m-auto d-flex align-items-center">
+                                        <i className="bi bi-plus-circle me-3 fs-4"></i>
+                                        Внести депозит
+                                    </div>
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                     {currencies.map((currency) =>
@@ -89,11 +99,6 @@ const WalletPage = () => {
                         )
                     )}
 
-
-                    <div className="col-12 col-md-6 currency-card"></div>
-                    <div className="col-12 col-md-6 currency-card"></div>
-                    <div className="col-12 col-md-6 currency-card"></div>
-                    <div className="col-12 col-md-6 currency-card"></div>
                 </div>
 
             </div>

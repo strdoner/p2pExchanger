@@ -71,6 +71,7 @@ public class MessageService {
 //        ) {
 //            throw new IllegalArgumentException();
 //        }
+
         Message message = new Message();
         message.setContent(messageRequestDTO.getContent());
         message.setRead(message.isRead());

@@ -8,7 +8,7 @@ const RegisterPage = () => {
     const navigate = useNavigate();
     const {store} = useContext(Context)
     const [form, setForm] = useState({username: '', email: '', password: '', password2: ''})
-    const [error, setError] = useState({username: '', email: '', password: '', password2: ''})
+    const [error, setError] = useState("")
     const [isRegisterLoading, setIsRegisterLoading] = useState(false)
 
     const registerHandler = () => {
@@ -33,7 +33,7 @@ const RegisterPage = () => {
                     }
                 })
             } else {
-                setError({...error, password2: er.error})
+                setError(er.error)
             }
         })
 
@@ -41,19 +41,28 @@ const RegisterPage = () => {
     }
 
     const isValid = () => {
-        setError({username: '', email: '', password: '', password2: ''})
         if (form.password !== form.password2) {
-            setError({...error, password2: "Пароли не совпадают!"})
+            setError("Пароли не совпадают!")
             return false;
         }
 
         if (form.username.length < 5) {
-            setError({...error, username: "Никнейм слишком короткий"})
+            setError("Никнейм слишком короткий")
+            return false;
+        }
+
+        if (/[^a-zA-Z0-9]/.test(form.username)) {
+            setError("Введите валидный username")
+            return false;
+        }
+
+        if (!/([a-zA-Z0-9_.-]+)@([a-zA-Z]+)([.])([a-zA-Z]+)/.test(form.email)) {
+            setError("Введите валидную электронную почту")
             return false;
         }
 
         if (form.password.length < 5) {
-            setError({...error, password: "Пароль слишком короткий"})
+            setError("Пароль слишком короткий")
             return false;
         }
 
@@ -72,35 +81,38 @@ const RegisterPage = () => {
                             placeholder='Имя пользователя'
                             onChange={e => setForm({...form, username: e.target.value})}
                         />
-                        <div className="danger-color m-2 text-center">{error.username}</div>
                         <input
                             className="form-control"
                             type="email"
                             placeholder='Электронная почта'
                             onChange={e => setForm({...form, email: e.target.value})}
                         />
-                        <div className="danger-color m-2 text-center">{error.email}</div>
                         <input
                             className="form-control"
                             type="password"
                             placeholder='Пароль'
                             onChange={e => setForm({...form, password: e.target.value})}
                         />
-                        <div className="danger-color m-2 text-center">{error.password}</div>
                         <input
                             className="form-control"
                             type="password"
                             placeholder='Повторите пароль'
                             onChange={e => setForm({...form, password2: e.target.value})}
                         />
-                        <div className="danger-color m-2 text-center">{error.password2}</div>
-                        <Button onClick={registerHandler} btnType={"primary mt-4"}
+                        <div className="danger-color m-2 text-center">{error}</div>
+                        <Button onClick={registerHandler} btnType={"primary"}
                                 isloading={isRegisterLoading ? 1 : 0}>Зарегистрироваться</Button>
-
-                        <div className='d-flex'>
-                            <p className=''>Уже зарегистрированы? </p>
-                            <Link to={"/login"} className='second-accent-color ps-1'>Войти</Link>
+                        <div className='d-flex align-items-center'>
+                            <hr className='flex-grow-1'/>
+                            <span className='px-2 small secondary-text-color'>или</span>
+                            <hr className='flex-grow-1'/>
                         </div>
+                        <div className='text-center'>
+                            <span className='secondary-text-color'>Уже зарегистрированы? </span>
+                            <Link to={"/login"}
+                                  className='main-accent-color text-decoration-none fw-medium'>Войти</Link>
+                        </div>
+
                     </div>
                 </div>
             </div>

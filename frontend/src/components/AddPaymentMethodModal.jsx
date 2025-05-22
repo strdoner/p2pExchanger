@@ -5,6 +5,7 @@ import {observer} from "mobx-react-lite";
 import CustomFormSelect from "./CustomSelect/CustomFormSelect";
 import {Context} from "../index";
 import {useNavigate, useParams} from "react-router-dom";
+import {IMaskInput} from "react-imask";
 
 const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => {
     const {store} = useContext(Context)
@@ -33,15 +34,19 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
     ]
 
     const handleAddPaymentMethod = async (e) => {
-
+        setPaymentMethod({...paymentMethod, cardNumber: cardDetails.cardNumber.replaceAll(" ", "")})
         setError("")
         if (!isValid()) {
             return
         }
-        const response = store.createPaymentMethod({...cardDetails, bankName: bank})
+        const response = store.createPaymentMethod({
+            ...cardDetails,
+            bankName: bank,
+            cardNumber: cardDetails.cardNumber.replaceAll(" ", "")
+        })
         response.then(async (response) => {
             if (response.success) {
-                navigate(`/user/${userId}`)
+                // window.location.reload();
                 setPaymentMethods(prev => [...prev, response.content]);
                 setPaymentMethod({cardNumber: '', bank: ''});
             }
@@ -51,12 +56,13 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
     };
 
     const isValid = () => {
-        if (cardDetails.cardNumber.length !== 16) {
+
+        if (cardDetails.cardNumber.replaceAll(" ", "").length !== 16) {
             setError("Длина номера карты должна быть равна 16 символам!")
             return false
         }
 
-        if (!/^\d+$/.test(cardDetails.cardNumber)) {
+        if (!/^\d+$/.test(cardDetails.cardNumber.replaceAll(" ", ""))) {
             setError("Номер карты может состоять только из цифр!")
             return false
         }
@@ -81,14 +87,16 @@ const AddPaymentMethodModal = ({showModal, setShowModal, setPaymentMethods}) => 
             </Modal.Header>
             <Modal.Body>
                 <label htmlFor="">Номер карты</label>
-                <input
-                    className={`form-control mb-3`}
-                    type="text"
-                    name={"cardNumber"}
+                <IMaskInput
+                    mask="0000 0000 0000 0000"
+                    definitions={{'0': /[0-9]/}}
+                    overwrite
                     value={cardDetails.cardNumber}
                     onChange={e => setCardDetails({...cardDetails, cardNumber: e.target.value})}
+                    className="form-control mb-3"
                     placeholder="0000 0000 0000 0000"
                 />
+
                 <label htmlFor="">Фамилия</label>
                 <input
                     className={`form-control mb-3`}

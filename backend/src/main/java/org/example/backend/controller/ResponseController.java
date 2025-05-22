@@ -14,6 +14,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
+
 @RestController
 @RequestMapping("/responses")
 @RequiredArgsConstructor
@@ -41,42 +43,29 @@ public class ResponseController {
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<?> cancelResponse(
             @PathVariable Long id,
-            @AuthenticationPrincipal User user) {
-        OrderResponse details = responseService.cancelResponse(id, user);
-
-        return details == null
-            ? new ResponseEntity<>(HttpStatus.FORBIDDEN)
-            : new ResponseEntity<>(details, HttpStatus.OK);
+            @AuthenticationPrincipal User user) throws AccessDeniedException {
+        return new ResponseEntity<>(responseService.cancelResponse(id, user), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/confirm")
     public ResponseEntity<?> confirmResponse(
             @PathVariable Long id,
-            @AuthenticationPrincipal User user) {
-        OrderResponse details = responseService.confirmResponse(id, user);
-        return details == null
-                ? new ResponseEntity<>(HttpStatus.FORBIDDEN)
-                : new ResponseEntity<>(details, HttpStatus.OK);
+            @AuthenticationPrincipal User user) throws AccessDeniedException {
+        return new ResponseEntity<>(responseService.confirmResponse(id, user), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/dispute")
     public ResponseEntity<?> disputeResponse(
             @PathVariable Long id,
-            @AuthenticationPrincipal User user) {
-        OrderResponse details = responseService.createDispute(id, user);
-        return details == null
-                ? new ResponseEntity<>(HttpStatus.FORBIDDEN)
-                : new ResponseEntity<>(details, HttpStatus.OK);
+            @AuthenticationPrincipal User user) throws AccessDeniedException {
+        return new ResponseEntity<>(responseService.createDispute(id, user), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/complete")
     public ResponseEntity<?> completeResponse(
             @PathVariable Long id,
-            @AuthenticationPrincipal User user) {
-        OrderResponse details = responseService.completeResponse(id, user);
-        return details == null
-                ? new ResponseEntity<>(HttpStatus.FORBIDDEN)
-                : new ResponseEntity<>(details, HttpStatus.OK);
+            @AuthenticationPrincipal User user) throws AccessDeniedException {
+        return new ResponseEntity<>(responseService.completeResponse(id, user), HttpStatus.OK);
     }
 
 
