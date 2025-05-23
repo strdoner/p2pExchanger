@@ -21,10 +21,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderResponseEventHandler {
 
-    private final BalanceService balanceService;
-    private final OrderService orderService;
     private final NotificationService notificationService;
-    private final DisputeService disputeService;
+
 
     private final List<OrderStatusHandlerStrategy> strs;
     private final Map<OrderStatus, OrderStatusHandlerStrategy> strategies = new HashMap<>();

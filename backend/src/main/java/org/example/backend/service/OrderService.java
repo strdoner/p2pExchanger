@@ -36,6 +36,7 @@ public class OrderService {
     private final ResponseService responseService;
     private final BalanceRepository balanceRepository;
     private final BankRepository bankRepository;
+    private final BalanceService balanceService;
 
     public void create(OrderRequestDTO order, User user) {
         Currency orderCurrency = currencyRepository.findByShortName(order.getCurrency());
@@ -191,6 +192,9 @@ public class OrderService {
             throw new AccessDeniedException("Запрещено");
         }
         order.setIsAvailable(false);
+        Balance balance = balanceRepository.findBalanceByUserAndCurrency(user , order.getCurrency());
+        balance.setAvailable(balance.getAvailable().add(order.getAmount()));
+        balance.setLocked(balance.getLocked().subtract(order.getAmount()));
         orderRepository.save(order);
 
     }
