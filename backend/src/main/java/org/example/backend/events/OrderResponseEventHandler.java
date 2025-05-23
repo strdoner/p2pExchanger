@@ -48,8 +48,13 @@ public class OrderResponseEventHandler {
 
         OrderStatusHandlerStrategy strategy = strategies.getOrDefault(status, defaultStrategy);
         strategy.handle(response);
+        if (status == OrderStatus.ACTIVE) {
+            notificationService.notifyAboutStatusChanging(response, response.getOrder().getMaker(), event.getStatus());
 
-        notificationService.notifyAboutStatusChanging(response, response.getTaker(), event.getStatus());
-        notificationService.notifyAboutStatusChanging(response, response.getOrder().getMaker(), event.getStatus());
+        }
+        else {
+            notificationService.notifyAboutStatusChanging(response, response.getTaker(), event.getStatus());
+            notificationService.notifyAboutStatusChanging(response, response.getOrder().getMaker(), event.getStatus());
+        }
     }
 }

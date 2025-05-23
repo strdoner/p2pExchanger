@@ -25,8 +25,7 @@ const OrdersHistory = () => {
         {label: null, value: "1", name: "Все статусы"},
         {label: "ACTIVE", value: "2", name: "Активен"},
         {label: "COMPLETED", value: "3", name: "Завершен"},
-        {label: "IN_PROCESS", value: "4", name: "В процессе"},
-        {label: "DISPUTED", value: "5", name: "На обжаловании"},
+        {label: "DISPUTED", value: "5", name: "Открыт спор"},
         {label: "CANCELLED", value: "6", name: "Отменен"},
         {label: "PENDING", value: "7", name: "Ожидание"},
 
@@ -39,7 +38,7 @@ const OrdersHistory = () => {
                 <div className='row history_filters mt-5 pt-5'>
                     <div className="col-3">
                         <p>Валюта</p>
-                        <CustomSelect options={coinsTo} size={"full"} paramName="coin"/>
+                        <CustomSelect options={coinsTo} size={"full"} paramName="coin" hasIcon={true}/>
                     </div>
                     <div className="col-3">
                         <p>Тип</p>

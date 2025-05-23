@@ -45,12 +45,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "COALESCE(r.taker.id, null) as taker, " +
             "COALESCE(r.id, null) as responseId " +
             "FROM Order o " +
-            "LEFT JOIN OrderResponse r ON r.order = o " +  // Просто LEFT JOIN без доп. условий
+            "LEFT JOIN OrderResponse r ON r.order = o " +
             "WHERE (o.maker.id = :userId OR r.taker.id = :userId) " +
             "AND (:currency IS NULL OR o.currency.shortName = :currency) " +
-            "AND (:type IS NULL OR o.type = :type) " +
+            "AND (:type IS NULL OR (o.type != :type AND r.taker.id = :userId) OR (o.type = :type AND r.taker.id != :userId) OR (o.type = :type AND r.taker.id IS NULL)) " +
             "AND (:status IS NULL OR " +
-            "   (r IS NULL AND :status = 'PENDING') OR " +  // Фильтр по PENDING
+            "   (r IS NULL AND :status = 'PENDING') OR " +
             "   (r IS NOT NULL AND r.status = :status)) " +
             "ORDER BY FIELD(status, 'CONFIRMATION','ACTIVE','DISPUTED','PENDING','CANCELLED','COMPLETED')")
     Page<Tuple> findUserOrdersWithStatus(
@@ -111,7 +111,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         (o.maker.id = :userId AND o.type = 'BUY' AND (:bankId IS NULL OR o.preferredBank.id = :bankId)) 
         OR 
         ((:userId IS NULL OR o.maker.id != :userId) AND o.type = 'SELL' AND (:bankId IS NULL OR pm.bank.id = :bankId))
+        
     )
+    ORDER BY o.price ASC
 """)
     //(:user is NULL AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
     Page<Order> findAllByCurrencyAndType_SellAndUserFilter(
@@ -131,6 +133,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         OR 
         ((:userId IS NULL OR o.maker.id != :userId) AND o.type = 'BUY' AND (:bankId IS NULL OR o.preferredBank.id = :bankId))
     )
+    ORDER BY o.price DESC
 """)
         //(:user is NULL AND o.type = 'SELL' AND (:bank IS NULL or o.paymentMethod.bank = :bank))
     Page<Order> findAllByCurrencyAndType_BuyAndUserFilter(

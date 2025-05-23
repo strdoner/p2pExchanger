@@ -36,6 +36,9 @@ const P2pOrderList = () => {
         const timer = setInterval(fetchOrders, 4000);
 
         fetchOrders();
+        return () => {
+            clearInterval(timer);
+        };
     }, [searchParams, store]);
 
 

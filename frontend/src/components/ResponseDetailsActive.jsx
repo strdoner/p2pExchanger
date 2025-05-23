@@ -8,7 +8,7 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [timer, setTimer] = useState(responseTimer);
-    const { responseId } = useParams();
+    const {responseId} = useParams();
     const [isPaid, setIsPaid] = useState(false)
 
     useEffect(() => {
@@ -29,11 +29,10 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
 
     const handleCancelOrder = () => {
         const response = store.cancelResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
-                navigate('/p2p-trade')
-            }
-            else {
+                navigate('/p2p-trade/buy')
+            } else {
                 console.log("some errors")
             }
         })
@@ -41,13 +40,12 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
 
     const handlePaymentConfirm = () => {
         const response = store.confirmResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
                 setIsPaid(true)
                 statusHandler("CONFIRMATION")
                 console.log("confirmed")
-            }
-            else {
+            } else {
                 console.log("some errors")
             }
         })
@@ -117,12 +115,14 @@ const ResponseDetailsActive = ({response, statusHandler, responseTimer}) => {
                                 justifyContent: 'center'
                             }}
                         >
-                                            <span className={`fw-bold ${response.paymentMethod.bank.color !== "yellow" ? "text-white": ""}`}>
+                                            <span
+                                                className={`fw-bold ${response.paymentMethod.bank.color !== "yellow" ? "text-white" : ""}`}>
                                                 {response.paymentMethod.bank.name.charAt(0)}
                                             </span>
                         </div>
                         <div>
                             <div className="fw-bold">{response.paymentMethod.bank.name}</div>
+                            <div>{response.paymentMethod.cardHolderName}</div>
                             <div className="secondary-text-color small">
                                 {formatCard(response.paymentMethod.details)}
                             </div>

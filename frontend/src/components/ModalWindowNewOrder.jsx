@@ -66,11 +66,11 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
     }
 
     const isValid = (order) => {
-        if (order.price < 1) {
+        if (order.price <= 0) {
             setError("Укажите корректную цену")
             return false
         }
-        if (order.amount < 1) {
+        if (order.amount <= 0) {
             setError("Укажите корректное количество")
             return false
         }
@@ -110,7 +110,8 @@ function ModalWindowNewOrder({modalShow, setModalShow, action}) {
                     <div className="deal-confirmation">
                         <div className="mb-3">
                             <label htmlFor="currency" className="form-label">Криптовалюта</label>
-                            <CustomFormSelect options={coinsTo} size={"full"} setOption={setCoin} initialValue={coin}/>
+                            <CustomFormSelect options={coinsTo} size={"full"} setOption={setCoin} initialValue={coin}
+                                              hasIcon={true}/>
                         </div>
                         <div className="row mb-3">
                             <div className="col-md-6">

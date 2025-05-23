@@ -874,6 +874,10 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.select-sm {
+  max-width: 120px !important;
+}
+
 .payment__method-item {
   background-color: var(--second-background-color);
   border-top: 1px solid var(--table-separator) !important;

@@ -92,7 +92,7 @@ public class OrderService {
         return ordersPage.map(order -> {
             User maker = order.getMaker();
 
-            long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(maker) + orderResponseRepository.countByTaker(maker) + orderResponseRepository.countByOrder_Maker(maker);
+            long totalMakerOrders = orderResponseRepository.countByTaker(maker) + orderResponseRepository.countByOrder_Maker(maker);
             long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(maker, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(maker, OrderStatus.COMPLETED);
             Long completionPercentage = totalMakerOrders > 0
                     ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)

@@ -1,9 +1,8 @@
-import { observer } from 'mobx-react-lite';
-import React, {useState, useEffect, useRef} from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import {observer} from 'mobx-react-lite';
+import React, {useEffect, useRef, useState} from 'react';
+import {useLocation, useSearchParams} from 'react-router-dom';
 
-const CustomSelect = ({ options, size, paramName }) => {
+const CustomSelect = ({options, size, paramName, hasIcon}) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const location = useLocation();
     const [showOptions, setShowOptions] = useState(false);
@@ -50,18 +49,32 @@ const CustomSelect = ({ options, size, paramName }) => {
     }, []);
 
     return (
-        <div className={`custom-select ${size === undefined ? "select-sm" : "select-"+size}`} ref={selectRef}>
+        <div className={`custom-select ${size === undefined ? "select-sm" : "select-" + size}`} ref={selectRef}>
             <button className="select-button" onClick={() => setShowOptions(!showOptions)}>
-                <span className="selected-value">{displayOption.name}</span>
+                <span className="selected-value d-flex align-items-center">
+                    {hasIcon ? (
+                        <div className={`${displayOption.name.toLowerCase()}-bg rounded-3 me-1`}
+                             style={{width: 15, height: 15}}></div>
+                    ) : (
+                        <></>
+                    )}
+                    {displayOption.name}
+                </span>
                 <span className="arrow"></span>
             </button>
             <ul className={`select-dropdown ${showOptions ? "show" : ""}`}>
                 {options.map((option, index) => (
                     <li
                         key={option.value}
-                        className={`option ${option.label === currentValue ? 'selected' : ''}`}
+                        className={`d-flex option align-items-center ${option.label === currentValue ? 'selected' : ''}`}
                         onClick={() => handleSelect(option)}
                     >
+                        {hasIcon ? (
+                            <div className={`${option.name.toLowerCase()}-bg rounded-3 me-1`}
+                                 style={{width: 15, height: 15}}></div>
+                        ) : (
+                            <></>
+                        )}
                         {option.name}
                     </li>
                 ))}

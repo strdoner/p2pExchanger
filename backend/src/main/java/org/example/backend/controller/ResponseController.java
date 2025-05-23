@@ -22,8 +22,6 @@ import java.nio.file.AccessDeniedException;
 public class ResponseController {
 
     private final ResponseService responseService;
-    private final UserService userService;
-    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getResponseById(

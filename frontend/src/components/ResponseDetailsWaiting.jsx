@@ -7,7 +7,7 @@ const ResponseDetailsWaiting = ({response, statusHandler, responseTimer}) => {
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [timer, setTimer] = useState(responseTimer);
-    const { responseId } = useParams();
+    const {responseId} = useParams();
     const [isPaid, setIsPaid] = useState(false)
 
     useEffect(() => {
@@ -28,11 +28,10 @@ const ResponseDetailsWaiting = ({response, statusHandler, responseTimer}) => {
 
     const handleCancelOrder = () => {
         const response = store.cancelResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
-                navigate('/p2p-trade')
-            }
-            else {
+                navigate('/p2p-trade/buy')
+            } else {
                 console.log("some errors")
             }
         })
@@ -40,13 +39,12 @@ const ResponseDetailsWaiting = ({response, statusHandler, responseTimer}) => {
 
     const handlePaymentConfirm = () => {
         const response = store.confirmResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
                 setIsPaid(true)
                 statusHandler("CONFIRMATION")
                 console.log("confirmed")
-            }
-            else {
+            } else {
                 console.log("some errors")
             }
         })

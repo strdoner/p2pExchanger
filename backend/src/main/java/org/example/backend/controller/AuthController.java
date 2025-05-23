@@ -1,6 +1,7 @@
 package org.example.backend.controller;
 
 import jakarta.persistence.EntityExistsException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -40,8 +42,12 @@ public class AuthController {
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
     @GetMapping("/whoami")
-    public ResponseEntity<?> getCurrentUser() {
+    public ResponseEntity<?> getCurrentUser(HttpServletResponse response, CsrfToken csrf) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Cookie cookie = new Cookie("XSRF-TOKEN", csrf.getToken());
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             return ResponseEntity.status(401).build();

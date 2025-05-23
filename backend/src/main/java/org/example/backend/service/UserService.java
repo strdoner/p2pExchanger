@@ -98,7 +98,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId).orElseThrow(
                 EntityNotFoundException::new
         );
-        long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
+        long totalMakerOrders = orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
         long completedMakerOrders = orderResponseRepository.countByTakerAndStatus(user, OrderStatus.COMPLETED) + orderResponseRepository.countByOrder_MakerAndStatus(user, OrderStatus.COMPLETED);
         Long completionPercentage = totalMakerOrders > 0
                 ? (long) (((double) completedMakerOrders / totalMakerOrders) * 100)
@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
                 EntityNotFoundException::new
         );
 
-        long totalMakerOrders = orderRepository.countByMakerAndIsAvailableTrue(user) + orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
+        long totalMakerOrders = orderResponseRepository.countByTaker(user) + orderResponseRepository.countByOrder_Maker(user);
         long completedBuyOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY)
                 + orderResponseRepository.countByTakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.BUY);
         long completedSellOrders = orderResponseRepository.countByOrder_MakerAndStatusAndOrder_Type(user, OrderStatus.COMPLETED, OrderType.SELL)

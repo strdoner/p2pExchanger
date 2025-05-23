@@ -1,8 +1,7 @@
-import { observer } from 'mobx-react-lite';
-import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import {observer} from 'mobx-react-lite';
+import React, {useEffect, useRef, useState} from 'react';
 
-const CustomFormSelect = ({ options, size, setOption, initialValue }) => {
+const CustomFormSelect = ({options, size, setOption, initialValue, hasIcon}) => {
     const [showOptions, setShowOptions] = useState(false);
     const [focusedOptionIndex, setFocusedOptionIndex] = useState(-1);
     const [selectedValue, setSelectedValue] = useState(initialValue || (options[0]?.value ?? null));
@@ -65,7 +64,7 @@ const CustomFormSelect = ({ options, size, setOption, initialValue }) => {
 
     return (
         <div
-            className={`custom-select ${size === undefined ? "select-sm" : "select-"+size}`}
+            className={`custom-select ${size === undefined ? "select-sm" : "select-" + size}`}
             ref={selectRef}
             tabIndex="0"
             onKeyDown={handleKeyDown}
@@ -76,7 +75,15 @@ const CustomFormSelect = ({ options, size, setOption, initialValue }) => {
                 aria-haspopup="listbox"
                 aria-expanded={showOptions}
             >
-                <span className="selected-value">{selectedOption?.name}</span>
+                <span className="selected-value d-flex align-items-center">
+                    {hasIcon ? (
+                        <div className={`${selectedOption.name.toLowerCase()}-bg rounded-3 me-1`}
+                             style={{width: 15, height: 15}}></div>
+                    ) : (
+                        <></>
+                    )}
+                    {selectedOption?.name}
+                </span>
                 <span className="arrow"></span>
             </button>
             <ul
@@ -88,11 +95,17 @@ const CustomFormSelect = ({ options, size, setOption, initialValue }) => {
                     <li
                         key={option.value}
                         id={`option-${index}`}
-                        className={`option ${option.value === selectedValue ? 'selected' : ''} ${index === focusedOptionIndex ? 'focused' : ''}`}
+                        className={`d-flex align-items-center option ${option.value === selectedValue ? 'selected' : ''} ${index === focusedOptionIndex ? 'focused' : ''}`}
                         onClick={() => handleSelect(option)}
                         role="option"
                         aria-selected={option.value === selectedValue}
                     >
+                        {hasIcon ? (
+                            <div className={`${option.name.toLowerCase()}-bg rounded-3 me-1`}
+                                 style={{width: 15, height: 15}}></div>
+                        ) : (
+                            <></>
+                        )}
                         {option.name}
                     </li>
                 ))}

@@ -22,7 +22,7 @@ const P2pOrderItem = ({action, order, placeholder, modalHandler, orderHandler}) 
                     className={placeholder ? "placeholder" : ""}>{placeholder ? "username" : order.maker.username}</span>
                 <div className={`d-flex align-items-center ${placeholder ? "placeholder" : ""}`}>
 
-                    <p className={placeholder ? "placeholder" : ""}>{placeholder ? "999" : order.maker.ordersCount} ордеров</p>|
+                    <p className={placeholder ? "placeholder" : ""}>Сделок: {placeholder ? "999" : order.maker.ordersCount}</p>|
                     <p className={placeholder ? "placeholder" : ""}>{placeholder ? "99" : order.maker.percentOrdersCompleted}%</p>
 
                 </div>

@@ -102,7 +102,8 @@ function ModalWindowNewOrderBuy({modalShow, setModalShow, action}) {
                     <div className="deal-confirmation">
                         <div className="mb-3">
                             <label htmlFor="currency" className="form-label">Криптовалюта</label>
-                            <CustomFormSelect options={coinsTo} size={"full"} setOption={setCoin} initialValue={coin}/>
+                            <CustomFormSelect options={coinsTo} size={"full"} setOption={setCoin} initialValue={coin}
+                                              hasIcon={true}/>
                         </div>
                         <div className="row mb-3">
                             <div className="col-md-6">

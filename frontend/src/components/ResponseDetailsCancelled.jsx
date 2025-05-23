@@ -8,36 +8,31 @@ const ResponseDetailsCancelled = ({response, statusHandler, isSell, responseTime
     const navigate = useNavigate()
     const {store} = useContext(Context)
     const [timer, setTimer] = useState(responseTimer);
-    const { responseId } = useParams();
+    const {responseId} = useParams();
     const [isPaid, setIsPaid] = useState(false)
     const [isCancelling, setIsCancelling] = useState(false)
     const [contragent, setContragent] = useState(null)
 
     useEffect(() => {
         const ans = store.getUserMinInfo(isSell ? response.taker.id : response.maker.id)
-        ans.then(function(er) {
+        ans.then(function (er) {
             if (er.success) {
                 setContragent(er.content)
-            }
-            else {
+            } else {
                 console.log("some error: " + er.error)
             }
         })
     }, []);
 
 
-
-
-
     const handlePaymentConfirm = () => {
         const response = store.confirmResponse(responseId)
-        response.then(function(er) {
+        response.then(function (er) {
             if (er.success) {
                 setIsPaid(true)
                 statusHandler("CONFIRMED")
                 console.log("confirmed")
-            }
-            else {
+            } else {
                 console.log("some errors")
             }
         })
@@ -49,7 +44,8 @@ const ResponseDetailsCancelled = ({response, statusHandler, isSell, responseTime
             <div className="card-body text-center p-4">
                 {/* Большая иконка отмены */}
                 <div className="my-4">
-                    <div className="bg-danger bg-opacity-10 d-inline-flex rounded-circle p-4 completed-operation justify-content-center align-items-center">
+                    <div
+                        className="bg-danger bg-opacity-10 d-inline-flex rounded-circle p-4 completed-operation justify-content-center align-items-center">
                         <i className="bi bi-x-circle-fill danger-color fs-1"></i>
                     </div>
                 </div>
@@ -88,14 +84,17 @@ const ResponseDetailsCancelled = ({response, statusHandler, isSell, responseTime
                 <div className="border-top pt-3 text-start">
                     <h6 className="text-start">Контрагент</h6>
                     <div className="d-flex align-items-center mb-3">
-                        <div className="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center"
-                             style={{ width: '40px', height: '40px' }}>
+                        <div
+                            className="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center"
+                            style={{width: '40px', height: '40px'}}>
                             <i className="bi bi-person-fill text-white fs-5"></i>
                         </div>
                         <div className={"placeholder-glow"}>
-                            <div className={`fw-bold ${contragent !== null ? "" : "placeholder"}`}>{contragent !== null ? contragent.username : "username"}</div>
+                            <div
+                                className={`fw-bold ${contragent !== null ? "" : "placeholder"}`}>{contragent !== null ? contragent.username : "username"}</div>
                             <div className={`secondary-text-color small ${contragent !== null ? "" : "placeholder"}`}>
-                                {contragent !== null ? contragent.percentOrdersCompleted : "4"}% | {contragent !== null ? contragent.ordersCount : "122"} сделок
+                                {contragent !== null ? contragent.percentOrdersCompleted : "4"}%
+                                | {contragent !== null ? contragent.ordersCount : "122"} сделок
                             </div>
                         </div>
                     </div>
@@ -107,7 +106,7 @@ const ResponseDetailsCancelled = ({response, statusHandler, isSell, responseTime
                         <i className="bi bi-clock-history me-2"></i>
                         История операций
                     </Link>
-                    <Link className="btn btn-primary" to={"/p2p-trade/buy"}>
+                    <Link className="btn btn-primary text-light" to={"/p2p-trade/buy"}>
                         <i className="bi bi-arrow-left me-2"></i>
                         Вернуться к объявлениям
                     </Link>

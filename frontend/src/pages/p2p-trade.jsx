@@ -84,7 +84,7 @@ function P2pTrade() {
                         </div>
                         <hr/>
                         <div className='d-flex orders__list_choose'>
-                            <CustomSelect options={coinsTo} paramName="coin"/>
+                            <CustomSelect options={coinsTo} paramName="coin" hasIcon={true}/>
                             <CustomSelect options={paymentsMethods} size="lg" paramName="method"/>
                             {store.isLoading ? (
                                 <div style={{width: 20, height: 20}}
