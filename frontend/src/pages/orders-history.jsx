@@ -1,0 +1,63 @@
+import {observer} from 'mobx-react-lite';
+import React from 'react';
+import P2pOrdersHistory from '../components/P2pOrdersHistory';
+import CustomSelect from '../components/CustomSelect/CustomSelect';
+import Footer from '../components/Footer/Footer';
+
+const OrdersHistory = () => {
+    var coinsTo = [
+        {label: null, value: "1", name: "Все валюты"},
+        {label: "USDT", value: "2", name: "USDT"},
+        {label: "USDC", value: "3", name: "USDC"},
+        {label: "ETH", value: "4", name: "ETH"},
+        {label: "BTC", value: "5", name: "BTC"},
+        {label: "BNB", value: "6", name: "BNB"},
+
+    ]
+
+    var type = [
+        {label: null, value: "1", name: "Все типы"},
+        {label: "BUY", value: "2", name: "Покупка"},
+        {label: "SELL", value: "3", name: "Продажа"}
+    ]
+
+    var status = [
+        {label: null, value: "1", name: "Все статусы"},
+        {label: "ACTIVE", value: "2", name: "Активен"},
+        {label: "COMPLETED", value: "3", name: "Завершен"},
+        {label: "DISPUTED", value: "5", name: "Открыт спор"},
+        {label: "CANCELLED", value: "6", name: "Отменен"},
+        {label: "PENDING", value: "7", name: "Ожидание"},
+
+    ]
+
+
+    return (
+        <>
+            <div className='container'>
+                <div className='row history_filters mt-5 pt-5'>
+                    <div className="col-3">
+                        <p>Валюта</p>
+                        <CustomSelect options={coinsTo} size={"full"} paramName="coin" hasIcon={true}/>
+                    </div>
+                    <div className="col-3">
+                        <p>Тип</p>
+                        <CustomSelect options={type} size={"full"} paramName="type"/>
+                    </div>
+                    <div className="col-3">
+                        <p>Статус</p>
+                        <CustomSelect options={status} size={"full"} paramName="status"/>
+                    </div>
+                </div>
+                <div style={{minHeight: 590}}>
+                    <P2pOrdersHistory/>
+                </div>
+            </div>
+            <Footer/>
+
+
+        </>
+    )
+}
+
+export default observer(OrdersHistory)

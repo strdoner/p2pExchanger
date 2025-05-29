@@ -1,21 +1,20 @@
 import {observer} from 'mobx-react-lite'
-import ToggleTheme from '../components/ToggleTheme/ToggleTheme'
-import { ThemeContext } from '../contexts/ThemeContext'
-import { themes } from '../contexts/ThemeContext'
-import Navbar from '../components/Navbar/Navbar'
 import Footer from '../components/Footer/Footer'
+import {Link} from "react-router-dom";
 
 function WelcomePage() {
     return (
         <>
-            <Navbar />
             <div className='container pt-5'>
-                 <div className="header__block pt-5 mt-5 text-center">
+                <div className="header__block pt-5 mt-5 text-center">
                     <h1>P2P-обменник криптовалюты</h1>
                     <p>Покупайте и продавайте BTC, USDT и другие активы напрямую у других пользователей.</p>
-                    <button className='btn btn-primary mt-5'>Начать торговать</button>
-                 </div>
-                 <div className="howto__block text-center">
+                    <Link to="/p2p-trade/buy">
+                        <button className='btn btn-primary mt-5'>Начать торговать</button>
+                    </Link>
+
+                </div>
+                <div className="howto__block text-center">
                     <h1>Как это работает?</h1>
                     <div className='row mt-5'>
                         <div className='col-12 col-md-6 col-lg-3'>
@@ -39,9 +38,9 @@ function WelcomePage() {
                             <p>Система разблокирует криптовалюту.</p>
                         </div>
                     </div>
-                    
-                 </div>
-                 <div className='preferences__block'>
+
+                </div>
+                <div className='preferences__block'>
                     <h1 className='text-center'>Наши преимущества</h1>
                     <div className='preferences_security row justify-content-around'>
                         <div className="col-4 text-left align-content-center">
@@ -53,40 +52,32 @@ function WelcomePage() {
                         </div>
                     </div>
 
-                    <div className='preferences_comissions row justify-content-around'>
-                        <div className="col-4 text-center">
-                            <i className='bi-percent'></i>
-                        </div>
-                        <div className="col-4 text-end align-content-center">
-                            <h2>Низкие комиссии</h2>
-                            <p>Платите только за успешные сделки.</p>
-                        </div>
-                    </div>
                     <div className='preferences_fast row justify-content-around'>
-                        <div className="col-4 text-left align-content-center">
-                            <h2>Быстрые сделки</h2>
-                            <p>Выбирайте контрагентов с мгновенными платежами (СБП, карты).</p>
-                        </div>
                         <div className="col-4 text-center">
                             <i className='bi-rocket'></i>
                         </div>
+                        <div className="col-4 text-end align-content-center">
+                            <h2>Быстрые сделки</h2>
+                            <p>Выбирайте контрагентов с мгновенными платежами (СБП, карты).</p>
+                        </div>
                     </div>
                     <div className='preferences_truly_course row justify-content-around'>
-                        <div className="col-4 text-center">
-                            <i className='bi-eye'></i>
-                        </div>
-                        <div className="col-4 text-end align-content-center">
+                        <div className="col-4 text-left align-content-center">
                             <h2>Честный курс</h2>
                             <p>Свободное ценообразование без скрытых надбавок.</p>
                         </div>
+                        <div className="col-4 text-center">
+                            <i className='bi-eye'></i>
+                        </div>
                     </div>
-                 </div>
-                 <div className='start__block text-center'>
+                </div>
+                <div className='start__block text-center'>
                     <h1>Готовы к первой сделке?</h1>
-                    <button className='btn btn-primary mt-4'>Зарегистрироваться</button>
-                 </div>
-                 <Footer />
-             </div>
+                    <Link to="/register"><button className='btn btn-primary mt-4'>Зарегистрироваться</button></Link>
+
+                </div>
+                <Footer/>
+            </div>
         </>
 
     )
